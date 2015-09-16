@@ -32,35 +32,33 @@ or, if you want to install the package globally for all users on Linux, type::
   sudo python setup.py install
   
   
-Example of Instalation on OpenSuse
-====================================
-Here is what one new user had to do for OpenSuse
-::
-   # dependences: python, python-devel, 
-   # python-virtualenv, python-pip, swig
-   sudo zypper install python-virtualenv
-   sudo zypper install python-pip
-   cd ~
-   mkdir .virtualenvs
-   cd .virtualenvs
-   mkdir BufferKdTree
+Example: OpenSuse
+-----------------
+
+Here are some small installation instructions for OpenSuse using virtualenv and pip::
+
+   # dependences: OpenCL installed
+   sudo zypper install python-virtualenv python-devel python-pip swig
+   
+   mkdir ~/.virtualenvs
+   cd ~/.virtualenvs
+   mkdir bufferkdtree
    cd bufferkdtree
 
-   #creates a new python environment
+   # creates a new python environment
    virtualenv bufferkdtree_master
 
-   #activate the environment:
+   # activate environment and install numpy
    source bufferkdtree_master/bin/activate
-
-   # for example if I want to install in environment:
    pip install numpy==1.6.1
 
-   # Make the OpenCL header files available, for example with:
+   # make the OpenCL header files available, for example with:
    export C_INCLUDE_PATH=/usr/local/cuda/include:$C_INCLUDE_PATH
 
-   # go to buffer kdtree git directory and
-   # compile the sources with:
-   python setup.py develop
+   # get and install sources
+   git clone https://github.com/gieseke/bufferkdtree.git
+   cd bufferkdtree
+   python setup.py install
 
    # execute an example
    python examples/neighbors.py
