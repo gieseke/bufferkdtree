@@ -33,13 +33,11 @@ or, if you want to install the package globally for all users on Linux, type::
   
   
 Example of Instalation on OpenSuse:
-====================================
-
-::
+====================================::
    # dependences: python, python-devel, 
    # python-virtualenv, python-pip, swig
-   sudo apt-get install python-virtualenv
-   sudo apt-get install python-pip
+   sudo zypper install python-virtualenv
+   sudo zypper install python-pip
    cd ~
    mkdir .virtualenvs
    cd .virtualenvs
