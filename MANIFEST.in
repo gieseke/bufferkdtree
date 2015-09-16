@@ -1,0 +1,6 @@
+include *.rst
+recursive-include examples *
+recursive-include bufferkdtree *.c *.h *.pyx *.pxd *.pxi *.i
+include COPYING
+include AUTHORS.rst
+include README.rst
