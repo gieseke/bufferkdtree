@@ -13,9 +13,11 @@ class NearestNeighbors(object):
     """ Provides access to the different implementations, in particular
     to the Buffer k-d Tree implementation. 
     
-    The brute-force implementatation is only used for comparison 
+    Note: The brute-force implementatation is only used for comparison 
     in relatively low-dimensional spaces; the performance is suboptimal
-    for higher dimensional feature spaces.
+    for higher dimensional feature spaces. Here, matrix based schemes
+    are more efficient (based on, e.g., cublas)
+    
     """
 
     ALLOWED_ALGORITHMS = ["brute", "kd_tree", "buffer_kd_tree"]
@@ -26,8 +28,8 @@ class NearestNeighbors(object):
                  algorithm="buffer_kd_tree", \
                  float_type="float", \
                  tree_depth=None, \
-                 splitting_type="cyclic", \
                  leaf_size=30, \
+                 splitting_type="cyclic", \
                  n_train_chunks=1, \
                  use_gpu=True, \
                  plat_dev_ids={0:[0]}, \
@@ -41,8 +43,29 @@ class NearestNeighbors(object):
         
         Parameters
         ----------
-        n_neighbors : int, optional (default = 5)
-            Number of neighbors used for kneighbors (as default).
+        n_neighbors : int (default 5)
+            Number of neighbors used
+        algorithm : str (default "buffer_kd_tree")
+            The algorithm that shall be used, one of 
+            "brute", "kd_tree", "buffer_kd_tree".
+        float_type : str (default "float")
+            The allowed float type. Currently, one
+            single-precision is allowed.
+        tree_depth : int or None (default None)
+            Needed for k-d tree implementations: In case 
+            the tree depth is specified, a tree
+            such a depth is built. Otherwise, leaf_size
+            is used to determine the desired tree depth.
+        leaf_size : int (default 30)
+            Needed for k-d tree implementations: The 
+            desired leaf size of the kd tree.
+        splitting_type : str (default "cyclic")
+            Needed for k-d tree implementations: The
+            splitting rule that shall be used to 
+            construct the kd tree. Currently, only
+            "cyclic" is supported.
+            
+            
         ...
         
         """
@@ -120,7 +143,6 @@ class NearestNeighbors(object):
             The object itself
         """
 
-        print self.algorithm
         assert self.algorithm in self.ALLOWED_ALGORITHMS
         
         self._set_internal_data_types()

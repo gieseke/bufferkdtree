@@ -190,7 +190,7 @@ int get_device_infos(cl_uint platform_number, cl_uint device_number, \
 	err = clGetPlatformIDs(nplatforms, platforms, NULL);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	if (platform_number > nplatforms){
+	if (platform_number < 0 || platform_number >= nplatforms){
 		return ERROR_INVALID_PLATFORMS;
 	}
 
@@ -207,7 +207,7 @@ int get_device_infos(cl_uint platform_number, cl_uint device_number, \
 	err = clGetDeviceIDs(platforms[platform_number], CL_DEVICE_TYPE_ALL, num_devices, devices, NULL);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	if (device_number > num_devices){
+	if (device_number < 0 || device_number >= num_devices){
 		return ERROR_INVALID_DEVICE;
 	}
 
