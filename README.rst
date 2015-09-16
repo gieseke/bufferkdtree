@@ -31,6 +31,40 @@ or, if you want to install the package globally for all users on Linux, type::
   python setup.py build
   sudo python setup.py install
   
+  
+Example of Instalation on OpenSuse:
+====================================
+
+::
+   # dependences: python, python-devel, 
+   # python-virtualenv, python-pip, swig
+   sudo apt-get install python-virtualenv
+   sudo apt-get install python-pip
+   cd ~
+   mkdir .virtualenvs
+   cd .virtualenvs
+   mkdir BufferKdTree
+   cd bufferkdtree
+
+   #creates a new python environment
+   virtualenv bufferkdtree_master
+
+   #activate the environment:
+   source bufferkdtree_master/bin/activate
+
+   # for example if I want to install in environment:
+   pip install numpy==1.6.1
+
+   # Make the OpenCL header files available, for example with:
+   export C_INCLUDE_PATH=/usr/local/cuda/include:$C_INCLUDE_PATH
+
+   # go to buffer kdtree git directory and
+   # compile the sources with:
+   python setup.py develop
+
+   # execute an example
+   python examples/neighbors.py
+
 Notes
 =====
 
