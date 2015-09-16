@@ -32,9 +32,10 @@ or, if you want to install the package globally for all users on Linux, type::
   sudo python setup.py install
   
   
-Example of Instalation on OpenSuse:
+Example of Instalation on OpenSuse
 ====================================
-Here is what one new user had to do for OpenSuse ::
+Here is what one new user had to do for OpenSuse
+::
    # dependences: python, python-devel, 
    # python-virtualenv, python-pip, swig
    sudo zypper install python-virtualenv
