@@ -16,6 +16,7 @@ def psf_model_mag_train(NUM=None):
     if not os.path.isfile(fname) or os.path.getsize(fname) != 363691280:
         answer = question(q)
         if answer == True:
+            print(ack)
             download_data(url, fname)
         else:
             return
@@ -64,6 +65,7 @@ def psf_model_mag_test(NUM=None):
     if not os.path.isfile(fname) or os.path.getsize(fname) != 1790285720:
         answer = question(q)
         if answer == True:
+            print(ack)
             download_data(url, fname)
         else:
             return
