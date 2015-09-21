@@ -54,7 +54,7 @@ def configuration(parent_package='', top_path=None):
 # define new clean command
 class CleanCommand(Clean):
 
-    description = "Cleans up code ..."
+    description = "Cleaning up code ..."
 
     def run(self):
 
@@ -62,6 +62,12 @@ class CleanCommand(Clean):
 
         if os.path.exists('build'):
             shutil.rmtree('build')
+
+        if os.path.exists('bufferkdtree.egg-info'):
+            shutil.rmtree('bufferkdtree.egg-info')
+
+        if os.path.exists('docs/_build'):
+            shutil.rmtree('docs/_build')
 
         for dirpath, dirnames, filenames in os.walk('bufferkdtree'):
             for filename in filenames:
@@ -75,8 +81,9 @@ class CleanCommand(Clean):
                         os.unlink(os.path.join(dirpath, filename))
 
             for dirname in dirnames:
-                if dirname == '__pycache__' or dirname == 'build':
+                if dirname == '__pycache__' or dirname == 'build' or dirname == '_build':
                     shutil.rmtree(os.path.join(dirpath, dirname))
+
 
 def setup_package():
     
