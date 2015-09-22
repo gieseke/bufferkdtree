@@ -63,3 +63,5 @@ Here are some installation instructions for OpenSuse using virtualenv and pip::
 
    # execute an example
    python examples/neighbors.py
+
+Cosmin out!
