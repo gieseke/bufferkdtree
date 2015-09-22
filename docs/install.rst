@@ -37,7 +37,7 @@ Finally, one can create and activate a new python environment in which numpy1.6.
 Quick Installation
 ------------------
 
-First, make sure that the OpenCL header files are available, for example by setting the C_INCLUDE_PATH environment variable in the .bashrc file:
+First, make sure that the OpenCL header files are available, for example by setting the C_INCLUDE_PATH environment variable in the .bashrc file::
 
    # make the OpenCL header files available, for example on a CUDA system
    # PATH_TO_OPENCL_INCLUDE_FOLDER could be /usr/local/cuda/include
