@@ -61,7 +61,7 @@ If you want to install the package globally for all users (on Linux machines), t
 To run the program, one may enter the examples folder and execute one of the python programs there::
 
   $ cd examples
-  $ python astronomy.py
+  $ python bigastronomy.py
 
 Previous to running the example, one should modify the python program, e.g., bigastronomy.py, in order to set::
 
