@@ -254,7 +254,7 @@ class NearestNeighbors(object):
             raise ValueError("n_neighbors must be <= n_samples, "
                 " but n_samples=%d, n_neighbors=%d" % (train_size, n_neighbors))
         if n_neighbors > self.N_NEIGHBORS_CL_THRES \
-                and self.algorithm in ["brute", "buffer_kd_tree"]:
+            and self.algorithm in ["brute", "buffer_kd_tree"]:
             warnings.warn("""
                 The performance of the many-core implementation 
                 decreases for large values of 'n_neighbors'!"""
