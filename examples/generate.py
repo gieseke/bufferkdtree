@@ -1,23 +1,21 @@
 import os
 import numpy
-from bufferkdtree.util.url import download_data
-from bufferkdtree.util.input import question
+from bufferkdtree.util.url import download_from_url
+from bufferkdtree.util.input import ask_question
 
 def psf_model_mag_train(NUM=None):
 
-    fname = 'data/photometric_spec_confirmed.npy'
+    fname = os.path.join(os.path.dirname(__file__), 'data', 'photometric_spec_confirmed.npy')
     q = "Additional data need to be downloaded (to the current directory, about 400MB). Do you wish to continue?"
-    url = "http://www.fabiangieseke.de/data/sdss/bufferkdtree/photometric_spec_confirmed.npy"
+    url = "http://www.cs.ru.nl/~fgieseke/data/sdss/photometric_spec_confirmed.npy"
 
     ack = "\nFunding for the SDSS and SDSS-II has been provided by the Alfred P. Sloan Foundation, the Participating Institutions, the National Science Foundation, the U.S. Department of Energy, the National Aeronautics and Space Administration, the Japanese Monbukagakusho, the Max Planck Society, and the Higher Education Funding Council for England. The SDSS Web Site is http://www.sdss.org/.\n\nThe SDSS is managed by the Astrophysical Research Consortium for the Participating Institutions. The Participating Institutions are the American Museum of Natural History, Astrophysical Institute Potsdam, University of Basel, University of Cambridge, Case Western Reserve University, University of Chicago, Drexel University, Fermilab, the Institute for Advanced Study, the Japan Participation Group, Johns Hopkins University, the Joint Institute for Nuclear Astrophysics, the Kavli Institute for Particle Astrophysics and Cosmology, the Korean Scientist Group, the Chinese Academy of Sciences (LAMOST), Los Alamos National Laboratory, the Max-Planck-Institute for Astronomy (MPIA), the Max-Planck-Institute for Astrophysics (MPA), New Mexico State University, Ohio State University, University of Pittsburgh, University of Portsmouth, Princeton University, the United States Naval Observatory, and the University of Washington.\n\n"
 
-
-
     if not os.path.isfile(fname) or os.path.getsize(fname) != 363691280:
-        answer = question(q)
+        answer = ask_question(q)
         if answer == True:
             print(ack)
-            download_data(url, fname)
+            download_from_url(url, fname)
         else:
             return
 
@@ -54,19 +52,17 @@ def psf_model_mag_train(NUM=None):
 
 def psf_model_mag_test(NUM=None):
 
-    fname = 'data/photometric.npy'
+    fname = os.path.join(os.path.dirname(__file__), 'data', 'photometric.npy')
     q = "Additional data need to be downloaded (to the current directory, about 2GB). Do you wish to continue?"
-    url = "http://www.fabiangieseke.de/data/sdss/bufferkdtree/photometric.npy"
+    url = "http://www.cs.ru.nl/~fgieseke/data/sdss/photometric.npy"
 
     ack = "\nFunding for the SDSS and SDSS-II has been provided by the Alfred P. Sloan Foundation, the Participating Institutions, the National Science Foundation, the U.S. Department of Energy, the National Aeronautics and Space Administration, the Japanese Monbukagakusho, the Max Planck Society, and the Higher Education Funding Council for England. The SDSS Web Site is http://www.sdss.org/.\n\nThe SDSS is managed by the Astrophysical Research Consortium for the Participating Institutions. The Participating Institutions are the American Museum of Natural History, Astrophysical Institute Potsdam, University of Basel, University of Cambridge, Case Western Reserve University, University of Chicago, Drexel University, Fermilab, the Institute for Advanced Study, the Japan Participation Group, Johns Hopkins University, the Joint Institute for Nuclear Astrophysics, the Kavli Institute for Particle Astrophysics and Cosmology, the Korean Scientist Group, the Chinese Academy of Sciences (LAMOST), Los Alamos National Laboratory, the Max-Planck-Institute for Astronomy (MPIA), the Max-Planck-Institute for Astrophysics (MPA), New Mexico State University, Ohio State University, University of Pittsburgh, University of Portsmouth, Princeton University, the United States Naval Observatory, and the University of Washington.\n\n"
 
-
-
     if not os.path.isfile(fname) or os.path.getsize(fname) != 1790285720:
-        answer = question(q)
+        answer = ask_question(q)
         if answer == True:
             print(ack)
-            download_data(url, fname)
+            download_from_url(url, fname)
         else:
             return
 

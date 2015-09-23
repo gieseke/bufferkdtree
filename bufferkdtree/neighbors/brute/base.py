@@ -101,6 +101,16 @@ class BruteNN(object):
         # variable to prevent destruction of external array)
         self.X = X.astype(self.numpy_dtype_float)
         
+        if self.X.shape[1] > 30:
+            raise Warning(
+                """
+                The brute-force implementatation is only used for comparison 
+                in relatively low-dimensional spaces; the performance is 
+                suboptimal for higher dimensional feature spaces (but even 
+                superior over other matrix based implementations making use
+                e.g., CUBLAS).            
+                """)
+        
         # fit model
         self._get_wrapper_module().fit_extern(self.X)
 

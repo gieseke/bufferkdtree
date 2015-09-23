@@ -5,33 +5,114 @@ Created on 15.09.2015
 '''
 
 import numpy
+import warnings
 from bufferkdtree.neighbors.brute.base import BruteNN
 from bufferkdtree.neighbors.kdtree.base import KDTreeNN
 from bufferkdtree.neighbors.buffer_kdtree.base import BufferKDTreeNN
 
 class NearestNeighbors(object):
-    """ Provides access to the different implementations, in particular
-    to the Buffer k-d Tree implementation. 
+    """ The 'NearestNeighbors' provides access to all nearest neighbor
+    implementations. It has simmilar parameters as the corresponding
+    implementation of the `scikit-learn <http://scikit-learn.org>`_ 
+    package.   
     
-    Note: The brute-force implementatation is only used for comparison 
-    in relatively low-dimensional spaces; the performance is suboptimal
-    for higher dimensional feature spaces. Here, matrix based schemes
-    are more efficient (based on, e.g., cublas)
+    The main method is the "buffer_kd_tree", which can be seen as
+    mix between the "brute" and the "kd_tree" implementations. 
     
+    Parameters
+    ----------
+    n_neighbors : int (default 5)
+        Number of neighbors used
+        
+    algorithm : {"brute", "kd_tree", "buffer_kd_tree"}, optional (default="buffer_kd_tree")
+        The algorithm that shall be used to compute 
+        the nearest neighbors. One of  
+        - 'brute': brute-force search
+        - 'kd_tree': k-d tree based search
+        - 'buffer_kd_tree': buffer k-d tree based search (with GPUs)
+        
+    tree_depth : int or None, optional (default=None)
+        Passed to the 'kd_tree' and 'buffer_kd_tree' implementation. 
+        In case 'tree_depth' is specified, a tree of such a depth
+        is built ('tree_depth' has priority over 'leaf_size').
+        
+    leaf_size : int, optional (default=30)
+        Passed to the 'kd_tree' and 'buffer_kd_tree' implementation. 
+        In case 'leaf_size' is set, the corresponding tree depth
+        is computed (is ignored in case tree_depth is not None).
+        
+    splitting_type : {'cyclic'}, optional (default='cyclic')
+        Passed to the 'kd_tree' and 'buffer_kd_tree' implementation.
+        The splitting rule that shall be used to 
+        construct the kd tree. Currently, only
+        "cyclic" is supported.
+        
+    n_train_chunks : int, optional (default=1)
+        Passed to the 'buffer_kd_tree' implementation.
+        The number of chunks the training patterns shall 
+        be processed in; only needed in case the 
+        training patterns do not fit on the GPU (in case 
+        n_train_chunks is too small, it is increased
+        automatically).
+        
+    plat_dev_ids : dict, optional (default={0:[0]})
+        Passed to the 'brute' and the 'buffer_kd_tree' implementation.
+        The platforms and devices that shall be used. E.g., 
+        plat_dev_ids={0:[0,1]} makes use of platform 0 and
+        the first two devices.
+        
+    allowed_train_mem_percent_chunk : float, optional (default=0.2)
+        Passed to the 'buffer_kd_tree' implementation.
+        The amount of memory (OpenCL) used for the 
+        training patterns (in percent).
+         
+    allowed_test_mem_percent : float, optional (default=0.8)
+        Passed to the 'buffer_kd_tree' implementation.
+        The amount of memory (OpenCL) used for the 
+        test/query patterns (in percent).
+    
+    n_jobs : int, optional (default=1)
+        Passed to the 'kd_tree' implementation.
+        The number of threads used for the querying phase.
+        
+    verbose : int, optional (default=0)
+        The verbosity level (0=no output, 1=output)
+        
+        
+    Example
+    -------        
+      >>> import numpy
+      >>> from bufferkdtree.neighbors.base import NearestNeighbors
+      >>> X = numpy.random.uniform(low=-1,high=1,size=(10000,10))
+      >>> nbrs = NearestNeighbors(n_neighbors=10, algorithm="buffer_kd_tree", tree_depth=9, plat_dev_ids={0:[0]}, verbose=0)    
+      >>> nbrs.fit(X)
+      >>> dists, inds = nbrs.kneighbors(X)   
+       
+    Notes
+    -----
+    The brute-force implementatation is only used for comparison 
+    in relatively low-dimensional spaces; the performance is 
+    suboptimal for higher dimensional feature spaces (but even 
+    superior over other matrix based implementations making use
+    e.g., CUBLAS).  
+    
+    The performance of the GPU implementations depends on the
+    corresponding architecture. An important ingredient is 
+    the support of automatic hardware caches.
+    
+    Only single-precision is supported until now.
     """
 
     ALLOWED_ALGORITHMS = ["brute", "kd_tree", "buffer_kd_tree"]
-    ALLOWED_FLOAT_TYPES = ["float"]
+    N_NEIGHBORS_CL_THRES = 30
     
     def __init__(self, \
                  n_neighbors=5, \
                  algorithm="buffer_kd_tree", \
-                 float_type="float", \
                  tree_depth=None, \
                  leaf_size=30, \
                  splitting_type="cyclic", \
                  n_train_chunks=1, \
-                 use_gpu=True, \
                  plat_dev_ids={0:[0]}, \
                  allowed_train_mem_percent_chunk=0.2, \
                  allowed_test_mem_percent=0.8, \
@@ -39,59 +120,25 @@ class NearestNeighbors(object):
                  verbose=0, \
                  **kwargs):
 
-        """ Model for unsupervised nearest neighbor search.
-        
-        Parameters
-        ----------
-        n_neighbors : int (default 5)
-            Number of neighbors used
-        algorithm : str (default "buffer_kd_tree")
-            The algorithm that shall be used, one of 
-            "brute", "kd_tree", "buffer_kd_tree".
-        float_type : str (default "float")
-            The allowed float type. Currently, one
-            single-precision is allowed.
-        tree_depth : int or None (default None)
-            Needed for k-d tree implementations: In case 
-            the tree depth is specified, a tree
-            such a depth is built. Otherwise, leaf_size
-            is used to determine the desired tree depth.
-        leaf_size : int (default 30)
-            Needed for k-d tree implementations: The 
-            desired leaf size of the kd tree.
-        splitting_type : str (default "cyclic")
-            Needed for k-d tree implementations: The
-            splitting rule that shall be used to 
-            construct the kd tree. Currently, only
-            "cyclic" is supported.
-            
-            
-        ...
-        
+        """ Constructor
         """
         
         self.n_neighbors = n_neighbors
         self.algorithm = algorithm
-        self.float_type = float_type
         self.tree_depth = tree_depth
-        self.splitting_type = splitting_type
         self.leaf_size = leaf_size
-        self.use_gpu = use_gpu
+        self.splitting_type = splitting_type        
         self.n_train_chunks = n_train_chunks        
         self.plat_dev_ids = plat_dev_ids
         self.allowed_train_mem_percent_chunk = allowed_train_mem_percent_chunk
         self.allowed_test_mem_percent = allowed_test_mem_percent        
         self.n_jobs = n_jobs
         self.verbose = verbose
-
-    def get_params(self, deep=True):
-        """ Get parameters for this estimator.
         
-        Parameters
-        ----------
-        deep : boolean, optional
-            If True: Will return the parameters for this 
-            estimator and its contained estimator subobjects.
+        self.float_type = "float" 
+
+    def get_params(self):
+        """ Get parameters for this estimator.
         
         Returns
         -------
@@ -101,11 +148,9 @@ class NearestNeighbors(object):
         
         return {"n_neighbors": self.n_neighbors, \
                 "algorithm": self.algorithm, \
-                "float_type": self.float_type, \
                 "tree_depth": self.tree_depth, \
-                "splitting_type": self.splitting_type, \
                 "leaf_size": self.leaf_size, \
-                "use_gpu": self.use_gpu, \
+                "splitting_type": self.splitting_type, \
                 "n_train_chunks": self.n_train_chunks, \
                 "plat_dev_ids": self.plat_dev_ids, \
                 "allowed_train_mem_percent_chunk": self.allowed_train_mem_percent_chunk, \
@@ -133,13 +178,13 @@ class NearestNeighbors(object):
         Parameters
         ----------
         X : array-like, shape (n_samples, n_features)
-            Training data, where n_samples is the number 
-            of patterns and n_features the number 
-            of features.
+            The set of training/reference points, where
+            'n_samples' is the number points and 
+            'n_features' the number of features.
             
         Returns
         -------
-        self : object
+        self : instance of NearestNeighbors
             The object itself
         """
 
@@ -155,7 +200,7 @@ class NearestNeighbors(object):
         return self
 
     def kneighbors(self, X=None, n_neighbors=None, return_distance=True):
-        """ Finds the K-neighbors of a point.
+        """ Finds the nearest neighbors for a given set of points.
         
         Parameters
         ----------
@@ -163,15 +208,19 @@ class NearestNeighbors(object):
             The set of query points. If not provided,
             the neighbors of each point in the training
             data are returned (in this case, the query
-            point itself is not considered its own 
+            point itself is not considered its own  
             neighbor.
-        n_neighbors : int
-            The number of neighbors to get. The default
-            values is the one passed to the 
-            constructor.
-        return_distance : boolean, optional, default is True
+            
+        n_neighbors : int or None, optional (default=None)
+            The number of nearest neighbors that shall be
+            returned for each query points. If 'None', then
+            the default values provided to the constructor
+            is used.
+            
+        return_distance : bool, optional (default=True)
             If False, then the distances associated with 
-            each query will not be returned.
+            each query will not be returned. Otherwise, they
+            will be returned.
             
         Returns
         -------
@@ -199,11 +248,17 @@ class NearestNeighbors(object):
             # for the sample itself being returned, which is removed later
             n_neighbors += 1                
 
-        # same as in scikit-learn
+        # sanity checks: similar to scikit-learn
         train_size = self.X.shape[0]
         if n_neighbors > train_size:
-            raise ValueError("Expected n_neighbors <= n_samples, "
-                " but n_samples = %d, n_neighbors = %d" %  (train_size, n_neighbors))
+            raise ValueError("n_neighbors must be <= n_samples, "
+                " but n_samples=%d, n_neighbors=%d" % (train_size, n_neighbors))
+        if n_neighbors > self.N_NEIGHBORS_CL_THRES \
+                and self.algorithm in ["brute", "buffer_kd_tree"]:
+            warnings.warn("""
+                The performance of the many-core implementation 
+                decreases for large values of 'n_neighbors'!"""
+                , Warning)
 
         # use wrapper to get nearest neighbors        
         result = self.wrapper.kneighbors(X=X, n_neighbors=n_neighbors, return_distance=return_distance)
@@ -222,14 +277,45 @@ class NearestNeighbors(object):
                 return neigh_ind        
     
     def compute_optimal_tree_depth(self, Xtrain, Xtest, target="test", tree_depths=None):
-        """ Computes the optimal tree depth for a 
-        tree-based nearest neighbor method.
+        """ Computes the optimal tree depth for the 
+        tree-based implementations. The method tests
+        various assignments of the parameters and 
+        simply measures the time needed for the approach
+        tp finish.
+        
+        Parameters
+        ----------
+        Xtrain : array-like, shape (n_samples, n_features)
+            The set of training/reference points, where
+            'n_samples' is the number points and 
+            'n_features' the number of features.
+            
+        Xtest : array-like, shape (n_samples, n_features)
+            The set of testing/querying points, where
+            'n_samples' is the number points and 
+            'n_features' the number of features.
+            
+        target : {'train', 'test', 'both'}, optional (default='test')
+            The runtime target, i.e., which phase shall 
+            be optimized. Three choices:
+            - 'train' : The training phase
+            - 'test' : The testing phase
+            - 'both' : Both phases
+        
+        tree_depths : list or None, optional
+            The range of different tree depths that 
+            shall be tested. If None, then the default
+            ranges are used by the different implementations:
+            
+            - buffer_kd_tree : range(2, max_depth - 1)
+            - kd_tree : range(4, max_depth - 1)
+            
+            where max_depth = int(math.floor(math.log(len(Xtrain), 2)))
         
         Returns
         -------
         opt_height : int
-            The optimal tree depth based
-            on the target provided.
+            The optimal tree depth
         """
         
         ALLOWED_TARGETS = ['train', 'test', 'both']
@@ -238,10 +324,12 @@ class NearestNeighbors(object):
             raise Exception("Optimal tree depth can only be determined for tree-based methods!")
         
         if target not in ALLOWED_TARGETS:
-            raise Exception("Target is invalid: " + unicode(target))
+            raise Exception("Target is not valid (allowed ones are " + unicode(ALLOWED_TARGETS) + ": " + unicode(target))
         
-        return self._get_wrapper().compute_optimal_tree_depth(Xtrain=Xtrain, Xtest=Xtest, \
-                                                              target=target, tree_depths=tree_depths)
+        return self._get_wrapper().compute_optimal_tree_depth(Xtrain=Xtrain, \
+                                                              Xtest=Xtest, \
+                                                              target=target, \
+                                                              tree_depths=tree_depths)
 
     def _set_internal_data_types(self):
         """ Set numpy float and int dtypes
@@ -264,7 +352,7 @@ class NearestNeighbors(object):
 
         if self.algorithm == "brute":
             return BruteNN(n_neighbors=self.n_neighbors, float_type=self.float_type, \
-                            use_gpu=self.use_gpu, plat_dev_ids=self.plat_dev_ids, \
+                            use_gpu=True, plat_dev_ids=self.plat_dev_ids, \
                             n_jobs=self.n_jobs, verbose=self.verbose)
 
         elif self.algorithm == "kd_tree":
@@ -277,7 +365,7 @@ class NearestNeighbors(object):
             return BufferKDTreeNN(n_neighbors=self.n_neighbors, float_type=self.float_type, \
                             tree_depth=self.tree_depth, leaf_size=self.leaf_size, \
                             splitting_type=self.splitting_type, \
-                            n_train_chunks=self.n_train_chunks, use_gpu=self.use_gpu, \
+                            n_train_chunks=self.n_train_chunks, use_gpu=True, \
                             plat_dev_ids=self.plat_dev_ids, \
                             allowed_train_mem_percent_chunk=self.allowed_train_mem_percent_chunk, \
                             allowed_test_mem_percent=self.allowed_test_mem_percent, \

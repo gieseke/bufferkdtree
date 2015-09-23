@@ -197,7 +197,7 @@ class KDTreeNN(object):
         max_depth = int(math.floor(math.log(len(Xtrain), 2)))
 
         if tree_depths is None:
-            tree_depths = range(2, max_depth - 1)
+            tree_depths = range(4, max_depth - 1)
 
         runtimes = {}
         

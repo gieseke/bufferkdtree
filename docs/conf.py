@@ -20,7 +20,10 @@ import sphinx_rtd_theme
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
+
 #sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../examples'))
 
 # -- General configuration ------------------------------------------------
 
@@ -33,10 +36,15 @@ import sphinx_rtd_theme
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.pngmath',
+    'numpydoc', 
+    'sphinx.ext.autosummary',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+# generate autosummary (in case no refs are given)
+autosummary_generate = True
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -51,7 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'bufferkdtree'
-copyright = u'2015, Fabian Gieseke'
+copyright = u'2014 - 2015, Fabian Gieseke'
 author = u'Fabian Gieseke'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -59,7 +67,8 @@ author = u'Fabian Gieseke'
 # built documents.
 #
 # The short X.Y version.
-version = '1.0'
+import bufferkdtree
+version = bufferkdtree.__version__
 # The full version, including alpha/beta/rc tags.
 release = '1.0'
 
@@ -78,7 +87,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', '_templates']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -174,7 +183,7 @@ html_static_path = ['_static']
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
@@ -357,3 +366,8 @@ epub_exclude_files = ['search.html']
 
 # If false, no index is generated.
 #epub_use_index = True
+
+numpydoc_show_class_members = False
+
+autodoc_member_order = 'bysource'
+

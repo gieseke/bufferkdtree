@@ -1,15 +1,32 @@
+'''
+Created on 15.09.2015
+
+@author: fgieseke
+'''
+
 import os
 import urllib2
 
-def download_data(url, fname):
-
+def download_from_url(url, fname):
+    """ Downloads data from a given url.
+    
+    Parameters
+    ----------
+    url : str
+        The target url
+    fname : str
+        The local filename
+    """
+    
     # create directory if needed
     d = os.path.dirname(fname)
     if not os.path.exists(d):
         os.makedirs(d)
 
+    # open local file
     f = open(fname, 'wb')
 
+    # get data from url
     u = urllib2.urlopen(url)
     meta = u.info()
     fsize = int(meta.getheaders("Content-Length")[0])

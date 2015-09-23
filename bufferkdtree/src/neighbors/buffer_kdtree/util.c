@@ -25,8 +25,8 @@ void set_default_parameters(TREE_PARAMETERS *params) {
 void check_parameters(TREE_PARAMETERS *params) {
 
 	// parameter checks
-	if ((params->n_neighbors < 1) || (params->n_neighbors > 50)) {
-		printf("Error: The parameter k must be > 0 and <= 50)\nExiting ...\n");
+	if ((params->n_neighbors < 1) || (params->n_neighbors > 100)) {
+		printf("Error: The parameter k must be > 0 and <= 100)\nExiting ...\n");
 		exit(1);
 	}
 
