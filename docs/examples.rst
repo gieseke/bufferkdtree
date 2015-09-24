@@ -47,7 +47,7 @@ The parameter ``algorithm`` determines the method that shall be used. The follow
 Large-Scale Querying
 --------------------
 
-The next data example is based on data from the Sloan Digital Sky Survey; the data is downloaded automatically.
+The next data example is based on data from the `Sloan Digital Sky Survey <http://www.sdss.org>`_; the data set will be downloaded automatically (see the `copyright notice <http://www.sdss.org/collaboration/citing-sdss>`_):
 
 .. literalinclude:: ../examples/astronomy.py
     :start-after: # Licence: GNU GPL (v2)

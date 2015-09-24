@@ -349,9 +349,9 @@ class NearestNeighbors(object):
             The wrapper object
         """
         
-        from bufferkdtree.neighbors.brute.base import BruteNN
-        from bufferkdtree.neighbors.kdtree.base import KDTreeNN
-        from bufferkdtree.neighbors.buffer_kdtree.base import BufferKDTreeNN
+        from .brute.base import BruteNN
+        from .kdtree.base import KDTreeNN
+        from .buffer_kdtree.base import BufferKDTreeNN
         
         if self.algorithm == "brute":
             return BruteNN(n_neighbors=self.n_neighbors, float_type=self.float_type, \

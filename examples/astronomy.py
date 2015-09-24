@@ -14,7 +14,7 @@ import os
 import time
 import numpy
 import generate
-from bufferkdtree.neighbors.base import NearestNeighbors
+from bufferkdtree.neighbors import NearestNeighbors
 
 # parameters
 plat_dev_ids = {0:[0,1,2,3]}

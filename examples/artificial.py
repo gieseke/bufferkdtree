@@ -11,7 +11,7 @@ print(__doc__)
 # Licence: GNU GPL (v2)
 
 import numpy
-from bufferkdtree.neighbors.base import NearestNeighbors
+from bufferkdtree.neighbors import NearestNeighbors
 
 n_neighbors = 10
 plat_dev_ids = {0:[0]}
