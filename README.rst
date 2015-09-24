@@ -18,22 +18,23 @@ Quickstart
 
 The package can be installed via pip via::
 
-pip install bufferkdtree
+  pip install bufferkdtree
 
 To install the package from the sources, get the current version via::
 
-git clone https://github.com/gieseke/bufferkdtree.git
+  git clone https://github.com/gieseke/bufferkdtree.git
 
 To install the package locally on a Linux system, use::
 
-python setup.py install --user
+  python setup.py install --user
 
 On Debian/Ubuntu systems, the package can be installed globally for all users via::
 
-python setup.py build
-sudo python setup.py install
+  python setup.py build
+  sudo python setup.py install
 
 To run the tests, type ``nosetests -v bufferkdtree`` outside from the source directory.
+
 ============
 Dependencies
 ============
