@@ -367,7 +367,9 @@ epub_exclude_files = ['search.html']
 # If false, no index is generated.
 #epub_use_index = True
 
+# see https://pypi.python.org/pypi/numpydoc
 numpydoc_show_class_members = False
+numpydoc_class_members_toctree = True
 autodoc_member_order = 'bysource'
 
 

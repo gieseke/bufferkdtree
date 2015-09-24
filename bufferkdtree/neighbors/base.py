@@ -6,9 +6,6 @@ Created on 15.09.2015
 
 import numpy
 import warnings
-from bufferkdtree.neighbors.brute.base import BruteNN
-from bufferkdtree.neighbors.kdtree.base import KDTreeNN
-from bufferkdtree.neighbors.buffer_kdtree.base import BufferKDTreeNN
 
 class NearestNeighbors(object):
     """ The 'NearestNeighbors' provides access to all nearest neighbor
@@ -21,6 +18,7 @@ class NearestNeighbors(object):
     
     Parameters
     ----------
+    
     n_neighbors : int (default 5)
         Number of neighbors used
         
@@ -78,18 +76,19 @@ class NearestNeighbors(object):
     verbose : int, optional (default=0)
         The verbosity level (0=no output, 1=output)
         
-        
-    Example
-    -------        
+    Examples
+    --------
+           
       >>> import numpy
       >>> from bufferkdtree.neighbors.base import NearestNeighbors
       >>> X = numpy.random.uniform(low=-1,high=1,size=(10000,10))
-      >>> nbrs = NearestNeighbors(n_neighbors=10, algorithm="buffer_kd_tree", tree_depth=9, plat_dev_ids={0:[0]}, verbose=0)    
+      >>> nbrs = NearestNeighbors(n_neighbors=10, algorithm="buffer_kd_tree", tree_depth=9, plat_dev_ids={0:[0]})    
       >>> nbrs.fit(X)
       >>> dists, inds = nbrs.kneighbors(X)   
        
     Notes
     -----
+    
     The brute-force implementatation is only used for comparison 
     in relatively low-dimensional spaces; the performance is 
     suboptimal for higher dimensional feature spaces (but even 
@@ -191,9 +190,7 @@ class NearestNeighbors(object):
         assert self.algorithm in self.ALLOWED_ALGORITHMS
         
         self._set_internal_data_types()
-        
         self.X = X.astype(self.numpy_dtype_float)
-        
         self.wrapper = self._get_wrapper()
         self.wrapper.fit(X)
         
@@ -321,10 +318,12 @@ class NearestNeighbors(object):
         ALLOWED_TARGETS = ['train', 'test', 'both']
         
         if self.algorithm not in ["kd_tree", "buffer_kd_tree"]:
-            raise Exception("Optimal tree depth can only be determined for tree-based methods!")
+            raise Exception("Optimal tree depth can only be \
+                    determined for tree-based methods!")
         
         if target not in ALLOWED_TARGETS:
-            raise Exception("Target is not valid (allowed ones are " + unicode(ALLOWED_TARGETS) + ": " + unicode(target))
+            raise Exception("Target is not valid (allowed ones are " + \
+                            unicode(ALLOWED_TARGETS) + ": " + unicode(target))
         
         return self._get_wrapper().compute_optimal_tree_depth(Xtrain=Xtrain, \
                                                               Xtest=Xtest, \
@@ -349,7 +348,11 @@ class NearestNeighbors(object):
         wrapper : object
             The wrapper object
         """
-
+        
+        from bufferkdtree.neighbors.brute.base import BruteNN
+        from bufferkdtree.neighbors.kdtree.base import KDTreeNN
+        from bufferkdtree.neighbors.buffer_kdtree.base import BufferKDTreeNN
+        
         if self.algorithm == "brute":
             return BruteNN(n_neighbors=self.n_neighbors, float_type=self.float_type, \
                             use_gpu=True, plat_dev_ids=self.plat_dev_ids, \

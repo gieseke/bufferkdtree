@@ -84,7 +84,7 @@ Finally, both implementations are used to compute the neighbors for the loaded d
 .. literalinclude:: ../examples/astronomy.py
     :start-after: print "----------------------------------------------------------------------"
 
-On a Ubuntu 14.04 system with an ``Intel(R) Core(TM) i7-4790K`` running at 4.00GHz (4 cores, 8 hardware threads), 32GB RAM, two ``Geforce Titan Z GPUs`` (with two devices each), CUDA 6.5 and Nvidia driver version 340.76, the output is::
+On a Ubuntu 14.04 system with an ``Intel(R) Core(TM) i7-4790K`` running at 4.00GHz (4 cores, 8 hardware threads), 32GB RAM, two ``Geforce Titan Z GPUs`` (with two devices each), CUDA 6.5 and Nvidia driver version 340.76, the above code yields::
 
     Running the GPU version ...
     Fitting time: 1.394939
@@ -96,7 +96,12 @@ On a Ubuntu 14.04 system with an ``Intel(R) Core(TM) i7-4790K`` running at 4.00G
 
 .. admonition:: Performance
 
-    The performance might depend on the particular OpenCL version Nvidia driver. For instance, we observed similar speed-ups (per device) with a weeker Gefore GTX 770 given CUDA 5.5 and Nvidia driver version 319.23. Also, both implementations are based on the standard rule for splitting nodes during the construction (cyclic, median based). Other splitting rules might be beneficial and are generally data set dependent.
+    The performance might depend on the particular OpenCL version Nvidia driver. For instance, we observed similar speed-ups (per device) with a weeker Gefore GTX 770 given CUDA 5.5 and Nvidia driver version 319.23. 
+
+.. admonition:: Tree Construction
+
+    Both implementations are based on the standard rule for splitting nodes during the construction (cyclic, median based). Other splitting rules might be beneficial, but are, in general, data set dependent. Other construction schemes will be available in future for all tree-based schemes.
+
 
 
 
