@@ -36,9 +36,6 @@ else:
 
 def configuration(parent_package='', top_path=None):
 
-    if os.path.exists('MANIFEST'):
-        os.remove('MANIFEST')
-
     from numpy.distutils.misc_util import Configuration
     config = Configuration(None, parent_package, top_path)
 
@@ -59,6 +56,11 @@ class CleanCommand(Clean):
     def run(self):
 
         Clean.run(self)
+
+        for dirpath, dirnames, filenames in os.walk('.'):
+            for filename in filenames:
+                if filename.endswith('~'):
+                    os.unlink(os.path.join(dirpath, filename))
 
         if os.path.exists('build'):
             shutil.rmtree('build')
@@ -105,10 +107,6 @@ def setup_package():
                                  'Programming Language :: Python :: 2',
                                  'Programming Language :: Python :: 2.6',
                                  'Programming Language :: Python :: 2.7',
-                                 'Programming Language :: Python :: 3',
-                                 'Programming Language :: Python :: 3.2',
-                                 'Programming Language :: Python :: 3.3',
-                                 'Programming Language :: Python :: 3.4',
                                  ],
                     cmdclass={'clean': CleanCommand},                    
                     **extra_setuptools_args)
