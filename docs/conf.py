@@ -21,8 +21,8 @@ import sphinx_rtd_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-sys.path.insert(0, os.path.abspath('.'))
-#sys.path.insert(0, os.path.abspath('..'))
+#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
 #sys.path.insert(0, os.path.abspath('../examples'))
 
 # -- General configuration ------------------------------------------------
@@ -372,18 +372,6 @@ numpydoc_show_class_members = False
 numpydoc_class_members_toctree = True
 autodoc_member_order = 'bysource'
 
-import sys
-from mock import Mock as MagicMock
 
-class Mock(MagicMock):
 
-    @classmethod
-    def __getattr__(cls, name):
-        return Mock()
-
-MOCK_MODULES = ['bufferkdtree.neighbors.brute', 'bufferkdtree.neighbors.kdtree', 'bufferkdtree.neighbors.buffer_kdtree']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
-for elt in sys.path:
-    print elt
 
