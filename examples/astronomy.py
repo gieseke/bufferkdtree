@@ -30,7 +30,7 @@ def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
                             leaf_size=leaf_size, \
                             n_jobs = n_jobs, \
                             plat_dev_ids=plat_dev_ids, \
-                            verbose=verbose)    
+                            verbose=verbose)
 
     start_time = time.time()
     nbrs.fit(Xtrain)
