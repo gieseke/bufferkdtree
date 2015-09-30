@@ -2,7 +2,7 @@
  * opencl.c
  *
  *  Created on: 18.08.2014
- *      Author: fgieseke
+ *      Author: Fabian Gieseke
  */
 
 #include "include/opencl.h"

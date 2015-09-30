@@ -1,3 +1,9 @@
+'''
+Created on 15.09.2015
+
+@author: Fabian Gieseke
+'''
+
 import numpy as np
 import wrapper_cpu_float, wrapper_cpu_double
 import wrapper_gpu_opencl_float, wrapper_gpu_opencl_double
@@ -36,11 +42,12 @@ class BruteNN(object):
     def __del__(self):
         """ Free external resources if needed
         """
+        
         try:
             if self.verbose > 0:
                 print("Freeing external resources ...")
             self._get_wrapper_module().free_resources_extern()
-        except Exception, e:
+        except Exception as e:
             if self.verbose > 0:
                 print("Exception occured while freeing external resources: " + unicode(e))
                       
@@ -201,5 +208,6 @@ class BruteNN(object):
     def __repr__(self):
         """ Reprentation of this object
         """
+        
         return str(self.get_params())
     

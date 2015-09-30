@@ -1,8 +1,12 @@
+'''
+Created on 15.09.2015
+
+@author: Fabian Gieseke
+'''
+
 import os
 import numpy
-from distutils.core import *
 
-# compiler flags
 TIMING = 1
 WORKGROUP_SIZE_BRUTE = 256
 WORKGROUP_SIZE_LEAVES = 32
@@ -32,7 +36,6 @@ sources_abs_path = os.path.abspath(os.path.join(current_path, SOURCES_RELATIVE_P
 source_files = [os.path.abspath(os.path.join(sources_abs_path, x)) for x in FILES_TO_BE_COMPILED] 
 include_paths = [os.path.abspath(os.path.join(sources_abs_path, x)) for x in DIRS_TO_BE_INCLUDED]
 
-# numpy include directory
 try:
     numpy_include = numpy.get_include()
 except AttributeError:
@@ -114,6 +117,7 @@ def configuration(parent_package='', top_path=None):
     return config
 
 if __name__ == '__main__':
+    
     from numpy.distutils.core import setup
     setup(**configuration(top_path='').todict())
 

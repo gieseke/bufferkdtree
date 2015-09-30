@@ -2,9 +2,9 @@
 bufferkdtree
 ============
 
-The bufferkdtree library is a Python library that aims at accelerating nearest neighbor computations using both k-d trees and many-core devices (e.g., GPUs) using `OpenCL <https://www.khronos.org/opencl/OpenCL>`_. 
+The bufferkdtree library is a Python library that aims at accelerating nearest neighbor computations using both k-d trees and many-core devices (e.g., GPUs) via the `OpenCL <https://www.khronos.org/opencl/OpenCL>`_ framework. 
 
-It can be seen as an intermediate version between a standard parallel k-d tree traversal and simple, massively-parallel brute-force implementations for nearest neigbhor search. The performance is well-suited for data sets with a large reference set (e.g., 1,000,000 points) and a huge query set (e.g., 10,000,000 points) with a moderate-sized feature space (e.g., d=5 to d=20).
+The buffer k-d tree technique can be seen as an intermediate version between a standard parallel k-d tree traversal and massively-parallel brute-force implementations for nearest neigbhor search. The implementation is well-suited for data sets with a large reference set (e.g., 1,000,000 points) and a huge query set (e.g., 10,000,000 points) with a moderate-sized feature space (e.g., from d=5 to d=25).
 
 =============
 Documentation
@@ -33,7 +33,7 @@ On Debian/Ubuntu systems, the package can be installed globally for all users vi
   python setup.py build
   sudo python setup.py install
 
-To run the tests, type ``nosetests -v bufferkdtree`` outside from the source directory.
+To run the tests, type ``nosetests -v bufferkdtree`` from *outside* the source directory.
 
 ============
 Dependencies
@@ -43,11 +43,11 @@ The bufferkdtree package is tested under Python 2.6 and Python 2.7. The required
 
 - NumPy >= 1.6.1
 
-and a working C/C++ compiler. Further, Swig and OpenCL need to be installed correctly. See the `documentation <http://bufferkdtree.readthedocs.org>`_ for more details.
+and a working C/C++ compiler. Further, `Swig <http://www.swig.org>`_ and `OpenCL <https://www.khronos.org/opencl/OpenCL>`_ need to be installed. See the `documentation <http://bufferkdtree.readthedocs.org>`_ for more details.
 
 ==========
 Disclaimer
 ==========
 
-The source code is published under the GNU General Public License (GPLv2). The author is not responsible for any implications that stem from the use of this software.
+The source code is published under the GNU General Public License (GPLv2). The authors are not responsible for any implications that stem from the use of this software.
 

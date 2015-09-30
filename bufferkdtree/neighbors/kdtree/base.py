@@ -1,3 +1,9 @@
+'''
+Created on 15.09.2015
+
+@author: Fabian Gieseke
+'''
+
 import math
 import time
 import numpy as np

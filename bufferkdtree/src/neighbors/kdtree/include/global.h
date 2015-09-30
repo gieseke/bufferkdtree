@@ -2,7 +2,7 @@
  * global.h
  *
  *  Created on: 31.10.2014
- *      Author: fgieseke
+ *      Author: Fabian Gieseke
  */
 
 #ifndef NEIGHBORS_KDTREE_INCLUDE_GLOBAL_H_

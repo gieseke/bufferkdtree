@@ -2,7 +2,7 @@
  * opencl.h
  *
  *  Created on: 18.08.2014
- *      Author: fgieseke
+ *      Author: Fabian Gieseke
  */
 
 #ifndef INCLUDE_OPENCL_H_

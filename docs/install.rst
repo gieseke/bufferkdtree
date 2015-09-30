@@ -6,73 +6,75 @@ Installation
 Dependencies
 ------------
 
-The bufferkdtree package has been tested under Ubuntu and OpenSUSE linux distributions. It requires that Python 2.6 or 2.7, a working C/C++ compiler, and OpenCL are already installed. In addition it requires several other packages, such as the development packages of Python (for header files), NumPy, pip, swig, and python-virtualenv. We recommand using the latter for installing NumPy (>=1.6.1).
+The bufferkdtree package has been tested under various Linux-based systems such as Ubuntu and OpenSUSE and requires Python 2.6 or 2.7. Below, some installation instructions will be given for Linux-based systems; similar steps have to be conducted on other systems.
 
-For Ubuntu, these can be installed with the command::
+To install the package, a working C/C++ compiler, `OpenCL <https://www.khronos.org/opencl/OpenCL>`_, `Swig <http://www.swig.org/>`_, and the Python development package (header files) need to be available. Further, the `NumPy <http://www.numpy.org>`_ package (>=1.6.1) is needed.
 
-   $ sudo apt-get install python2.7 python-virtualenv python-dev python-pip swig
+On Ubuntu 12.04, for instance, the following command installs all dependencies (except for OpenCL)::
 
-For OpenSUSE, these can be installed with the command::
+   $ sudo apt-get install python2.7 swig build-essential python-numpy
 
-   $ sudo zypper install python python-virtualenv python-devel python-pip swig
+On an OpenSUSE system, the corresponding commands are::
 
-Finally, one can create and activate a new python environment in which numpy1.6.1 is installed by::
-
-   $ mkdir ~/.virtualenvs
-   $ cd ~/.virtualenvs
-   $ mkdir bufferkdtree
-   $ cd bufferkdtree
-
-   # creates a new python environment
-   $ virtualenv bufferkdtree_master
-
-   # activate environment and install numpy
-   $ source bufferkdtree_master/bin/activate
-   $ pip install numpy==1.6.1
+   $ sudo zypper install python python-devel swig
 
 .. admonition:: Compatibility
 
-   The implementation is based on the efficient use of implicit hardware caches. Thus, to obtain good speed-ups, the GPU at hand has to support this feature! Current architectures such as Nvidia's Kepler architecture exhibit such caches, see, e.g., the `Kepler GK110 Whitepaper <http://www.nvidia.com/content/PDF/kepler/NVIDIA-Kepler-GK110-Architecture-Whitepaper.pdf>`_.     
+   The implementation is based on the efficient use of implicit hardware caches. Thus, to obtain good speed-ups, the GPU at hand has to support this feature! Current architectures such as Nvidia's Kepler architecture exhibit such caches, see, e.g., the `Kepler GK110 Whitepaper <http://www.nvidia.com/content/PDF/kepler/NVIDIA-Kepler-GK110-Architecture-Whitepaper.pdf>`_. 
+
+OpenCL
+------
+
+OpenCL needs to be installed correctly. Make sure that the OpenCL header files are available, for example by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux systems. For instance, in case CUDA is installed with header files being located in ``/usr/local/cuda/include``, then the following command should update the environment variable::
+
+   export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/cuda/include
 
 Quick Installation
 ------------------
 
-First, make sure that the OpenCL header files are available, for example by setting the C_INCLUDE_PATH environment variable in the .bashrc file::
+.. warning::
 
-   # make the OpenCL header files available, for example on a CUDA system
-   # PATH_TO_OPENCL_INCLUDE_FOLDER could be /usr/local/cuda/include
-   export C_INCLUDE_PATH=PATH_TO_OPENCL_INCLUDE_FOLDER:$C_INCLUDE_PATH
+    The authors are not responsible for any implications that stem from the use of this software.
 
-The package is available on `PyPI <https://pypi.python.org/pypi>`_, but can also be installed from the sources. For instance, to install the package via PyPI on Linux machines, type::
+The package is available on `PyPI <https://pypi.python.org/pypi>`_, but can also be installed from the sources. For instance, to install the package via `PyPI <https://pypi.python.org/pypi>`_ on Linux machines, type::
 
   $ sudo pip install bufferkdtree
 
-Alternatively, you can resort to the sources::
+To install the package from the sources, first get the current version via ::
 
   $ git clone https://github.com/gieseke/bufferkdtree.git
+
+Subsequently, install the package locally via::
+
   $ cd bufferkdtree
   $ python setup.py install --user
 
-If you want to install the package globally for all users (on Linux machines), type::
+or, globally for all users, via::
 
   $ sudo python setup.py build
   $ sudo python setup.py install
 
-To run the program, one may enter the examples folder and execute one of the python programs there::
 
-  $ cd examples
-  $ python bigastronomy.py
 
-Previous to running the example, one should modify the python program, e.g., bigastronomy.py, in order to set::
 
-   plat_dev_ids={0:[0,1]}
+Virtualenv & Pip
+----------------
 
-if there are two available GPGPUs (devices 0 and 1), and, at the very end, one should also set n_jobs to the number of parallel threads used for multi-core execution, for example assuming 32 threads are desired::
+We recommend to install the package via virtualenv and pip. On Ubuntu 12.04, for instance, the following commands can be used to install virtualenv and pip::
 
-   run_algorithm(algorithm="kd_tree", leaf_size=32, n_jobs=32)
+   $ sudo apt-get install python-virtualenv python-pip
 
-   
+Afterwards, create a new virtual environment and install the Numpy package::
 
-.. warning::
+   $ mkdir ~/.virtualenvs
+   $ cd ~/.virtualenvs
+   $ virtualenv bufferkdtree
+   $ source bufferkdtree/bin/activate
+   $ pip install numpy==1.6.1
 
-    The authors are not responsible for any implications that stem from the use of this software.
+Given the activated virtual environment, follow the instructions above to install the bufferkdtree package.
+
+    
+
+
+

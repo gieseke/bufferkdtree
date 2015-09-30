@@ -1,5 +1,7 @@
 .. -*- rst -*-
 
+.. _reference:
+
 Reference
 =========
 

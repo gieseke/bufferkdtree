@@ -2,7 +2,7 @@
  * kdtree.c
  *
  *  Created on: 31.10.2014
- *      Author: fgieseke
+ *      Author: Fabian Gieseke
  */
 
 #include "include/kdtree.h"

@@ -10,9 +10,7 @@ print(__doc__)
 # Authors: Fabian Gieseke 
 # Licence: GNU GPL (v2)
 
-import os
 import time
-import numpy
 import generate
 from bufferkdtree.neighbors import NearestNeighbors
 

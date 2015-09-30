@@ -1,8 +1,10 @@
 '''
 Created on 15.09.2015
 
-@author: fgieseke
+@author: Fabian Gieseke
 '''
+
+from __future__ import print_function
 
 import os
 import urllib2
@@ -13,9 +15,11 @@ def download_from_url(url, fname):
     Parameters
     ----------
     url : str
-        The target url
+        The target url from which the data
+        shall be downloaded
     fname : str
-        The local filename
+        The local filename; if the corresponding 
+        directory does not exists, it will be created
     """
     
     # create directory if needed
@@ -26,26 +30,27 @@ def download_from_url(url, fname):
     # open local file
     f = open(fname, 'wb')
 
-    # get data from url
+    # get data from url; based on 
+    # http://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
     u = urllib2.urlopen(url)
     meta = u.info()
     fsize = int(meta.getheaders("Content-Length")[0])
-    print("Downloading from %s ... (%i bytes)\n" % (url, fsize))
+    print("Downloading from %s (%i bytes) ... \n" % (url, fsize))
 
-    fsize_dl = 0
-    block_sz = 8192
+    fsize_current = 0
+    block_size = 8192
 
     while True:
 
-        bu = u.read(block_sz)
-        if not bu:
+        buff = u.read(block_size)
+        if not buff:
             break
 
-        fsize_dl += len(bu)
-        f.write(bu)
+        fsize_current += len(buff)
+        f.write(buff)
 
-        stat = r"%10d  [%3.2f%%]" % (fsize_dl, fsize_dl * 100. / fsize)
+        stat = r"%10d  [%3.2f%%]" % (fsize_current, fsize_current * 100. / fsize)
         stat = stat + chr(8)*(len(stat)+1)
-        print stat,
+        print(stat, end='')
 
     f.close()

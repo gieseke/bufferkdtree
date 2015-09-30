@@ -1,3 +1,9 @@
+'''
+Created on 15.09.2015
+
+@author: Fabian Gieseke
+'''
+
 from __future__ import division
 import math
 import time
