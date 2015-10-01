@@ -3,8 +3,8 @@
 Changes
 =======
 
-Release 1.0 - (under development)
------------------------------------
+Release 1.0
+-----------
 * First major release
 * Python wrappers for three implementations ('brute', 'kd_tree', 'buffer_kd_tree')
 * Performance improvements for both kd-tree based implementations
