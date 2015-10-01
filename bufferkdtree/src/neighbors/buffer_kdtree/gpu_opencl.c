@@ -51,27 +51,46 @@ void init_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 			tree_record->dXtrain, params->n_neighbors, params->n_neighbors, tree_record->max_visited,
 			params->tree_depth, tree_record->n_nodes);
 
+    char kernel_final_path [4096];
+
 	// compile kernels
-	tree_record->find_leaves_kernel = make_kernel_from_file((tree_record->gpu_context), tree_record->gpu_device,
-			constants,
-			KERNEL_NAME_FIND_LEAVES_IDX_BATCH, "find_leaf_idx_batch");
-	tree_record->brute_nn_kernel = make_kernel_from_file((tree_record->gpu_context), tree_record->gpu_device, constants,
-	KERNEL_NAME_BRUTE_ALL_LEAVES_NEAREST_NEIGHBORS, "do_bruteforce_all_leaves_nearest_neighbors");
-	tree_record->update_dist_kernel = make_kernel_from_file((tree_record->gpu_context), tree_record->gpu_device,
-			constants, KERNEL_NAME_UPDATE_DISTANCES, "do_update_distances");
-	tree_record->retrieve_dist_kernel = make_kernel_from_file((tree_record->gpu_context), tree_record->gpu_device,
-			constants, KERNEL_NAME_UPDATE_DISTANCES, "do_retrieve_distances");
+    strcpy(kernel_final_path, params->kernels_source_directory);
+    strcat(kernel_final_path, "find_leaves_idx_batch_float.cl");
+	tree_record->find_leaves_kernel = make_kernel_from_file((tree_record->gpu_context),
+			tree_record->gpu_device, constants, kernel_final_path, "find_leaf_idx_batch");
+
+    strcpy(kernel_final_path, params->kernels_source_directory);
+    strcat(kernel_final_path, "brute_all_leaves_nearest_neighbors.cl");
+	tree_record->brute_nn_kernel = make_kernel_from_file((tree_record->gpu_context),
+			tree_record->gpu_device, constants, kernel_final_path,
+			"do_bruteforce_all_leaves_nearest_neighbors");
+
+    strcpy(kernel_final_path, params->kernels_source_directory);
+    strcat(kernel_final_path, "update_distances.cl");
+	tree_record->update_dist_kernel = make_kernel_from_file((tree_record->gpu_context),
+			tree_record->gpu_device, constants, kernel_final_path,
+			"do_update_distances");
+	tree_record->retrieve_dist_kernel = make_kernel_from_file((tree_record->gpu_context),
+			tree_record->gpu_device, constants, kernel_final_path,
+			"do_retrieve_distances");
 	tree_record->compute_final_dists_idxs_kernel = make_kernel_from_file((tree_record->gpu_context),
-			tree_record->gpu_device, constants, KERNEL_NAME_UPDATE_DISTANCES, "do_compute_final_distances_indices");
+			tree_record->gpu_device, constants, kernel_final_path,
+			"do_compute_final_distances_indices");
+
+    strcpy(kernel_final_path, params->kernels_source_directory);
+    strcat(kernel_final_path, "generate_subset_test_patterns.cl");
 	tree_record->generate_test_subset_kernel = make_kernel_from_file((tree_record->gpu_context),
-			tree_record->gpu_device, constants, KERNEL_NAME_GENERATE_SUBSET_TEST_PATTERNS,
+			tree_record->gpu_device, constants, kernel_final_path,
 			"do_generate_subset_test_patterns");
-	tree_record->init_dists_kernel = make_kernel_from_file((tree_record->gpu_context), tree_record->gpu_device,
-			constants, KERNEL_NAME_INIT_ARRAYS, "do_init_distances");
-	tree_record->init_stacks_kernel = make_kernel_from_file((tree_record->gpu_context), tree_record->gpu_device,
-			constants, KERNEL_NAME_INIT_ARRAYS, "do_init_allstacks");
-	tree_record->init_depths_idxs_kernel = make_kernel_from_file((tree_record->gpu_context), tree_record->gpu_device,
-			constants, KERNEL_NAME_INIT_ARRAYS, "do_init_depths_idx");
+
+    strcpy(kernel_final_path, params->kernels_source_directory);
+    strcat(kernel_final_path, "init_arrays.cl");
+	tree_record->init_dists_kernel = make_kernel_from_file((tree_record->gpu_context),
+			tree_record->gpu_device, constants, kernel_final_path, "do_init_distances");
+	tree_record->init_stacks_kernel = make_kernel_from_file((tree_record->gpu_context),
+			tree_record->gpu_device, constants, kernel_final_path, "do_init_allstacks");
+	tree_record->init_depths_idxs_kernel = make_kernel_from_file((tree_record->gpu_context),
+			tree_record->gpu_device, constants, kernel_final_path, "do_init_depths_idx");
 
 	err = clWaitForEvents(1, &event_copy_nodes);
 	err |= clReleaseEvent(event_copy_nodes);

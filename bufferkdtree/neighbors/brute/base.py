@@ -4,6 +4,7 @@ Created on 15.09.2015
 @author: Fabian Gieseke
 '''
 
+import os
 import numpy as np
 import wrapper_cpu_float, wrapper_cpu_double
 import wrapper_gpu_opencl_float, wrapper_gpu_opencl_double
@@ -97,8 +98,12 @@ class BruteNN(object):
                         
         # initialize device
         platform_id = self.plat_dev_ids.keys()[0]
-        device_id = self.plat_dev_ids[platform_id][0]        
-        self._get_wrapper_module().init_extern(self.n_neighbors, self.n_jobs, platform_id, device_id, self.verbose)
+        device_id = self.plat_dev_ids[platform_id][0]
+        
+        root_path = os.path.dirname(os.path.realpath(__file__))
+        kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/brute/kernels/opencl/")
+        self._get_wrapper_module().init_extern(self.n_neighbors, self.n_jobs, platform_id, \
+                                               device_id, kernel_sources_dir, self.verbose)
         
         # make sure that the array is contiguous
         # (needed for the swig module)

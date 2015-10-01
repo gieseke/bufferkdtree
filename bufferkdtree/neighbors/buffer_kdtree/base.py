@@ -5,6 +5,8 @@ Created on 15.09.2015
 '''
 
 from __future__ import division
+
+import os
 import math
 import time
 import numpy as np
@@ -221,12 +223,15 @@ class BufferKDTreeNN(object):
         
         wrapper_tree_params = self._get_wrapper_module().TREE_PARAMETERS()
         
+        root_path = os.path.dirname(os.path.realpath(__file__))
+        kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
+                
         self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, \
                                                self.n_jobs, self.n_train_chunks, 0, 0, \
                                                self.allowed_train_mem_percent_chunk, \
                                                self.allowed_test_mem_percent, \
                                                self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], \
-                                               self.verbose, wrapper_tree_params)        
+                                               kernel_sources_dir, self.verbose, wrapper_tree_params)        
         wrapper_tree_record = self._get_wrapper_module().TREE_RECORD()
         
         self._get_wrapper_module().build_bufferkdtree(self.X, wrapper_tree_record, wrapper_tree_params)
@@ -235,6 +240,9 @@ class BufferKDTreeNN(object):
                 
     def _fit_gpu(self, final_tree_depth):        
         
+        root_path = os.path.dirname(os.path.realpath(__file__))
+        kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
+                
         for platform_id in self.plat_dev_ids.keys():
             self.wrapper_instances[platform_id] = {}
             for device_id in self.plat_dev_ids[platform_id]:
@@ -248,7 +256,7 @@ class BufferKDTreeNN(object):
                                                        self.allowed_train_mem_percent_chunk, \
                                                        self.allowed_test_mem_percent, \
                                                        self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], \
-                                                       self.verbose, wrapper_tree_params)
+                                                       kernel_sources_dir, self.verbose, wrapper_tree_params)
                 wrapper_tree_record = self._get_wrapper_module().TREE_RECORD()
                                 
                 # store records

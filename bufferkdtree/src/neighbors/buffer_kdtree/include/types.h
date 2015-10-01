@@ -16,13 +16,12 @@
 #define STR(x) STR_HELPER(x)
 
 // kernels
-#define KERNEL_NAME_BRUTE_FORCE "kernels/brute_float.cl"
-#define KERNEL_NAME_BRUTE_ALL_LEAVES STR(ABSOLUTE_PATH)"/kernels/brute_all_leaves.cl"
-#define KERNEL_NAME_BRUTE_ALL_LEAVES_NEAREST_NEIGHBORS STR(ABSOLUTE_PATH)"/kernels/brute_all_leaves_nearest_neighbors.cl"
-#define KERNEL_NAME_UPDATE_DISTANCES STR(ABSOLUTE_PATH)"/kernels/update_distances.cl"
-#define KERNEL_NAME_FIND_LEAVES_IDX_BATCH STR(ABSOLUTE_PATH)"/kernels/find_leaves_idx_batch_float.cl"
-#define KERNEL_NAME_GENERATE_SUBSET_TEST_PATTERNS STR(ABSOLUTE_PATH)"/kernels/generate_subset_test_patterns.cl"
-#define KERNEL_NAME_INIT_ARRAYS STR(ABSOLUTE_PATH)"/kernels/init_arrays.cl"
+//#define KERNEL_NAME_BRUTE_ALL_LEAVES STR(SOURCE_PATH)"/kernels/brute_all_leaves.cl"
+//#define KERNEL_NAME_BRUTE_ALL_LEAVES_NEAREST_NEIGHBORS STR(SOURCE_PATH)"/kernels/brute_all_leaves_nearest_neighbors.cl"
+//#define KERNEL_NAME_UPDATE_DISTANCES STR(SOURCE_PATH)"/kernels/update_distances.cl"
+//#define KERNEL_NAME_FIND_LEAVES_IDX_BATCH STR(SOURCE_PATH)"/kernels/find_leaves_idx_batch_float.cl"
+//#define KERNEL_NAME_GENERATE_SUBSET_TEST_PATTERNS STR(SOURCE_PATH)"/kernels/generate_subset_test_patterns.cl"
+//#define KERNEL_NAME_INIT_ARRAYS STR(SOURCE_PATH)"/kernels/init_arrays.cl"
 
 #define SPLITTING_TYPE_CYCLIC 0
 #define SPLITTING_TYPE_LONGEST_BOX 1
@@ -97,6 +96,7 @@ typedef struct tree_parameters {
 	INT_TYPE tree_depth;
 	INT_TYPE num_threads;
 	INT_TYPE splitting_type;
+	char *kernels_source_directory;
 	INT_TYPE verbosity_level;
 	INT_TYPE platform_id;
 	INT_TYPE device_id;

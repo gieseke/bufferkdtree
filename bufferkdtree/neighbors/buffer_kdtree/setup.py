@@ -52,7 +52,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/buffer_kdtree")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
                                         ('USE_DOUBLE', 0),
                                         ('TIMING', TIMING)
                                     ],
@@ -65,7 +65,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/buffer_kdtree")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
                                         ('USE_DOUBLE', 1),
                                         ('TIMING', TIMING)
                                     ],
@@ -78,7 +78,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/buffer_kdtree")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
                                         ('USE_GPU', 1),
                                         ('USE_DOUBLE', 0),
                                         ('TIMING', TIMING),
@@ -99,7 +99,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/buffer_kdtree")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
                                         ('USE_GPU', 1),
                                         ('USE_DOUBLE', 1),
                                         ('TIMING', TIMING),
