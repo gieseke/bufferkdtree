@@ -14,6 +14,7 @@ def configuration(parent_package='', top_path=None):
     config.add_subpackage('neighbors/kdtree', subpackage_path='neighbors/kdtree')
     config.add_subpackage('neighbors/buffer_kdtree', subpackage_path='neighbors/buffer_kdtree')
     config.add_subpackage('tests')
+    config.add_subpackage('util')    
 
     return config
 

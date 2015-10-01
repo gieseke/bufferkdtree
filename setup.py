@@ -24,7 +24,7 @@ VERSION = bufferkdtree.__version__
 # adapted from scikit-learn
 if len(set(('develop', 'release')).intersection(sys.argv)) > 0:
     import setuptools
-    extra_setuptools_args = dict(zip_safe=False, include_package_data=True)
+    extra_setuptools_args = dict(zip_safe=False)
 else:
     extra_setuptools_args = dict()
     
@@ -102,7 +102,7 @@ def setup_package():
                                  ],
                     cmdclass={'clean': CleanCommand},
                     install_requires=["numpy>=1.6.1"],
-                    include_package_data=True,                        
+                    include_package_data=True,
                     package_data={'bufferkdtree': ['src/neighbors/brute/kernels/opencl/*.cl',
                                                    'src/neighbors/buffer_kdtree/kernels/*.cl'
                                                   ]},
