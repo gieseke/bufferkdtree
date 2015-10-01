@@ -7,7 +7,7 @@ from bufferkdtree.util.input import ask_question
 def psf_model_mag_train(NUM=None):
 
     fname = os.path.join(os.path.dirname(__file__), 'data', 'photometric_spec_confirmed.npy')
-    q = "Additional data need to be downloaded (to the current directory, about 400MB). Do you wish to continue?"
+    q = "Additional data need to be downloaded (to the current directory, about 400MB). Do you wish to continue? [y/n] "
     url = "http://www.cs.ru.nl/~fgieseke/data/sdss/photometric_spec_confirmed.npy"
 
     ack =   """\nFunding for the SDSS and SDSS-II has been provided by the Alfred 
@@ -76,7 +76,7 @@ def psf_model_mag_train(NUM=None):
 def psf_model_mag_test(NUM=None):
 
     fname = os.path.join(os.path.dirname(__file__), 'data', 'photometric.npy')
-    q = "Additional data need to be downloaded (to the current directory, about 2GB). Do you wish to continue?"
+    q = "Additional data need to be downloaded (to the current directory, about 2GB). Do you wish to continue? [y/n] "
     url = "http://www.cs.ru.nl/~fgieseke/data/sdss/photometric.npy"
 
     ack =   """\nFunding for the SDSS and SDSS-II has been provided by the Alfred 

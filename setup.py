@@ -118,8 +118,11 @@ def setup_package():
 
     else:
 
-        from numpy.distutils.core import setup
-        metadata['configuration'] = configuration
+        try:
+            from numpy.distutils.core import setup
+            metadata['configuration'] = configuration
+        except:
+            print("bufferkdtree requires numpy>=1.6.1")
 
     setup(**metadata)
 
