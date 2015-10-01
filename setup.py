@@ -100,7 +100,12 @@ def setup_package():
                                  'Programming Language :: Python :: 2.6',
                                  'Programming Language :: Python :: 2.7',
                                  ],
-                    cmdclass={'clean': CleanCommand},                    
+                    cmdclass={'clean': CleanCommand},
+                    install_requires=["numpy>=1.6.1"],
+                    include_package_data=True,                        
+                    package_data={'bufferkdtree': ['src/neighbors/brute/kernels/opencl/*.cl',
+                                                   'src/neighbors/buffer_kdtree/kernels/*.cl'
+                                                  ]},
                     **extra_setuptools_args)
 
     if (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or sys.argv[1] in ('--version', 'clean'))):

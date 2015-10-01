@@ -20,7 +20,7 @@ DEFINE_TIMER(3);
  * --------------------------------------------------------------------------------
  */
 void init_extern(int n_neighbors, int num_threads, int platform_id, \
-		int device_id, int verbosity_level) {
+		int device_id, char *kernels_source_directory, int verbosity_level) {
 
 	START_TIMER(1);
 
@@ -29,6 +29,7 @@ void init_extern(int n_neighbors, int num_threads, int platform_id, \
 	params_global.num_threads = num_threads;
 	params_global.platform_id = platform_id;
 	params_global.device_id = device_id;
+	params_global.kernels_source_directory = kernels_source_directory;
 	params_global.verbosity_level = verbosity_level;
 	check_parameters(&params_global);
 

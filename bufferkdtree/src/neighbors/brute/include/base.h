@@ -24,7 +24,7 @@
  * --------------------------------------------------------------------------------
  */
 void init_extern(int n_neighbors, int num_threads, int platform_id, \
-		int device_id, int verbosity_level);
+		int device_id, char *kernels_source_directory, int verbosity_level);
 
 /* --------------------------------------------------------------------------------
  * Interface (extern): fit model

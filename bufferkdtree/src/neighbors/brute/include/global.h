@@ -58,6 +58,7 @@ struct parameters {
 	int n_neighbors;
 	int num_threads;
 	int platform_id;
+	char *kernels_source_directory;
 	int device_id;
 	int verbosity_level;
 };

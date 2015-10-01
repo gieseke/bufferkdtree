@@ -50,7 +50,8 @@
  */
 void init_extern(int n_neighbors, int tree_depth, int num_threads, int num_nXtrain_chunks, int platform_id,
 		int device_id, double allowed_train_mem_percent_chunk, double allowed_test_mem_percent,
-		int splitting_type, int verbosity_level,TREE_PARAMETERS *params);
+		int splitting_type, char *kernels_source_directory,
+		int verbosity_level, TREE_PARAMETERS *params);
 
 /* -------------------------------------------------------------------------------- 
  * Builds a buffer k-d-tree.

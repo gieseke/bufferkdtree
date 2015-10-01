@@ -14,6 +14,7 @@
 #include <CL/cl.h>
 #endif
 
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 

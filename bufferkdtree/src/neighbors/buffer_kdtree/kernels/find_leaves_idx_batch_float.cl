@@ -48,7 +48,7 @@ __kernel void find_leaf_idx_batch(
     // get local workgroup id    
     int lid = get_local_id(0);    
     // counter variable
-    register unsigned int k;    
+    unsigned int k;    
     // get the test index
     unsigned int test_idx = all_next_indices[tid];
  

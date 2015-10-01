@@ -36,7 +36,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/brute")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
                                         ('USE_GPU', 0),
                                         ('USE_DOUBLE', 0),
                                         ('TIMING', 1)
@@ -50,7 +50,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/brute")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
                                         ('USE_GPU', 0),
                                         ('USE_DOUBLE', 1),
                                         ('TIMING', 1)
@@ -64,7 +64,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/brute")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
                                         ('USE_GPU', 1),
                                         ('USE_DOUBLE', 0),
                                         ('TIMING', 1),
@@ -79,7 +79,7 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/brute")),
+                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
                                         ('USE_GPU', 1),
                                         ('USE_DOUBLE', 1),
                                         ('TIMING', 1),

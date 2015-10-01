@@ -25,7 +25,7 @@
 #define STR(x) STR_HELPER(x)
 
 // kernel names
-#define KERNEL_SOURCES_BRUTE STR(ABSOLUTE_PATH)"/kernels/opencl/brute.cl"
+//#define KERNEL_SOURCES_BRUTE STR(SOURCE_PATH)"/kernels/opencl/brute.cl"
 
 // default workgroup sizes
 #ifndef WORKGROUP_SIZE

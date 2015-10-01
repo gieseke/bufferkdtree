@@ -35,13 +35,17 @@ void fit_gpu(FLOAT_TYPE *X, int nX, int dX, Parameters *params) {
 	sprintf(constants,"#define USE_DOUBLE %d\n#define DIM %d\n#define K_NN %d\n", USE_DOUBLE, dX, K);
 
 	// brute-force kernel
+	char brute_kernel_fname[] = "brute.cl";
+    char *kernel_final_path = malloc(strlen(params->kernels_source_directory) + strlen(brute_kernel_fname) + 1);
+    strcpy(kernel_final_path, params->kernels_source_directory);
+    strcat(kernel_final_path, brute_kernel_fname);
+
 	gpu_brute_nearest_neighbors_kernel = make_kernel_from_file(gpu_context,
-			gpu_device, constants, KERNEL_SOURCES_BRUTE, "nearest_neighbors");
-
-	// transpose kernel
+			gpu_device, constants, kernel_final_path, "nearest_neighbors");
 	gpu_brute_transpose_kernel = make_kernel_from_file(gpu_context,
-			gpu_device, constants, KERNEL_SOURCES_BRUTE, "transpose_simple");
+			gpu_device, constants, kernel_final_path, "transpose_simple");
 
+	free(kernel_final_path);
 	PRINT("Compilation done!\n");
 
 	// initialize buffers for training patterns

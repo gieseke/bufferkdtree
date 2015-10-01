@@ -36,7 +36,6 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/kdtree")),
                                         ('USE_DOUBLE', 0),
                                         ('TIMING', 1)
                                     ],
@@ -49,7 +48,6 @@ def configuration(parent_package='', top_path=None):
                                     swig_opts=['-modern'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
-                                        ('ABSOLUTE_PATH', os.path.join(sources_abs_path, "neighbors/kdtree")),
                                         ('USE_DOUBLE', 1),
                                         ('TIMING', 1)
                                     ],

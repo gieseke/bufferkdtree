@@ -282,6 +282,7 @@ cl_kernel make_kernel_from_file(cl_context context, cl_device_id device,
 
 	// print build log if needed
 	if (err != CL_SUCCESS) {
+		printf("Error while compiling file %s\n", kernel_filename);
 		print_build_information(program, device);
 	}
 	check_cl_error(err, __FILE__, __LINE__);
@@ -309,6 +310,12 @@ void readfile(char *filename, char **text, unsigned long *size) {
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
 		printf("Cannot open file %s\n", filename);
+
+	    char cwdout[2048];
+	    if (getcwd(cwdout, sizeof(cwdout)) != NULL){
+	    	fprintf(stdout, "Current working directory is: %s\n", cwdout);
+	    }
+
 		exit(0);
 	}
 	if (fseek(fp, 0, SEEK_END) == 0) {
