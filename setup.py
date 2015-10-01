@@ -123,6 +123,7 @@ def setup_package():
             metadata['configuration'] = configuration
         except:
             print("bufferkdtree requires numpy>=1.6.1")
+            sys.exit(0)
 
     setup(**metadata)
 
