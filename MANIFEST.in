@@ -4,7 +4,7 @@ include LICENSE
 include requirements.txt
 
 recursive-include examples *.py
-recursive-include bufferkdtree *.c *.h *.pyx *.pxd *.pxi *.i
+recursive-include bufferkdtree *.c *.h *.pyx *.pxd *.pxi *.i *.cl
 
 include docs/conf.py
 include docs/Makefile
