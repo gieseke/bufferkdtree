@@ -9,6 +9,7 @@ from __future__ import division
 import os
 import math
 import time
+import warnings
 import numpy as np
 import threading 
 import wrapper_cpu_float, wrapper_cpu_double
@@ -332,8 +333,8 @@ class BufferKDTreeNN(object):
             X = np.ascontiguousarray(X)
             X = X.astype(self.numpy_dtype_float)
 
-        d_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_float)
-        idx_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_int)
+        d_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_float)
+        idx_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_int)
         
         if self.use_gpu == True:
             self._kneighbors_gpu(X, n_neighbors, d_mins, idx_mins)
@@ -543,12 +544,12 @@ class BufferKDTreeNN(object):
         if tree_depth is not None:
 
             if tree_depth > d:
-                raise Warning("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
+                warnings.warn("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
                 return d
             else:
                 return tree_depth
         else:
-            raise Exception("Warning: Tree depth has to be adapted for buffer k-d trees ...")
+            raise Exception("Tree depth has to be adapted for buffer k-d trees ...")
 
     def _set_internal_data_types(self):
         """ Set numpy float and int dtypes

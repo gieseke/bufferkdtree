@@ -6,6 +6,7 @@ Created on 15.09.2015
 
 import math
 import time
+import warnings
 import numpy as np
 import wrapper_cpu_float, wrapper_cpu_double
 
@@ -166,8 +167,8 @@ class KDTreeNN(object):
             X = np.ascontiguousarray(X)
             X = X.astype(self.numpy_dtype_float)
 
-        d_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_float)
-        idx_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_int)
+        d_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_float)
+        idx_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_int)
 
         self._get_wrapper_module().neighbors_extern(X, d_mins, idx_mins, self.wrapper_kdtree_struct, self.wrapper_params_struct)
 
@@ -281,7 +282,7 @@ class KDTreeNN(object):
         if tree_depth is not None:
 
             if tree_depth > d:
-                raise Warning("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
+                warnings.warn("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
                 return d
             else:
                 return tree_depth
@@ -295,7 +296,7 @@ class KDTreeNN(object):
 
             if d - subtr < 0:
                 # tree consisting of single leaf
-                raise Warning("tree_depth smaller than 0; setting tree_depth to 0")
+                warnings.warn("tree_depth smaller than 0; setting tree_depth to 0")
                 return 0
             else:
                 return d - subtr
