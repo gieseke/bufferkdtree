@@ -24,13 +24,13 @@
  * Sets default parameters.
  * --------------------------------------------------------------------------------
  */
-void set_default_parameters(Parameters *params);
+void set_default_parameters(BRUTE_PARAMETERS *params);
 
 /* --------------------------------------------------------------------------------
  * Checks parameters.
  * --------------------------------------------------------------------------------
  */
-void check_parameters(Parameters *params);
+void check_parameters(BRUTE_PARAMETERS *params);
 
 
 #endif /* BRUTE_INCLUDE_UTIL_H_ */

@@ -56,7 +56,7 @@ class KDTreeNN(object):
             if self.verbose > 0:
                 print("Exception occured while freeing external resources: " + unicode(e))
 
-    def get_params(self, deep=True):
+    def get_params(self):
         """ Get parameters for this estimator.
         
         Parameters

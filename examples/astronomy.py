@@ -40,13 +40,13 @@ def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
     end_time = time.time()
     print("Testing time: %f" % (end_time-start_time))
 
-# get/download data
+print("Parsing data ...")
 Xtrain, Ytrain, Xtest = generate.get_data_set(NUM_TRAIN=2000000, NUM_TEST=10000000)
-print "-------------------------------- DATA --------------------------------"
-print "Number of training patterns:\t", Xtrain.shape[0]
-print "Number of test patterns:\t", Xtest.shape[0]
-print "Dimensionality of patterns:\t", Xtrain.shape[1]
-print "----------------------------------------------------------------------"
+print("-------------------------------- DATA --------------------------------")
+print("Number of training patterns:\t %i" % Xtrain.shape[0])
+print("Number of test patterns:\t %i" % Xtest.shape[0])
+print("Dimensionality of patterns:\t%i" % Xtrain.shape[1])
+print("----------------------------------------------------------------------")
 
 print("\n\nRunning the GPU version ...")
 run_algorithm(algorithm="buffer_kd_tree", tree_depth=9)

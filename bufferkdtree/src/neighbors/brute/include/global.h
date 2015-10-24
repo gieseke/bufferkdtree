@@ -4,6 +4,10 @@
 #ifndef BRUTE_INCLUDE_GLOBAL_H_
 #define BRUTE_INCLUDE_GLOBAL_H_
 
+#define INT_TYPE int
+#define UINT_TYPE unsigned int
+
+#include "../../../include/opencl.h"
 #include "../../../include/timing.h"
 #include "../../../include/float.h"
 
@@ -22,19 +26,11 @@
 #define MAX_FLOAT_TYPE     1.7976931348623158e+308
 #define MIN_FLOAT_TYPE     -1.7976931348623158e+308
 #define TRANSPOSE_ARRAY transpose_array_double
-#define PRINT_PATTERN print_pattern_double
-#define SAVE_PREDICTIONS save_predictions_double
-#define READ_INPUT_PATTERNS read_input_patterns_double
-#define PLOT_PRECISION_INFOS plot_precision_infos_double
 #else
 #define FLOAT_TYPE float
 #define MAX_FLOAT_TYPE     3.402823466e+38
 #define MIN_FLOAT_TYPE     -3.402823466e+38
 #define TRANSPOSE_ARRAY transpose_array_float
-#define PRINT_PATTERN print_pattern_float
-#define SAVE_PREDICTIONS save_predictions_float
-#define READ_INPUT_PATTERNS read_input_patterns_float
-#define PLOT_PRECISION_INFOS plot_precision_infos_float
 #endif
 
 // CPU and GPU functions are mapped via the following macros
@@ -50,27 +46,56 @@
 #define FREE_RESOURCES free_resources_cpu
 #endif
 
-// print function
-#define PRINT if (params_global.verbosity_level > 0) printf
-
 // struct for input parameters
-struct parameters {
-	int n_neighbors;
-	int num_threads;
-	int platform_id;
+typedef struct brute_parameters {
+
+	INT_TYPE n_neighbors;
+	INT_TYPE num_threads;
 	char *kernels_source_directory;
-	int device_id;
-	int verbosity_level;
-};
+	INT_TYPE verbosity_level;
+	INT_TYPE platform_id;
+	INT_TYPE device_id;
 
-typedef struct parameters Parameters;
+} BRUTE_PARAMETERS;
 
-// parameters
-extern Parameters params_global;
 
-// declare timers
-DECLARE_TIMER(1);
-DECLARE_TIMER(2);
-DECLARE_TIMER(3);
+// record struct for patterns and CL stuff
+typedef struct brute_record {
+
+	// training patterns
+	FLOAT_TYPE *Xtrain;
+
+	// dimension of patterns
+	INT_TYPE dXtrain;
+
+	// number of training patters
+	INT_TYPE nXtrain;
+
+	// test patterns
+	FLOAT_TYPE *Xtest;
+
+	// number of test patterns
+	UINT_TYPE nXtest;
+
+	TIMER timers[25];
+	INT_TYPE counters[10];
+
+	// OpenCL stuff
+	cl_platform_id gpu_platform;
+	cl_device_id gpu_device;
+	cl_context gpu_context;
+	cl_command_queue gpu_command_queue;
+
+	// OpenCL kernels
+	cl_kernel gpu_brute_nearest_neighbors_kernel;
+	cl_kernel gpu_brute_transpose_kernel;
+
+	// OpenCL buffers
+	cl_mem gpu_device_Xtrain;
+	cl_mem gpu_device_d_mins_trans;
+	cl_mem gpu_device_idx_mins_trans;
+
+
+} BRUTE_RECORD;
 
 #endif /* BRUTE_INCLUDE_GLOBAL_H_ */

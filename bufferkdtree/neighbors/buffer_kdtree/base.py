@@ -149,7 +149,7 @@ class BufferKDTreeNN(object):
             if self.verbose > 0:
                 print("Exception occured while freeing external resources: " + unicode(e))
 
-    def get_params(self, deep=True):
+    def get_params(self):
         """ Get parameters for this estimator.
         
         Parameters
@@ -196,6 +196,10 @@ class BufferKDTreeNN(object):
         
         assert self.float_type in self.ALLOWED_FLOAT_TYPES
         assert self.use_gpu in self.ALLOWED_USE_GPU
+        
+        assert self.allowed_test_mem_percent > 0.0
+        assert self.allowed_train_mem_percent_chunk > 0.0
+        assert self.allowed_test_mem_percent + self.allowed_train_mem_percent_chunk <= 1.0
 
         # set float and int type
         self._set_internal_data_types()
@@ -335,7 +339,7 @@ class BufferKDTreeNN(object):
 
         d_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_float)
         idx_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_int)
-        
+                    
         if self.use_gpu == True:
             self._kneighbors_gpu(X, n_neighbors, d_mins, idx_mins)
         else:
@@ -353,7 +357,15 @@ class BufferKDTreeNN(object):
                                                     wrapper_tree_params)
     
     def _kneighbors_gpu(self, X, n_neighbors, d_mins, idx_mins):
-        
+
+        if self.n_neighbors > 50:
+            warnings.warn(
+                """
+                The performance of the buffer k-d tree implementation
+                might decrease for large 'n_neighbors' due to too much
+                local memory used by the threads. 
+                """)
+                    
         # split up queries over all devices
         n_total_devices = self._get_n_total_devices()
         n_chunk = int(math.ceil(len(X) / n_total_devices))

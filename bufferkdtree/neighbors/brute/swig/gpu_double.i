@@ -17,4 +17,4 @@
 %apply (int* INPLACE_ARRAY2, int DIM1, int DIM2) {(int* indices, int nindices, int dindices)}
 
 %include "base.h"      
-
+%include "global.h"      

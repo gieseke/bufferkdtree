@@ -43,5 +43,4 @@ nbrs_kd_tree = NearestNeighbors(algorithm="kd_tree", \
                         verbose=verbose)    
 nbrs_kd_tree.fit(X)
 dists, inds = nbrs_kd_tree.kneighbors(X, n_neighbors=n_neighbors)
-print("\nkd_tree output\n" + unicode(dists[0]))
-print("")
+print("\nkd_tree output\n" + unicode(dists[0]) + "\n")
