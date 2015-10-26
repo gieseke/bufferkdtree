@@ -15,6 +15,11 @@ import time
 import generate
 from bufferkdtree.neighbors import NearestNeighbors
 
+# NOTE: If the 'brute' implementation exits with error code -5 (OUT_OF_RESOURCES),
+# then the "watchdog timer" of the driver might have killed to scheme due to
+# the kernel taking too long time; an easy fix on Linux systems is to start the
+# code without X (e.g., go to terminal 1 via ctrl+alt+F1 and start the code from here)
+
 # platform dependent parameters
 # (might have to be adapted!)
 plat_dev_ids = {0:[0,1,2,3]}
@@ -22,7 +27,7 @@ n_jobs = 8
 
 # parameters
 ofilename = "results.json"
-n_test_range = [1000000, 2500000, 5000000, 7500000, 1000000]
+n_test_range = [1000000, 2500000, 5000000, 7500000, 10000000]
 algorithms = ["brute", "kd_tree", "buffer_kd_tree"]
 verbose = 1
 n_neighbors = 10
@@ -109,7 +114,8 @@ for n_test in n_test_range:
     for algorithm in algorithms:
         run_algorithm(n_test, algorithm=algorithm)
 
-print("Writing results to %s ..." % ofilename)
-with open(ofilename, 'w') as f:
-    json.dump(results, f)
+        # write results after each step
+        print("Writing results to %s ..." % ofilename)
+        with open(ofilename, 'w') as f:
+            json.dump(results, f)
 
