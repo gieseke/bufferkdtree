@@ -284,15 +284,17 @@ class BufferKDTreeNN(object):
         # start all threads
         if self.verbose > 0:
             print("Starting all build threads ...")
+        
         for thread in threads:
             thread.start()
             
         # wait for all threads to be completed
         for thread in threads:
             thread.join()
+        
         if self.verbose > 0:
             print("All build threads finished!")          
-
+        
     def kneighbors(self, X=None, n_neighbors=None, return_distance=True):
         """ Finds the K-neighbors of a point.
         

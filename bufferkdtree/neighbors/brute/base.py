@@ -29,11 +29,27 @@ class DeviceQueryThread(threading.Thread):
         self.verbose = verbose
  
     def run(self):
-
+        
         self.wrapper_module.neighbors_extern(self.X[self.start_idx:self.end_idx], \
                                              self.d_mins[self.start_idx:self.end_idx], \
                                              self.idx_mins[self.start_idx:self.end_idx], \
                                              self.record, self.params)
+        
+        
+class FitThread(threading.Thread):
+     
+    def __init__(self, wrapper_module, params, record, X):
+ 
+        threading.Thread.__init__(self)
+        
+        self.wrapper_module = wrapper_module 
+        self.params = params
+        self.record = record
+        self.X = X
+ 
+    def run(self):
+        
+        self.wrapper_module.fit_extern(self.X, self.record, self.params)
             
 class BruteNN(object):
     """ Brute-force nearest neighbor computations.
@@ -74,21 +90,20 @@ class BruteNN(object):
     def __del__(self):
         """ Free external resources if needed
         """
-        
-        try:
+
+        if self.verbose > 0:
+            print("Freeing external resources ...")        
             
-            if self.verbose > 0:
-                print("Freeing external resources ...")
-                
-            for platform_id in self.plat_dev_ids.keys():
-                for device_id in self.plat_dev_ids[platform_id]:     
+        for platform_id in self.plat_dev_ids.keys():
+            for device_id in self.plat_dev_ids[platform_id]:
+                    
+                try:
                     wrapper_params = self.wrapper_instances[platform_id][device_id]['params']
                     wrapper_record = self.wrapper_instances[platform_id][device_id]['record']            
                     self._get_wrapper_module().free_resources_extern(wrapper_record, wrapper_params)
-                    
-        except Exception as e:
-            if self.verbose > 0:
-                print("Exception occured while freeing external resources: " + unicode(e))
+                except Exception as e:
+                    if self.verbose > 0:
+                        print("Exception occured while freeing external resources: " + unicode(e))
                       
     def get_params(self):
         """ Get parameters for this estimator.
@@ -160,23 +175,47 @@ class BruteNN(object):
         # initialize devices
         for platform_id in self.plat_dev_ids.keys():
             self.wrapper_instances[platform_id] = {}
+
             for device_id in self.plat_dev_ids[platform_id]:
                 
                 self._validate_device(platform_id, device_id)
         
-                wrapper_record = self._get_wrapper_module().BRUTE_RECORD()
                 wrapper_params = self._get_wrapper_module().BRUTE_PARAMETERS()
                 
                 self._get_wrapper_module().init_extern(self.n_neighbors, self.n_jobs, platform_id, \
                                                        device_id, kernel_sources_dir, self.verbose,
                                                        wrapper_params)
-
-                self._get_wrapper_module().fit_extern(self.X, wrapper_record, wrapper_params)
+                wrapper_record = self._get_wrapper_module().BRUTE_RECORD()
                         
-                self.wrapper_instances[platform_id] = {}
                 self.wrapper_instances[platform_id][device_id] = {}
                 self.wrapper_instances[platform_id][device_id]['params'] = wrapper_params
                 self.wrapper_instances[platform_id][device_id]['record'] = wrapper_record
+
+        threads = []
+        
+        # fit all models
+        for platform_id in self.plat_dev_ids.keys():
+            for device_id in self.plat_dev_ids[platform_id]:
+                
+                wrapper_module = self._get_wrapper_module()
+                wrapper_params = self.wrapper_instances[platform_id][device_id]['params']
+                wrapper_record = self.wrapper_instances[platform_id][device_id]['record']
+                
+                thread = FitThread(wrapper_module, wrapper_params, wrapper_record, self.X)
+                threads.append(thread)                
+            
+        # start all threads
+        if self.verbose > 0:
+            print("Starting all fitting threads ...")
+         
+        for thread in threads:
+            thread.start()
+            
+        # wait for all threads to be completed
+        for thread in threads:
+            thread.join()
+        if self.verbose > 0:
+            print("All fitting threads finished!")                    
         
         return self
 
@@ -228,10 +267,13 @@ class BruteNN(object):
         n_total_devices = self._get_n_total_devices()
         n_chunk = int(math.ceil(len(X) / n_total_devices))
         
+        if self.verbose > 0:
+            print("Splitting queries into %i chunks." % int(n_total_devices))
+        
         d_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_float)
         idx_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_int)
         
-        thread_list = []
+        threads = []
         
         chunk_start = 0
         chunk_end = n_chunk
@@ -246,7 +288,7 @@ class BruteNN(object):
                             chunk_end_cropped = len(X)
                         else:
                             chunk_end_cropped = chunk_end
-                            
+                        
                         wrapper_module = self._get_wrapper_module()
                         wrapper_params = self.wrapper_instances[platform_id][device_id]['params']
                         wrapper_record = self.wrapper_instances[platform_id][device_id]['record']
@@ -256,21 +298,23 @@ class BruteNN(object):
                         thread = DeviceQueryThread(wrapper_module, wrapper_params, wrapper_record, \
                                              X, d_mins, idx_mins, chunk_start, chunk_end_cropped, \
                                              verbose=self.verbose)
-                        thread_list.append(thread)
+                        threads.append(thread)
     
                     chunk_start += n_chunk
                     chunk_end += n_chunk
                     
 
         if self.verbose > 0:
-            print("Processing all query thread_list ...")
-        for thread in thread_list:
+            print("Processing all query threads ...")
+            
+        for thread in threads:
             thread.start()
 
-        for thread in thread_list:
-            thread.join()            
+        for thread in threads:
+            thread.join()         
+               
         if self.verbose > 0:
-            print("All query thread_list finished!")  
+            print("All query threads finished!")  
 
         return np.sqrt(d_mins), idx_mins
 

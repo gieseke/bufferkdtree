@@ -23,9 +23,9 @@ void init_gpu(BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params) {
 
 }
 
-/* -------------------------------------------------------------------------------- 
+/* --------------------------------------------------------------------------------
  * Fits a model given the training data (and parameters)
- * -------------------------------------------------------------------------------- 
+ * --------------------------------------------------------------------------------
  */
 void fit_gpu(FLOAT_TYPE *X, int nX, int dX, BRUTE_RECORD *brute_record, \
 		BRUTE_PARAMETERS *params) {
@@ -120,11 +120,6 @@ void neighbors_gpu(FLOAT_TYPE *Xtest, int nXtest, int dXtest, FLOAT_TYPE *d_mins
 
 	// apply nearest neighbor kernel
 
-	// global and local sizes
-	size_t global_size_brute_nearest_neighbors = ceil(
-			nXtest / (float) WORKGROUP_SIZE) * WORKGROUP_SIZE;
-	size_t local_size_brute_nearest_neighbors = WORKGROUP_SIZE;
-
 	// set kernel parameters
 	err = clSetKernelArg(brute_record->gpu_brute_nearest_neighbors_kernel, 0, sizeof(cl_mem),
 			&(brute_record->gpu_device_Xtrain));
@@ -140,16 +135,41 @@ void neighbors_gpu(FLOAT_TYPE *Xtest, int nXtest, int dXtest, FLOAT_TYPE *d_mins
 			&nXtest);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	// execute kernel
-	err = clEnqueueNDRangeKernel(brute_record->gpu_command_queue,
-			brute_record->gpu_brute_nearest_neighbors_kernel, 1, NULL,
-			&global_size_brute_nearest_neighbors,
-			&local_size_brute_nearest_neighbors, 0, NULL, &event);
-	check_cl_error(err, __FILE__, __LINE__);
+	int max_chunk_size = 65536;
+	if (max_chunk_size > nXtest){
+		max_chunk_size = nXtest;
+	}
 
-	err = clWaitForEvents(1, &event);
-	check_cl_error(err, __FILE__, __LINE__);
-	clReleaseEvent(event);
+	// global and local sizes
+	size_t local_size_brute_nearest_neighbors = WORKGROUP_SIZE;
+
+	int chunk_start = 0;
+	while (chunk_start < nXtest) {
+		int chunk_end = chunk_start + max_chunk_size;
+		if (chunk_end > nXtest) {
+			chunk_end = nXtest;
+		}
+		int n_indices = chunk_end - chunk_start;
+
+		size_t global_size_brute_nearest_neighbors = ceil(n_indices / (float) WORKGROUP_SIZE) * WORKGROUP_SIZE;
+
+		err = clSetKernelArg(brute_record->gpu_brute_nearest_neighbors_kernel, 6, sizeof(int), &chunk_start);
+		check_cl_error(err, __FILE__, __LINE__);
+
+		// execute kernel
+		err = clEnqueueNDRangeKernel(brute_record->gpu_command_queue,
+				brute_record->gpu_brute_nearest_neighbors_kernel, 1, NULL,
+				&global_size_brute_nearest_neighbors,
+				&local_size_brute_nearest_neighbors, 0, NULL, &event);
+		check_cl_error(err, __FILE__, __LINE__);
+
+		err = clWaitForEvents(1, &event);
+		check_cl_error(err, __FILE__, __LINE__);
+		clReleaseEvent(event);
+
+		chunk_start += max_chunk_size;
+
+	}
 
 	// copy results back to host system
 	int *idx_mins_trans = (int*) malloc(nXtest *  K * sizeof(int));

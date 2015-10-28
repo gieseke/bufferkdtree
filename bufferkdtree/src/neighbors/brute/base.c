@@ -40,17 +40,16 @@ void fit_extern(FLOAT_TYPE *X, int nX, int dX, BRUTE_RECORD *brute_record,
 		INIT_MY_TIMER(brute_record->timers + i);
 	}
 
+	PRINT(params)("Fitting model ...\n");
+	START_MY_TIMER(brute_record->timers + 1);
+
 	brute_record->dXtrain = dX;
 	brute_record->nXtrain = nX;
 
 	INIT(brute_record, params);
-
-	PRINT(params)("Fitting model ...\n");
-
-	START_MY_TIMER(brute_record->timers + 1);
 	FIT(X, nX, dX, brute_record, params);
-	STOP_MY_TIMER(brute_record->timers + 1);
 
+	STOP_MY_TIMER(brute_record->timers + 1);
 	PRINT(params)("Fitting time (extern): \t\t\t\t\t\t\t\t%2.10f\n", \
 			(FLOAT_TYPE) GET_MY_TIMER(brute_record->timers + 1));
 
@@ -66,7 +65,6 @@ void neighbors_extern(FLOAT_TYPE *Xtest, int nXtest, int dXtest,
 		BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params) {
 
 	PRINT(params)("Computing nearest neighbors ...\n");
-
 	START_MY_TIMER(brute_record->timers + 2);
 	NEIGHBORS(Xtest, nXtest, dXtest, distances, indices, brute_record, params);
 	STOP_MY_TIMER(brute_record->timers + 2);

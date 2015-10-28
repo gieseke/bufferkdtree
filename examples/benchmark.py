@@ -55,7 +55,7 @@ def run_algorithm(n_test, algorithm="buffer_kd_tree"):
         # the different tree depths that shall
         # be tested for this data set
         if algorithm == "buffer_kd_tree":
-            tree_depths = range(3,11)
+            tree_depths = range(4,12)
         elif algorithm == "kd_tree":
             tree_depths = range(8,16)
 
@@ -68,7 +68,7 @@ def run_algorithm(n_test, algorithm="buffer_kd_tree"):
         opt_tree_depth = nbrs_tree_test.compute_optimal_tree_depth(Xtrain, Xtest_local, \
                                                     target="test", tree_depths=tree_depths)
         print("Optimal tree depth found: %i " % opt_tree_depth)
-
+        
         # instantiate final model
         nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
                                 algorithm=algorithm, \
@@ -76,6 +76,7 @@ def run_algorithm(n_test, algorithm="buffer_kd_tree"):
                                 tree_depth=opt_tree_depth, \
                                 plat_dev_ids=plat_dev_ids, \
                                 verbose=verbose)
+        
 
     elif algorithm == "brute":
 
@@ -111,11 +112,11 @@ def run_algorithm(n_test, algorithm="buffer_kd_tree"):
 
 # run all algorithms and all n_tests
 for n_test in n_test_range:
-    for algorithm in algorithms:
+    for i in xrange(len(algorithms)):
+        algorithm = algorithms[i]
         run_algorithm(n_test, algorithm=algorithm)
 
         # write results after each step
         print("Writing results to %s ..." % ofilename)
         with open(ofilename, 'w') as f:
             json.dump(results, f)
-
