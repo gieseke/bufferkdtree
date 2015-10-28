@@ -240,7 +240,7 @@ void allocate_memory_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *p
 	err |= clSetKernelArg(tree_record->init_dists_kernel, 1, sizeof(cl_mem), &(tree_record->device_d_mins));
 	err |= clSetKernelArg(tree_record->init_dists_kernel, 2, sizeof(cl_mem), &(tree_record->device_idx_mins));
 	err |= clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->init_dists_kernel, 1,
-	NULL, global_size_1, local_size_1, 0, NULL, &event_distance_kernel);
+			NULL, global_size_1, local_size_1, 0, NULL, &event_distance_kernel);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	// allstacks
@@ -251,7 +251,7 @@ void allocate_memory_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *p
 	err = clSetKernelArg(tree_record->init_stacks_kernel, 0, sizeof(INT_TYPE), &num_elts);
 	err |= clSetKernelArg(tree_record->init_stacks_kernel, 1, sizeof(cl_mem), &(tree_record->device_all_stacks));
 	err |= clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->init_stacks_kernel, 1,
-	NULL, global_size_2, local_size_2, 0, NULL, &event_init_all_stacks);
+			NULL, global_size_2, local_size_2, 0, NULL, &event_init_all_stacks);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	// all_depths and all_idxs
@@ -263,7 +263,7 @@ void allocate_memory_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *p
 	err |= clSetKernelArg(tree_record->init_depths_idxs_kernel, 1, sizeof(cl_mem), &(tree_record->device_all_depths));
 	err |= clSetKernelArg(tree_record->init_depths_idxs_kernel, 2, sizeof(cl_mem), &(tree_record->device_all_idxs));
 	err |= clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->init_depths_idxs_kernel, 1,
-	NULL, global_size_3, local_size_3, 0, NULL, &event_all_depths_idxs);
+			NULL, global_size_3, local_size_3, 0, NULL, &event_all_depths_idxs);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	// we allocate host space for consecutive buffers to store intermediate results
@@ -699,6 +699,7 @@ void do_brute_force_all_leaves_FIRST_gpu(INT_TYPE *test_indices,
 		err = clEnqueueNDRangeKernel(cmd_queue_chunk,
 				tree_record->brute_nn_kernel, 1, NULL, global_size_nn,
 				localSize_nn, 0, NULL, NULL);
+		check_cl_error(err, __FILE__, __LINE__);
 
 		chunk_start += n_instances_chunk;
 		chunk_end += n_instances_chunk;
@@ -719,7 +720,6 @@ void do_brute_force_all_leaves_SECOND_gpu(INT_TYPE *test_indices,
 
 	cl_int err;
 
-
 	cl_command_queue cmd_queue_chunk;
 	if (current_chunk == TRAIN_CHUNK_0) {
 		cmd_queue_chunk = tree_record->gpu_command_queue_chunk_0;
@@ -728,6 +728,9 @@ void do_brute_force_all_leaves_SECOND_gpu(INT_TYPE *test_indices,
 	}
 
 	// wait for brute force nearest neighbor computation
+	// if errors occur here, use an event to wait for the previous
+	// kernel launch (above: tree_record->brute_nn_kernel) to check
+	// for the particular error
 	err = clFinish(cmd_queue_chunk);
 	check_cl_error(err, __FILE__, __LINE__);
 
@@ -754,6 +757,8 @@ void do_brute_force_all_leaves_SECOND_gpu(INT_TYPE *test_indices,
 	// call kernel update_distances_kernel
 	err = clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->update_dist_kernel, 1, NULL,
 			global_size_update, local_size_update, 0, NULL, NULL);
+	check_cl_error(err, __FILE__, __LINE__);
+
 	err = clFinish(tree_record->gpu_command_queue);
 	check_cl_error(err, __FILE__, __LINE__);
 
@@ -815,8 +820,7 @@ void find_leaf_idx_batch_gpu(INT_TYPE *all_next_indices, INT_TYPE num_all_next_i
 	size_t local_size[] = { WORKGROUP_SIZE_LEAVES };
 
 	err = clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->find_leaves_kernel, 1,
-	NULL, global_size, local_size, 0,
-	NULL, &event);
+			NULL, global_size, local_size, 0, NULL, &event);
 	// we wait here until the nearest neighbor computations are done (could be optimized)
 	err |= clWaitForEvents(1, &event);
 	err |= clReleaseEvent(event);
@@ -824,7 +828,7 @@ void find_leaf_idx_batch_gpu(INT_TYPE *all_next_indices, INT_TYPE num_all_next_i
 
 	// copy indices found back to CPU
 	err = clEnqueueReadBuffer(tree_record->gpu_command_queue, tree_record->device_ret_vals,
-	CL_TRUE, 0, num_all_next_indices * sizeof(INT_TYPE), tree_record->leaf_indices_batch_ret_vals, 0, NULL, &event);
+			CL_TRUE, 0, num_all_next_indices * sizeof(INT_TYPE), tree_record->leaf_indices_batch_ret_vals, 0, NULL, &event);
 	// we wait here until the nearest neighbor computations are done (could be optimized)
 	err |= clWaitForEvents(1, &event);
 	err |= clReleaseEvent(event);
