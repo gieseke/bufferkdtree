@@ -18,7 +18,7 @@ from bufferkdtree.neighbors import NearestNeighbors
 # NOTE: If the 'brute' implementation exits with error code -5 (OUT_OF_RESOURCES),
 # then the "watchdog timer" of the driver might have killed to scheme due to
 # the kernel taking too long time; an easy fix on Linux systems is to start the
-# code without X (e.g., go to terminal 1 via ctrl+alt+F1 and start the code from here)
+# code without X (e.g., go to tty 1 via Ctrl+Alt+F1 and start the code from here)
 
 # platform dependent parameters
 # (might have to be adapted!)
@@ -29,7 +29,7 @@ n_jobs = 8
 ofilename = "results.json"
 n_test_range = [1000000, 2500000, 5000000, 7500000, 10000000]
 algorithms = ["brute", "kd_tree", "buffer_kd_tree"]
-verbose = 1
+verbose = 0
 n_neighbors = 10
 
 results = {}
@@ -42,13 +42,9 @@ print("Number of test patterns:\t %i" % Xtest.shape[0])
 print("Dimensionality of patterns:\t%i" % Xtrain.shape[1])
 print("----------------------------------------------------------------------")
 
-def run_algorithm(n_test, algorithm="buffer_kd_tree"):
+def compute_opt_tree_depth(algorithm, n_test_tree=2000000):
 
-    print("----------------------------------------------------------------------")
-    print("\n\nRunning %s for n_test=%i ...\n" % (algorithm, n_test))
-    print("----------------------------------------------------------------------")
     opt_tree_depth = None
-    Xtest_local = Xtest[:n_test, :]
 
     if algorithm in ["buffer_kd_tree", "kd_tree"]:
 
@@ -65,31 +61,26 @@ def run_algorithm(n_test, algorithm="buffer_kd_tree"):
                                      n_jobs=n_jobs, \
                                      plat_dev_ids=plat_dev_ids, \
                                      verbose=verbose)
-        opt_tree_depth = nbrs_tree_test.compute_optimal_tree_depth(Xtrain, Xtest_local, \
-                                                    target="test", tree_depths=tree_depths)
+        opt_tree_depth = nbrs_tree_test.compute_optimal_tree_depth(Xtrain, Xtest[:n_test_tree], target="test", tree_depths=tree_depths)
         print("Optimal tree depth found: %i " % opt_tree_depth)
-        
-        # instantiate final model
-        nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
-                                algorithm=algorithm, \
-                                n_jobs=n_jobs, \
-                                tree_depth=opt_tree_depth, \
-                                plat_dev_ids=plat_dev_ids, \
-                                verbose=verbose)
-        
+    return opt_tree_depth
 
-    elif algorithm == "brute":
+def run_algorithm(n_test, tree_depth=None, algorithm="buffer_kd_tree"):
 
-        nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
-                                algorithm=algorithm, \
-                                n_jobs=n_jobs, \
-                                plat_dev_ids=plat_dev_ids, \
-                                verbose=verbose)
+    print("----------------------------------------------------------------------")
+    print("\n\nRunning %s for n_test=%i ...\n" % (algorithm, n_test))
+    print("----------------------------------------------------------------------")
 
-    else:
+    Xtest_local = Xtest[:n_test, :]
 
-        raise Exception("Unkown algorithm ...")
-        
+    # instantiate model
+    nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
+                            algorithm=algorithm, \
+                            n_jobs=n_jobs, \
+                            tree_depth=opt_tree_depth, \
+                            plat_dev_ids=plat_dev_ids, \
+                            verbose=verbose)
+                
     # train model
     start_time = time.time()
     nbrs.fit(Xtrain)
@@ -111,12 +102,17 @@ def run_algorithm(n_test, algorithm="buffer_kd_tree"):
     results[algorithm][n_test] = {'train':train_time, 'test':test_time, 'opt_tree_depth':opt_tree_depth}
 
 # run all algorithms and all n_tests
-for n_test in n_test_range:
-    for i in xrange(len(algorithms)):
-        algorithm = algorithms[i]
-        run_algorithm(n_test, algorithm=algorithm)
+for i in xrange(len(algorithms)):
+    algorithm = algorithms[i]
+    print("----------------------------------------------------------------------")
+    print("\n\nRunning %s ...\n" % (algorithm))
+    print("----------------------------------------------------------------------")
+    opt_tree_depth = compute_opt_tree_depth(algorithm, n_test_tree=2000000)
+    for n_test in n_test_range:
+        run_algorithm(n_test, tree_depth=opt_tree_depth, algorithm=algorithm)
+    print("\n\n")
 
-        # write results after each step
-        print("Writing results to %s ..." % ofilename)
-        with open(ofilename, 'w') as f:
-            json.dump(results, f)
+# write results after each step
+print("Writing results to %s ..." % ofilename)
+with open(ofilename, 'w') as f:
+    json.dump(results, f)

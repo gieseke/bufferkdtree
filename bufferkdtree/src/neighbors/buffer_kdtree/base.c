@@ -76,8 +76,11 @@ void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain,
 	PRINT(params)("Memory needed for all training patterns: %f (GB)\n", train_mem_bytes / MEM_GB);
 
 	if (train_mem_bytes / params->n_train_chunks > device_mem_bytes * params->allowed_train_mem_percent_chunk) {
-		params->n_train_chunks = (INT_TYPE) ceil(
-				train_mem_bytes / (device_mem_bytes * params->allowed_train_mem_percent_chunk));
+		params->n_train_chunks = (INT_TYPE) ceil(train_mem_bytes / (device_mem_bytes * params->allowed_train_mem_percent_chunk));
+		// if set automatically, then use at least 5 chunks (hide computations and data transfer)
+		if (params->n_train_chunks < 5){
+			params->n_train_chunks = 5;
+		}
 		PRINT(params)("WARNING: Increasing number of chunks to %i ...\n", params->n_train_chunks);
 	}
 

@@ -74,9 +74,9 @@ void init_opencl(cl_uint platform_number, cl_platform_id *platform,
 
 		printf("\nDetected %i devices(s) on platform with id %i.\n", num_devices, platform_number);
 
-		char name[512];
-		char version[512];
-		char driver[512];
+		char name[1024];
+		char version[1024];
+		char driver[1024];
 		cl_int num_compute_units;
 		cl_ulong mem_in_bytes;
 
