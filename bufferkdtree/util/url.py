@@ -7,6 +7,7 @@ Created on 15.09.2015
 from __future__ import print_function
 
 import os
+import sys
 import urllib2
 
 def download_from_url(url, fname):
@@ -40,6 +41,7 @@ def download_from_url(url, fname):
     fsize_current = 0
     block_size = 8192
 
+    print("Progress")
     while True:
 
         buff = u.read(block_size)
@@ -48,9 +50,13 @@ def download_from_url(url, fname):
 
         fsize_current += len(buff)
         f.write(buff)
+        
+        percent = fsize_current * 100. / fsize
+        
+        sys.stdout.flush()        
+        sys.stdout.write("\r%2d%%" % percent)
+                
+        sys.stdout.flush()        
 
-        stat = r"%10d  [%3.2f%%]" % (fsize_current, fsize_current * 100. / fsize)
-        stat = stat + chr(8)*(len(stat)+1)
-        print(stat, end='')
-
+    print("\n")
     f.close()

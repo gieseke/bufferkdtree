@@ -7,8 +7,9 @@ from bufferkdtree.util.input import ask_question
 def psf_model_mag_train(NUM=None):
 
     fname = os.path.join(os.path.dirname(__file__), 'data', 'photometric_spec_confirmed.npy')
-    q = "Additional data need to be downloaded (to the current directory, about 400MB). Do you wish to continue? [y/n] "
     url = "http://www.cs.ru.nl/~fgieseke/data/sdss/photometric_spec_confirmed.npy"
+    q = "\nAdditional data need to be downloaded from:\n%s\n(to the current directory, about 400MB).\n\nDo you wish to continue? [y/n] " % url
+
 
     ack = """\n
     Funding for the SDSS and SDSS-II has been provided by the Alfred 
@@ -79,8 +80,9 @@ def psf_model_mag_train(NUM=None):
 def psf_model_mag_test(NUM=None):
 
     fname = os.path.join(os.path.dirname(__file__), 'data', 'photometric.npy')
-    q = "Additional data need to be downloaded (to the current directory, about 2GB). Do you wish to continue? [y/n] "
     url = "http://www.cs.ru.nl/~fgieseke/data/sdss/photometric.npy"
+    q = "\nAdditional data need to be downloaded from:\n%s\n(to the current directory, about 2GB).\n\nDo you wish to continue? [y/n] " % url
+
 
     ack = """\n
     Funding for the SDSS and SDSS-II has been provided by the Alfred 
