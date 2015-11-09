@@ -85,7 +85,7 @@ void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain,
 	}
 
 	double train_chunk_gb = get_train_mem_with_chunks_device_bytes(tree_record, params);
-	PRINT(params)("Memory needed for training patterns chunk: %f (GB)\n", train_chunk_gb / MEM_GB);
+	PRINT(params)("Memory needed for the (2) training patterns chunks: %f (GB)\n", train_chunk_gb / MEM_GB);
 
 	// we empty a buffer as soon as it has reached a certain filling status (here: 50%)
 	tree_record->leaves_buffer_sizes_threshold = 0.7 * tree_record->leaves_initial_buffer_sizes;

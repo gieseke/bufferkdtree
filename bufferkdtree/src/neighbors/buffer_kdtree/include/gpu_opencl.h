@@ -14,7 +14,6 @@
 
 #include "base.h"
 #include "types.h"
-#include "extern.h"
 #include "util.h"
 
 #include "../../../include/opencl.h"

@@ -1,9 +1,0 @@
-/* 
- * extern.h
- */
-
-#ifndef NEIGHBORS_BUFFER_KD_TREE_EXTERN_H_
-#define NEIGHBORS_BUFFER_KD_TREE_EXTERN_H_
-
-
-#endif /* NEIGHBORS_BUFFER_KD_TREE_EXTERN_H_ */
