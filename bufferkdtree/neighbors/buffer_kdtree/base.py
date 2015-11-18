@@ -8,7 +8,6 @@ from __future__ import division
 
 import os
 import math
-import time
 import warnings
 import numpy as np
 import threading 
@@ -464,74 +463,6 @@ class BufferKDTreeNN(object):
                 return wrapper_cpu_double
         else:
             raise Exception("Unknown 'float_type'!")
-
-    def compute_optimal_tree_depth(self, Xtrain, Xtest, target="test", tree_depths=None):
-        """ Computes the optimal tree depth.
-        
-        Returns
-        -------
-        opt_height : int
-            The optimal tree depth based
-            on the target provided.
-        """
-        
-        max_depth = int(math.floor(math.log(len(Xtrain), 2)))
-
-        if tree_depths is None:
-            tree_depths = range(2, max_depth - 1)
-
-        runtimes = {}
-        
-        if target == "test":            
-            
-            for tree_depth in tree_depths:
-
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                new_model.fit(Xtrain)
-
-                start = time.time()
-                new_model.kneighbors(Xtest)
-                end = time.time()
-
-                if new_model.verbose:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start 
-        
-        elif target == "train":
-
-            for tree_depth in tree_depths:
-
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                start = time.time()
-                new_model.fit(Xtrain)
-                end = time.time()
-                
-                if new_model.verbose:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start 
-                
-        elif target == "both":
-            
-            for tree_depth in tree_depths:
-                            
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                start = time.time()
-                new_model.fit(Xtrain)
-                new_model.kneighbors(Xtest)
-                end = time.time()
-                
-                if self.verbose > 0:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start
-
-        else:
-
-            raise Exception("Unknown target: " + unicode(target))
-
-        return min(runtimes, key=runtimes.get)
     
     def _compute_final_tree_depth(self, n, leaf_size, tree_depth):
         """ Computes tree depth for kd tree.

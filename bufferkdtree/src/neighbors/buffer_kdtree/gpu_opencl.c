@@ -111,24 +111,42 @@ void init_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
  */
 void free_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
+	cl_int err;
+
 	free_train_buffers_gpu(tree_record, params);
 	free_query_buffers_gpu(tree_record, params);
 
-	clReleaseKernel(tree_record->find_leaves_kernel);
-	clReleaseKernel(tree_record->update_dist_kernel);
-	clReleaseKernel(tree_record->retrieve_dist_kernel);
-	clReleaseKernel(tree_record->brute_nn_kernel);
-	clReleaseKernel(tree_record->generate_test_subset_kernel);
-	clReleaseKernel(tree_record->compute_final_dists_idxs_kernel);
-	clReleaseKernel(tree_record->init_dists_kernel);
-	clReleaseKernel(tree_record->init_stacks_kernel);
-	clReleaseKernel(tree_record->init_depths_idxs_kernel);
+	err = clReleaseKernel(tree_record->find_leaves_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->update_dist_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->retrieve_dist_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->brute_nn_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->generate_test_subset_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->compute_final_dists_idxs_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->init_dists_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->init_stacks_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseKernel(tree_record->init_depths_idxs_kernel);
+	check_cl_error(err, __FILE__, __LINE__);
 
-	clReleaseCommandQueue(tree_record->gpu_command_queue);
-	clReleaseCommandQueue(tree_record->gpu_command_queue_chunk_0);
-	clReleaseCommandQueue(tree_record->gpu_command_queue_chunk_1);
-	clReleaseContext(tree_record->gpu_context);
-	//clReleaseDevice(tree_record->gpu_device);
+	err = clReleaseCommandQueue(tree_record->gpu_command_queue);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseCommandQueue(tree_record->gpu_command_queue_chunk_0);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseCommandQueue(tree_record->gpu_command_queue_chunk_1);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseContext(tree_record->gpu_context);
+	check_cl_error(err, __FILE__, __LINE__);
+
+	// see http://stackoverflow.com/questions/15855759/opencl-1-2-c-wrapper-undefined-reference-to-clreleasedevice
+	//err = clReleaseDevice(tree_record->gpu_device);
+	//check_cl_error(err, __FILE__, __LINE__);
 
 }
 
@@ -138,8 +156,12 @@ void free_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
  */
 void free_train_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
-	clReleaseMemObject(tree_record->device_nodes);
-	clReleaseMemObject(tree_record->device_leave_bounds);
+	cl_int err;
+
+	err = clReleaseMemObject(tree_record->device_nodes);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseMemObject(tree_record->device_leave_bounds);
+	check_cl_error(err, __FILE__, __LINE__);
 
 }
 
@@ -149,22 +171,35 @@ void free_train_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
  */
 void free_query_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
+	cl_int err;
+
 	free_train_patterns_device(tree_record, params, TRAIN_CHUNK_0);
 
-	if (training_chunks_inactive(tree_record, params)) {
+	if (!training_chunks_inactive(tree_record, params)) {
 		free_train_patterns_device(tree_record, params, TRAIN_CHUNK_1);
 	}
 
 	if (tree_record->device_query_buffers_allocated == 1){
-		clReleaseMemObject(tree_record->device_test_patterns);
-		clReleaseMemObject(tree_record->device_d_mins);
-		clReleaseMemObject(tree_record->device_idx_mins);
-		clReleaseMemObject(tree_record->device_all_stacks);
-		clReleaseMemObject(tree_record->device_all_depths);
-		clReleaseMemObject(tree_record->device_all_idxs);
-		clReleaseMemObject(tree_record->device_dist_mins_tmp);
-		clReleaseMemObject(tree_record->device_idx_mins_tmp);
-		clReleaseMemObject(tree_record->device_test_patterns_subset_tmp);
+
+		err = clReleaseMemObject(tree_record->device_test_patterns);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_d_mins);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_idx_mins);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_all_stacks);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_all_depths);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_all_idxs);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_dist_mins_tmp);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_idx_mins_tmp);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_test_patterns_subset_tmp);
+		check_cl_error(err, __FILE__, __LINE__);
+
 		tree_record->device_query_buffers_allocated = 0;
 	}
 
@@ -452,6 +487,7 @@ void process_buffers_brute_force_in_chunks_gpu(TREE_RECORD *tree_record, TREE_PA
 		}
 
 		// prepare chunk of test indices with associated bounds
+		// TODO: start with last index of previous chunk, not i=0
 		INT_TYPE n_tindices_chunk = 0;
 		for (i = 0; i < n_tindices_removed; i++) {
 
@@ -991,10 +1027,14 @@ void copy_train_patterns_to_device(TREE_RECORD *tree_record, TREE_PARAMETERS *pa
 
 void free_train_patterns_device(TREE_RECORD *tree_record, TREE_PARAMETERS *params, INT_TYPE chunk) {
 
+	cl_int err;
+
 	if (chunk == TRAIN_CHUNK_0) {
-		clReleaseMemObject(tree_record->device_train_patterns_chunk_0);
+		err = clReleaseMemObject(tree_record->device_train_patterns_chunk_0);
+		check_cl_error(err, __FILE__, __LINE__);
 	} else if (chunk == TRAIN_CHUNK_1) {
-		clReleaseMemObject(tree_record->device_train_patterns_chunk_1);
+		err = clReleaseMemObject(tree_record->device_train_patterns_chunk_1);
+		check_cl_error(err, __FILE__, __LINE__);
 	} else {
 		printf("Only two chunks allowed: %i\n", chunk);
 		exit(EXIT_FAILURE);

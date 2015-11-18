@@ -271,64 +271,7 @@ class NearestNeighbors(object):
             else:
                 neigh_ind = result            
                 neigh_ind = neigh_ind[:, 1:]
-                return neigh_ind        
-    
-    def compute_optimal_tree_depth(self, Xtrain, Xtest, target="test", tree_depths=None):
-        """ Computes the optimal tree depth for the 
-        tree-based implementations. The method tests
-        various assignments of the parameters and 
-        simply measures the time needed for the approach
-        tp finish.
-        
-        Parameters
-        ----------
-        Xtrain : array-like, shape (n_samples, n_features)
-            The set of training/reference points, where
-            'n_samples' is the number points and 
-            'n_features' the number of features.
-            
-        Xtest : array-like, shape (n_samples, n_features)
-            The set of testing/querying points, where
-            'n_samples' is the number points and 
-            'n_features' the number of features.
-            
-        target : {'train', 'test', 'both'}, optional (default='test')
-            The runtime target, i.e., which phase shall 
-            be optimized. Three choices:
-            - 'train' : The training phase
-            - 'test' : The testing phase
-            - 'both' : Both phases
-        
-        tree_depths : list or None, optional
-            The range of different tree depths that 
-            shall be tested. If None, then the default
-            ranges are used by the different implementations:
-            
-            - buffer_kd_tree : range(2, max_depth - 1)
-            - kd_tree : range(4, max_depth - 1)
-            
-            where max_depth = int(math.floor(math.log(len(Xtrain), 2)))
-        
-        Returns
-        -------
-        opt_height : int
-            The optimal tree depth
-        """
-        
-        ALLOWED_TARGETS = ['train', 'test', 'both']
-        
-        if self.algorithm not in ["kd_tree", "buffer_kd_tree"]:
-            raise Exception("Optimal tree depth can only be \
-                    determined for tree-based methods!")
-        
-        if target not in ALLOWED_TARGETS:
-            raise Exception("Target is not valid (allowed ones are " + \
-                            unicode(ALLOWED_TARGETS) + ": " + unicode(target))
-        
-        return self._get_wrapper().compute_optimal_tree_depth(Xtrain=Xtrain, \
-                                                              Xtest=Xtest, \
-                                                              target=target, \
-                                                              tree_depths=tree_depths)
+                return neigh_ind
 
     def _set_internal_data_types(self):
         """ Set numpy float and int dtypes

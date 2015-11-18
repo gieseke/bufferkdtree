@@ -232,15 +232,18 @@ int get_device_infos(cl_uint platform_number, cl_uint device_number, \
 	return 0;
 }
 
+
 /* --------------------------------------------------------------------------------
  * Checks for OpenCL error.
  * --------------------------------------------------------------------------------
  */
 void check_cl_error(cl_int err, const char *file, int line) {
+
 	if (err != CL_SUCCESS) {
-		printf("OpenCL error occurred: Errorcode=%d in file %s and line %d \n", err, file, line);
+		printf("An OpenCL error with code %i in file %s and line %i occurred ...\n", err, file, line);
 		exit(1);
 	}
+
 }
 
 /* --------------------------------------------------------------------------------
