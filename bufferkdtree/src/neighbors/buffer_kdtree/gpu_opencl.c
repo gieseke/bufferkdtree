@@ -14,6 +14,7 @@ void init_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 	cl_event event_copy_nodes, event_copy_leaves;
 
 	tree_record->counters[0] = 0;
+	tree_record->counters[1] = 0;
 
 	PRINT(params)("-----------------------------------------------------\n");
 	PRINT(params)("Initializing OpenCL (platform_id=%i, device_id=%i)\n", params->platform_id, params->device_id);
@@ -101,6 +102,8 @@ void init_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 	check_cl_error(err, __FILE__, __LINE__);
 
 	tree_record->device_query_buffers_allocated = 0;
+
+
 	PRINT(params)("GPU initialized successfully!\n");
 
 }
@@ -199,6 +202,13 @@ void free_query_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 		check_cl_error(err, __FILE__, __LINE__);
 		err = clReleaseMemObject(tree_record->device_test_patterns_subset_tmp);
 		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_fr_indices);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_to_indices);
+		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_test_indices_removed_from_all_buffers);
+		check_cl_error(err, __FILE__, __LINE__);
+
 
 		tree_record->device_query_buffers_allocated = 0;
 	}
@@ -333,6 +343,20 @@ void allocate_memory_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *p
 	err |= clReleaseEvent(event_all_depths_idxs);
 	check_cl_error(err, __FILE__, __LINE__);
 
+	// fr_indices
+	tree_record->device_fr_indices = clCreateBuffer(tree_record->gpu_context,
+			CL_MEM_READ_ONLY, tree_record->nXtest * sizeof(INT_TYPE), NULL, &err);
+	check_cl_error(err, __FILE__, __LINE__);
+
+	// to_indices
+	tree_record->device_to_indices = clCreateBuffer(tree_record->gpu_context,
+			CL_MEM_READ_ONLY, tree_record->nXtest * sizeof(INT_TYPE), NULL, &err);
+	check_cl_error(err, __FILE__, __LINE__);
+
+	tree_record->device_test_indices_removed_from_all_buffers = clCreateBuffer(tree_record->gpu_context,
+			CL_MEM_READ_ONLY,  tree_record->nXtest * sizeof(INT_TYPE), NULL, &err);
+	check_cl_error(err, __FILE__, __LINE__);
+
 	tree_record->device_query_buffers_allocated = 1;
 
 	PRINT(params)("GPU memory allocated successfully!\n");
@@ -374,16 +398,13 @@ void process_all_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) 
 
 void process_buffers_brute_force_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params, INT_TYPE all_brute) {
 
-	START_MY_TIMER(tree_record->timers + 11);
-
 	// test indices and leaf bounds
+	START_MY_TIMER(tree_record->timers + 11);
 	INT_TYPE *tindices_removed = (INT_TYPE*) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE *fr_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE *to_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
-
-	INT_TYPE n_tindices_removed = retrieve_indices_from_buffers_gpu(tree_record, params, all_brute, tindices_removed,
-			fr_indices, to_indices);
-
+	INT_TYPE n_tindices_removed = retrieve_indices_from_buffers_gpu(tree_record, params, all_brute, tindices_removed, fr_indices, to_indices);
+	//printf("Removing %i test indices from buffers ...\n", n_tindices_removed);
 	STOP_MY_TIMER(tree_record->timers + 11);
 
 	START_MY_TIMER(tree_record->timers + 18);
@@ -462,15 +483,14 @@ void process_buffers_brute_force_in_chunks_gpu(TREE_RECORD *tree_record, TREE_PA
 	INT_TYPE chunk_start = 0;
 	cl_mem current_train_patterns_chunk;
 
-	// initiate first copy operation (chunk_start + n_patts_per_chunk < tree_record->nXtrain)
-	//INT_TYPE current_chunk_id = TRAIN_CHUNK_0;
-	//copy_train_patterns_to_device(tree_record, params, current_chunk_id, chunk_start,
-	//		chunk_start + tree_record->n_patts_per_chunk);
+	// first chunk is copied in the initialization phase or at the end of the previous call
 
 	// retrieve test indices that should be part of the current chunk
 	INT_TYPE *tindices_chunk = (INT_TYPE*) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE *fr_indices_chunk = (INT_TYPE*) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE *to_indices_chunk = (INT_TYPE*) malloc(tree_record->nXtest * sizeof(INT_TYPE));
+
+	INT_TYPE last_processed_tindex = 0;
 
 	while (chunk_start < tree_record->nXtrain) {
 
@@ -486,12 +506,11 @@ void process_buffers_brute_force_in_chunks_gpu(TREE_RECORD *tree_record, TREE_PA
 			chunk_next_end = tree_record->nXtrain;
 		}
 
+		START_MY_TIMER(tree_record->timers + 23);
 		// prepare chunk of test indices with associated bounds
-		// TODO: start with last index of previous chunk, not i=0
 		INT_TYPE n_tindices_chunk = 0;
-		for (i = 0; i < n_tindices_removed; i++) {
-
-			if (!all_brute) {
+		if (!all_brute) {
+			for (i = last_processed_tindex; i < n_tindices_removed; i++) {
 				// three cases
 				if ((fr_indices[i] >= chunk_start) && (to_indices[i] <= chunk_end)) {
 					tindices_chunk[n_tindices_chunk] = tindices_removed[i];
@@ -509,8 +528,10 @@ void process_buffers_brute_force_in_chunks_gpu(TREE_RECORD *tree_record, TREE_PA
 					to_indices_chunk[n_tindices_chunk] = to_indices[i];
 					n_tindices_chunk++;
 				}
-
-			} else {
+			}
+			last_processed_tindex = n_tindices_chunk;
+		} else {
+			for (i = 0; i < n_tindices_removed; i++) {
 				tindices_chunk[n_tindices_chunk] = tindices_removed[i];
 				fr_indices_chunk[n_tindices_chunk] = chunk_start;
 				to_indices_chunk[n_tindices_chunk] = chunk_end;
@@ -524,6 +545,7 @@ void process_buffers_brute_force_in_chunks_gpu(TREE_RECORD *tree_record, TREE_PA
 		} else {
 			current_train_patterns_chunk = tree_record->device_train_patterns_chunk_1;
 		}
+		STOP_MY_TIMER(tree_record->timers + 23);
 
 		// define a new brute force flag: if processed in chunks,
 		// then one should NOT do brute force in the remaining chunks
@@ -532,6 +554,7 @@ void process_buffers_brute_force_in_chunks_gpu(TREE_RECORD *tree_record, TREE_PA
 			do_all_brute = 0;
 		}
 
+		START_MY_TIMER(tree_record->timers + 24);
 		if (n_tindices_chunk > 0) {
 			do_brute_force_all_leaves_FIRST_gpu(tindices_chunk, n_tindices_chunk, fr_indices_chunk, to_indices_chunk,
 					tree_record, params, chunk_end - chunk_start, current_train_patterns_chunk, chunk_offset,
@@ -555,6 +578,7 @@ void process_buffers_brute_force_in_chunks_gpu(TREE_RECORD *tree_record, TREE_PA
 
 		chunk_start += tree_record->n_patts_per_chunk;
 		tree_record->current_chunk_id = (tree_record->current_chunk_id + 1) % 2;
+		STOP_MY_TIMER(tree_record->timers + 24);
 
 	}
 
@@ -581,34 +605,24 @@ void do_brute_force_all_leaves_FIRST_gpu(INT_TYPE *test_indices,
 	cl_event event;
 	cl_event event1, event_fr, event_to;
 
+	START_MY_TIMER(tree_record->timers + 25);
+
 	if (all_brute) {
 		PRINT(params)("Starting final brute-force phase ...\n");
 		fflush(stdout);
 		START_MY_TIMER(tree_record->timers + 20);
 	}
 
-	// generate test_indices buffer on GPU
-	tree_record->device_test_indices_removed_from_all_buffers = clCreateBuffer(tree_record->gpu_context,
-			CL_MEM_READ_ONLY, n_test_indices * sizeof(INT_TYPE), NULL, &err);
-	check_cl_error(err, __FILE__, __LINE__);
+	// write data to buffers
 	err = clEnqueueWriteBuffer(tree_record->gpu_command_queue,
 			tree_record->device_test_indices_removed_from_all_buffers, CL_FALSE, 0,
 			n_test_indices * sizeof(INT_TYPE), test_indices, 0, NULL, &event1);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	// fr_indices
-	tree_record->device_fr_indices = clCreateBuffer(tree_record->gpu_context,
-			CL_MEM_READ_ONLY, n_test_indices * sizeof(INT_TYPE), NULL, &err);
-	check_cl_error(err, __FILE__, __LINE__);
-
-	// to_indices
-	tree_record->device_to_indices = clCreateBuffer(tree_record->gpu_context,
-			CL_MEM_READ_ONLY, n_test_indices * sizeof(INT_TYPE), NULL, &err);
-	check_cl_error(err, __FILE__, __LINE__);
-
 	err = clEnqueueWriteBuffer(tree_record->gpu_command_queue, tree_record->device_fr_indices, CL_FALSE, 0,
 			n_test_indices * sizeof(INT_TYPE), fr_indices, 0, NULL, &event_fr);
 	check_cl_error(err, __FILE__, __LINE__);
+
 	err = clEnqueueWriteBuffer(tree_record->gpu_command_queue, tree_record->device_to_indices, CL_FALSE, 0,
 			n_test_indices * sizeof(INT_TYPE), to_indices, 0, NULL, &event_to);
 	check_cl_error(err, __FILE__, __LINE__);
@@ -685,8 +699,6 @@ void do_brute_force_all_leaves_FIRST_gpu(INT_TYPE *test_indices,
 	err |= clReleaseEvent(event_to);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	START_MY_TIMER(tree_record->timers + 14);
-
 	cl_command_queue cmd_queue_chunk;
 	if (current_chunk == TRAIN_CHUNK_0) {
 		cmd_queue_chunk = tree_record->gpu_command_queue_chunk_0;
@@ -719,6 +731,14 @@ void do_brute_force_all_leaves_FIRST_gpu(INT_TYPE *test_indices,
 	size_t global_size_nn[] = { WORKGROUP_SIZE_BRUTE * ((INT_TYPE) n_instances_chunk / WORKGROUP_SIZE_BRUTE) + WORKGROUP_SIZE_BRUTE };
 	size_t localSize_nn[] = { WORKGROUP_SIZE_BRUTE };
 
+	// wait for chunk to be ready for processing
+	START_MY_TIMER(tree_record->timers + 22);
+	err = clFinish(cmd_queue_chunk);
+	check_cl_error(err, __FILE__, __LINE__);
+	STOP_MY_TIMER(tree_record->timers + 22);
+
+	STOP_MY_TIMER(tree_record->timers + 25);
+	START_MY_TIMER(tree_record->timers + 14);
 	while (chunk_start < n_test_indices){
 
 		INT_TYPE test_indices_offset = chunk_start;
@@ -771,6 +791,7 @@ void do_brute_force_all_leaves_SECOND_gpu(INT_TYPE *test_indices,
 	check_cl_error(err, __FILE__, __LINE__);
 
 	STOP_MY_TIMER(tree_record->timers + 14);
+	START_MY_TIMER(tree_record->timers + 26);
 	/********************************************************************************************/
 
 	/************************************* UPDATE DISTANCES *************************************/
@@ -802,14 +823,18 @@ void do_brute_force_all_leaves_SECOND_gpu(INT_TYPE *test_indices,
 	/********************************************************************************************/
 
 	// free memory
-	clReleaseMemObject(tree_record->device_test_indices_removed_from_all_buffers);
-	clReleaseMemObject(tree_record->device_fr_indices);
-	clReleaseMemObject(tree_record->device_to_indices);
+	START_MY_TIMER(tree_record->timers + 27);
+
+
+	tree_record->counters[1]++;
+	STOP_MY_TIMER(tree_record->timers + 27);
 
 	if (all_brute) {
 		PRINT(params)("Final brute-force done!\n");
 		STOP_MY_TIMER(tree_record->timers + 20);
 	}
+
+	STOP_MY_TIMER(tree_record->timers + 26);
 
 }
 

@@ -234,8 +234,8 @@ typedef struct tree_record {
 	cl_mem device_test_indices_removed_from_all_buffers; // n_test_indices * sizeof(INT_TYPE)
 	cl_mem device_all_next_indices; // tree_record->approx_number_of_avail_buffer_slots * sizeof(INT_TYPE)
 	cl_mem device_ret_vals; // tree_record->approx_number_of_avail_buffer_slots * sizeof(INT_TYPE)
-	cl_mem device_fr_indices; // n_test_indices * sizeof(INT_TYPE)
-	cl_mem device_to_indices; // n_test_indices * sizeof(INT_TYPE)
+	cl_mem device_fr_indices; // nXtest * sizeof(INT_TYPE)
+	cl_mem device_to_indices; // nXtest * sizeof(INT_TYPE)
 
 	// Memory Consumption (roughly)
 	// train: 2* n_train_chunks * dXtrain * sizeof(FLOAT_TYPE)
@@ -249,7 +249,7 @@ typedef struct tree_record {
 
 	int device_query_buffers_allocated;
 
-	TIMER timers[25];
+	TIMER timers[30];
 	INT_TYPE counters[10];
 
 } TREE_RECORD;

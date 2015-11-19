@@ -67,7 +67,7 @@ void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain,
 		tree_record->leaves_initial_buffer_sizes = 128;
 		PRINT(params)("Warning: tree depth %i might be too large (memory consumption)!", params->tree_depth);
 	} else {
-		tree_record->leaves_initial_buffer_sizes = pow(2, 23 - params->tree_depth);
+		tree_record->leaves_initial_buffer_sizes = pow(2, 24 - params->tree_depth);
 	}
 
 	// memory needed for storing training data (in bytes)
@@ -92,11 +92,11 @@ void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain,
 
 
 	// we empty a buffer as soon as it has reached a certain filling status (here: 50%)
-	tree_record->leaves_buffer_sizes_threshold = 0.6 * tree_record->leaves_initial_buffer_sizes;
+	tree_record->leaves_buffer_sizes_threshold = 0.9 * tree_record->leaves_initial_buffer_sizes;
 
 	// the amount of indices removed from both queues (input and reinsert) in each round; has to
 	// be reasonably large to provide sufficient work for a call to FIND_LEAF_IDX_BATCH
-	tree_record->approx_number_of_avail_buffer_slots = 5 * tree_record->leaves_initial_buffer_sizes;
+	tree_record->approx_number_of_avail_buffer_slots = 10 * tree_record->leaves_initial_buffer_sizes;
 
 	PRINT(params)("Number of nodes (internal and leaves) in the top tree: %i\n",
 			tree_record->n_nodes + tree_record->n_leaves);
@@ -307,8 +307,17 @@ void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
 	PRINT(params)("(I.B)  Do brute-force (do_brute.../process_buffers_...chunks_gpu : \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 18));
 	PRINT(params)("(I.B.1) -> Elapsed time for clEnqueueWriteBuffer (INTERLEAVED): \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 19));
 	PRINT(params)("(I.B.1) -> Elapsed time for memcpy (INTERLEAVED): \t\t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 21));
+	PRINT(params)("(I.B.1) -> Elapsed time for waiting for chunk (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 22));
 	PRINT(params)("(I.B.2) -> Number of copy calls: %i\n", tree_record->counters[0]);
 
+	if (!training_chunks_inactive(tree_record, params)) {
+		PRINT(params)("(I.B.4) -> Overhead distributing indices to chunks (in seconds): \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 23));
+		PRINT(params)("(I.B.5) -> Processing of whole chunk (all three phases, in seconds): \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 24));
+		PRINT(params)("(I.B.6) -> Processing of chunk before brute (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 25));
+		PRINT(params)("(I.B.7) -> Processing of chunk after brute (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 26));
+		PRINT(params)("(I.B.8) -> Processing of chunk after brute, buffer release (in seconds): \t%2.10f\n", GET_MY_TIMER(tree_record->timers + 27));
+		PRINT(params)("(I.B.9) -> Number of release buffer calls: %i\n", tree_record->counters[0]);
+	}
 	if (USE_GPU) {
 
 		PRINT(params)("(I.B.3)   -> Elapsed time for TEST_SUBSET (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 13));
@@ -319,6 +328,7 @@ void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
 				- GET_MY_TIMER(tree_record->timers + 14)
 		    	- GET_MY_TIMER(tree_record->timers + 15)
 				- GET_MY_TIMER(tree_record->timers + 13));
+
 
 	}
 
@@ -342,8 +352,7 @@ void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
 			GET_MY_TIMER(tree_record->timers + 2) - GET_MY_TIMER(tree_record->timers + 12)
 					- GET_MY_TIMER(tree_record->timers + 16));
 	PRINT(params)("\n");
-	PRINT(params)(
-			"-----------------------------------------------------------------------------------------------------------------------------\n");
+	PRINT(params)("-----------------------------------------------------------------------------------------------------------------------------\n");
 
 	// free all allocated memory related to querying
 	for (i = 0; i < tree_record->n_leaves; i++) {
