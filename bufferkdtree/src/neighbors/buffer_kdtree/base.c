@@ -71,7 +71,9 @@ void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain,
 	}
 
 	// memory needed for storing training data (in bytes)
-	double device_mem_bytes = tree_record->device_infos.device_mem_bytes;
+	double device_mem_bytes = (double)tree_record->device_infos.device_mem_bytes;
+	double device_max_alloc_bytes = (double)tree_record->device_infos.device_max_alloc_bytes;
+
 	double train_mem_bytes = get_raw_train_mem_device_bytes(tree_record, params);
 	PRINT(params)("Memory needed for all training patterns: %f (GB)\n", train_mem_bytes / MEM_GB);
 
@@ -329,7 +331,6 @@ void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
 		    	- GET_MY_TIMER(tree_record->timers + 15)
 				- GET_MY_TIMER(tree_record->timers + 13));
 
-
 	}
 
 	PRINT(params)("(II)   FIND_LEAF_IDX_BATCH : \t\t\t\t\t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 16));
@@ -404,13 +405,19 @@ void extern_free_query_buffers(TREE_RECORD *tree_record, TREE_PARAMETERS *params
 long get_max_nXtest_extern(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
 	long device_mem_bytes = tree_record->device_infos.device_mem_bytes;
-	//double test_mem_bytes = get_test_tmp_mem_device_bytes(tree_record, params);
 
-	double X = sizeof(FLOAT_TYPE) * (2 * tree_record->dXtrain + 2 * params->n_neighbors);
-	X += sizeof(INT_TYPE) * (2 * params->n_neighbors + params->tree_depth + 2);
-	X += sizeof(INT_TYPE) * 3;
+	// w.r.t. to total memory consumption (see types.h)
+	double total_test_mem = sizeof(FLOAT_TYPE) * (2 * tree_record->dXtrain + 2 * params->n_neighbors);
+	total_test_mem += sizeof(INT_TYPE) * (2 * params->n_neighbors + params->tree_depth + 2);
+	total_test_mem += sizeof(INT_TYPE) * 3;
+	long n_max_total = (long) ((device_mem_bytes * params->allowed_test_mem_percent - 5E6 * sizeof(INT_TYPE)) / total_test_mem);
 
-	return (long) ((device_mem_bytes * params->allowed_test_mem_percent - 5E6 * sizeof(INT_TYPE)) / X);
+	// per single buffer
+	long device_max_alloc = tree_record->device_infos.device_max_alloc_bytes;
+	long n_max_buffer = device_max_alloc / (MAX(tree_record->dXtrain, params->n_neighbors) * sizeof(FLOAT_TYPE));
+	n_max_buffer = (long) (0.33 * (double)n_max_buffer);
+
+	return MIN(n_max_total, n_max_buffer);
 
 }
 

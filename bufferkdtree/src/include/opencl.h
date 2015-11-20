@@ -27,6 +27,7 @@
 
 typedef struct {
 	long device_mem_bytes;
+	long device_max_alloc_bytes;
 } DEVICE_INFOS;
 
 #define ERROR_NO_PLATFORMS -1

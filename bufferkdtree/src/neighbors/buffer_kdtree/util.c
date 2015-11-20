@@ -295,6 +295,28 @@ double get_test_tmp_mem_device_bytes(TREE_RECORD *tree_record, TREE_PARAMETERS *
 	return mem;
 }
 
+
+/* --------------------------------------------------------------------------------
+ * Returns the number of bytes needed by the largest single training buffer
+ * --------------------------------------------------------------------------------
+ */
+double get_train_max_buffer_device_bytes(TREE_RECORD *tree_record, TREE_PARAMETERS *params){
+
+	double ntrain = (double) (tree_record->nXtrain / params->n_train_chunks);
+	return ntrain * tree_record->dXtrain * sizeof(FLOAT_TYPE);
+
+}
+
+/* --------------------------------------------------------------------------------
+ * Returns the number of bytes needed by the largest single test buffer
+ * --------------------------------------------------------------------------------
+ */
+double get_test_max_buffer_device_bytes(TREE_RECORD *tree_record, TREE_PARAMETERS *params){
+
+	return tree_record->nXtest * MAX(tree_record->dXtrain, params->n_neighbors) * sizeof(FLOAT_TYPE);
+
+}
+
 double get_total_mem_device_bytes(TREE_RECORD *tree_record, TREE_PARAMETERS *params){
 
 	double mem_train = get_train_mem_with_chunks_device_bytes(tree_record, params);

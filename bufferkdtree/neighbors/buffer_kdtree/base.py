@@ -44,6 +44,9 @@ class DeviceQueryThread(threading.Thread):
                                                  self.tree_record, self.tree_params)
         else:
             
+            if self.verbose > 0:
+                print("Processing queries in chunks due to memory constraints on the device ...")   
+                         
             # split up in equal-sized chunks
             n_chunk = int(math.ceil(n_total / n_test_max))
             chunk_size = int(math.ceil(n_total / n_chunk))

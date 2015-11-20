@@ -166,6 +166,10 @@ void free_train_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 	err = clReleaseMemObject(tree_record->device_leave_bounds);
 	check_cl_error(err, __FILE__, __LINE__);
 
+	free_train_patterns_device(tree_record, params, TRAIN_CHUNK_0);
+	if (!training_chunks_inactive(tree_record, params)) {
+		free_train_patterns_device(tree_record, params, TRAIN_CHUNK_1);
+	}
 }
 
 /* --------------------------------------------------------------------------------
@@ -175,12 +179,6 @@ void free_train_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 void free_query_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
 	cl_int err;
-
-	free_train_patterns_device(tree_record, params, TRAIN_CHUNK_0);
-
-	if (!training_chunks_inactive(tree_record, params)) {
-		free_train_patterns_device(tree_record, params, TRAIN_CHUNK_1);
-	}
 
 	if (tree_record->device_query_buffers_allocated == 1){
 
@@ -404,7 +402,7 @@ void process_buffers_brute_force_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *
 	INT_TYPE *fr_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE *to_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE n_tindices_removed = retrieve_indices_from_buffers_gpu(tree_record, params, all_brute, tindices_removed, fr_indices, to_indices);
-	//printf("Removing %i test indices from buffers ...\n", n_tindices_removed);
+	printf("Removing %i test indices from buffers ...\n", n_tindices_removed);
 	STOP_MY_TIMER(tree_record->timers + 11);
 
 	START_MY_TIMER(tree_record->timers + 18);
@@ -671,8 +669,7 @@ void do_brute_force_all_leaves_FIRST_gpu(INT_TYPE *test_indices,
 
 	// set kernel parameters: retrieve_dist_kernel
 	err |= clSetKernelArg(tree_record->retrieve_dist_kernel, 0, sizeof(INT_TYPE), &n_test_indices);
-	err |= clSetKernelArg(tree_record->retrieve_dist_kernel, 1, sizeof(cl_mem),
-			&(tree_record->device_test_indices_removed_from_all_buffers));
+	err |= clSetKernelArg(tree_record->retrieve_dist_kernel, 1, sizeof(cl_mem), &(tree_record->device_test_indices_removed_from_all_buffers));
 	err |= clSetKernelArg(tree_record->retrieve_dist_kernel, 2, sizeof(cl_mem), &(tree_record->device_d_mins));
 	err |= clSetKernelArg(tree_record->retrieve_dist_kernel, 3, sizeof(cl_mem), &(tree_record->device_idx_mins));
 	err |= clSetKernelArg(tree_record->retrieve_dist_kernel, 4, sizeof(cl_mem), &(tree_record->device_dist_mins_tmp));
