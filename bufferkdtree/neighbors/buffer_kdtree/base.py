@@ -108,8 +108,8 @@ class BufferKDTreeNN(object):
                  use_gpu=True, \
                  n_train_chunks=1, \
                  plat_dev_ids={0:[0]}, \
-                 allowed_train_mem_percent_chunk=0.2, \
-                 allowed_test_mem_percent=0.8, \
+                 allowed_train_mem_percent_chunk=0.15, \
+                 allowed_test_mem_percent=0.55, \
                  n_jobs=1, \
                  verbose=0):
         """ Model for unsupervised nearest neighbor search (buffer k-d-trees).
@@ -265,7 +265,7 @@ class BufferKDTreeNN(object):
                                                        self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], \
                                                        kernel_sources_dir, self.verbose, wrapper_tree_params)
                 wrapper_tree_record = self._get_wrapper_module().TREE_RECORD()
-                                
+                 
                 # store records
                 self.wrapper_instances[platform_id][device_id] = {}
                 self.wrapper_instances[platform_id][device_id]['tree_params'] = wrapper_tree_params

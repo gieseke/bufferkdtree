@@ -402,7 +402,7 @@ void process_buffers_brute_force_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *
 	INT_TYPE *fr_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE *to_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE n_tindices_removed = retrieve_indices_from_buffers_gpu(tree_record, params, all_brute, tindices_removed, fr_indices, to_indices);
-	printf("Removing %i test indices from buffers ...\n", n_tindices_removed);
+	//printf("Removing %i test indices from buffers ...\n", n_tindices_removed);
 	STOP_MY_TIMER(tree_record->timers + 11);
 
 	START_MY_TIMER(tree_record->timers + 18);

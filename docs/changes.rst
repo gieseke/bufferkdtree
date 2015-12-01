@@ -3,10 +3,11 @@
 Changes
 =======
 
-Release 1.1.0 (November 2015)
+Release 1.1 (Dezember 2015)
 -----------------------------
 * Fixed wrong parameter assignment in 'kneighbors' method of both neighbors/kd_tree/base.py and neighbors/buffer_kdtree/base.py
 * Added Multi-GPU support to brute-force approach (for benchmark purposes)
+* Adapted parameter settings for buffer k-d tree implementation
 * Added benchmark example
 
 Release 1.0.2 (September 2015)

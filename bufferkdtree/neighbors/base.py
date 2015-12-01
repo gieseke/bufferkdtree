@@ -59,12 +59,12 @@ class NearestNeighbors(object):
         plat_dev_ids={0:[0,1]} makes use of platform 0 and
         the first two devices.
         
-    allowed_train_mem_percent_chunk : float, optional (default=0.2)
+    allowed_train_mem_percent_chunk : float, optional (default=0.15)
         Passed to the 'buffer_kd_tree' implementation.
         The amount of memory (OpenCL) used for the 
         training patterns (in percent).
          
-    allowed_test_mem_percent : float, optional (default=0.8)
+    allowed_test_mem_percent : float, optional (default=0.55)
         Passed to the 'buffer_kd_tree' implementation.
         The amount of memory (OpenCL) used for the 
         test/query patterns (in percent).
@@ -113,8 +113,8 @@ class NearestNeighbors(object):
                  splitting_type="cyclic", \
                  n_train_chunks=1, \
                  plat_dev_ids={0:[0]}, \
-                 allowed_train_mem_percent_chunk=0.2, \
-                 allowed_test_mem_percent=0.8, \
+                 allowed_train_mem_percent_chunk=0.15, \
+                 allowed_test_mem_percent=0.55, \
                  n_jobs=1, \
                  verbose=0, \
                  **kwargs):
