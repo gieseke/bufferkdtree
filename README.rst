@@ -2,9 +2,9 @@
 bufferkdtree
 ============
 
-The bufferkdtree library is a Python library that aims at accelerating nearest neighbor computations using both k-d trees and many-core devices (e.g., GPUs) via the `OpenCL <https://www.khronos.org/opencl/OpenCL>`_ framework. 
+The bufferkdtree package is a Python library that aims at accelerating nearest neighbor computations using both k-d trees and modern many-core devices such as graphics processing units (GPUs). The implementation is based on `OpenCL <https://www.khronos.org/opencl/OpenCL>`_. 
 
-The buffer k-d tree technique can be seen as an intermediate version between a standard parallel k-d tree traversal and massively-parallel brute-force implementations for nearest neigbhor search. The implementation is well-suited for data sets with a large reference set (e.g., 1,000,000 points) and a huge query set (e.g., 10,000,000 points) with a moderate-sized feature space (e.g., from d=5 to d=25).
+The implementation can be seen as an intermediate version between a standard parallel k-d tree traversal (on multi-core systems) and a massively-parallel brute-force implementation for nearest neigbhor search. In particular, it makes use of the top of a standard k-d tree (which induces a spatial subdivision of the space) and resorts to a simple yet efficient brute-force implementation for processing chunks of "big" leaves. The implementation is well-suited for data sets with a large reference set (e.g., 1,000,000 points) and a huge query set (e.g., 10,000,000 points) given a moderate dimensionality of the search space (e.g., from d=5 to d=25).
 
 =============
 Documentation
@@ -16,15 +16,15 @@ See the `documentation <http://bufferkdtree.readthedocs.org>`_ for details and e
 Quickstart
 ==========
 
-The package can be installed via pip via::
+The package can easily be installed via pip via::
 
   pip install bufferkdtree
 
-To install the package from the sources, get the current version via::
+To install the package from the sources, first get the current version via::
 
   git clone https://github.com/gieseke/bufferkdtree.git
 
-To install the package locally on a Linux system, use::
+Afterwards, on Linux systems, you can install the package locally for the current user via::
 
   python setup.py install --user
 
@@ -32,8 +32,6 @@ On Debian/Ubuntu systems, the package can be installed globally for all users vi
 
   python setup.py build
   sudo python setup.py install
-
-To run the tests, type ``nosetests -v bufferkdtree`` from *outside* the source directory.
 
 ============
 Dependencies
