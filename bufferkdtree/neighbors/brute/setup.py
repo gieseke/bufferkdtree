@@ -33,7 +33,7 @@ def configuration(parent_package='', top_path=None):
     # CPU + FLOAT
     config.add_extension("_wrapper_cpu_float", \
                                     sources=["swig/cpu_float.i"] + source_files,
-                                    swig_opts=['-modern'],
+                                    swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
                                         ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
@@ -42,12 +42,12 @@ def configuration(parent_package='', top_path=None):
                                         ('TIMING', 1)
                                     ],
                                     libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     # CPU + DOUBLE
     config.add_extension("_wrapper_cpu_double", \
                                     sources=["swig/cpu_double.i"] + source_files,
-                                    swig_opts=['-modern'],
+                                    swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
                                         ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
@@ -56,12 +56,12 @@ def configuration(parent_package='', top_path=None):
                                         ('TIMING', 1)
                                     ],
                                     libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     # GPU + FLOAT
     config.add_extension("_wrapper_gpu_opencl_float", \
                                     sources=["swig/gpu_float.i"] + source_files,
-                                    swig_opts=['-modern'],
+                                    swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
                                         ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
@@ -71,12 +71,12 @@ def configuration(parent_package='', top_path=None):
                                         ('WORKGROUP_SIZE', 256)
                                     ],
                                     libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     # GPU + DOUBLE
     config.add_extension("_wrapper_gpu_opencl_double", \
                                     sources=["swig/gpu_double.i"] + source_files,
-                                    swig_opts=['-modern'],
+                                    swig_opts=['-modern', '-threads'],
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
                                         ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/brute")),
@@ -86,7 +86,7 @@ def configuration(parent_package='', top_path=None):
                                         ('WORKGROUP_SIZE', 256)
                                     ],
                                     libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     return config
 

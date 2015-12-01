@@ -19,27 +19,26 @@
 #include "util.h"
 #include "kdtree.h"
 #include "cpu.h"
-#include "extern.h"
 #include "gpu_opencl.h"
 
 #if USE_GPU > 0
 #define PROCESS_ALL_BUFFERS process_all_buffers_gpu
 #define FIND_LEAF_IDX_BATCH find_leaf_idx_batch_gpu
-#define INIT_OPENCL_DEVICES init_opencl_devices
-#define ALLOCATE_MEMORY_OPENCL_DEVICES allocate_memory_opencl_devices
-#define FREE_OPENCL_DEVICES free_opencl_devices
+#define INIT_OPENCL_DEVICES(tree_record, params); init_opencl_devices(tree_record, params);
+#define ALLOCATE_MEMORY_OPENCL_DEVICES(tree_record, params); allocate_memory_opencl_devices(tree_record, params);
+#define FREE_OPENCL_DEVICES(tree_record, params); free_opencl_devices(tree_record, params);
 #define GET_DISTANCES_AND_INDICES get_distances_and_indices_gpu
 #define WRITE_SORTED_TRAINING_PATTERNS write_sorted_training_patterns_gpu
-#define INIT_ARRAYS
+#define INIT_ARRAYS(tree_record, params);
 #else
 #define PROCESS_ALL_BUFFERS process_all_buffers_cpu
 #define FIND_LEAF_IDX_BATCH find_leaf_idx_batch_cpu
-#define INIT_OPENCL_DEVICES
-#define ALLOCATE_MEMORY_OPENCL_DEVICES
-#define FREE_OPENCL_DEVICES
+#define INIT_OPENCL_DEVICES(tree_record, params);
+#define ALLOCATE_MEMORY_OPENCL_DEVICES(tree_record, params);
+#define FREE_OPENCL_DEVICES(tree_record, params);
 #define GET_DISTANCES_AND_INDICES get_distances_and_indices_cpu
 #define WRITE_SORTED_TRAINING_PATTERNS write_sorted_training_patterns_cpu
-#define INIT_ARRAYS init_arrays_cpu
+#define INIT_ARRAYS(tree_record, params); init_arrays_cpu(tree_record, params);
 #endif
 
 #define PRINT(params) if ((params->verbosity_level) > 0) printf

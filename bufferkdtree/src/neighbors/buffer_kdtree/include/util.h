@@ -118,5 +118,18 @@ inline void swap_elements(void *p1, void *p2, int size_elt);
  */
 inline void copy_element(void *dest, const void *src, INT_TYPE size_elt);
 
+/* --------------------------------------------------------------------------------
+ * Returns the number of bytes needed by the largest single training buffer
+ * --------------------------------------------------------------------------------
+ */
+double get_train_max_buffer_device_bytes(TREE_RECORD *tree_record, TREE_PARAMETERS *params);
+
+/* --------------------------------------------------------------------------------
+ * Returns the number of bytes needed by the largest single test buffer
+ * --------------------------------------------------------------------------------
+ */
+double get_test_max_buffer_device_bytes(TREE_RECORD *tree_record, TREE_PARAMETERS *params);
+
+
 #endif /* NEIGHBORS_BUFFER_KD_TREE_UTIL_H_ */
 

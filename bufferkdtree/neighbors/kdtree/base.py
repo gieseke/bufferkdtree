@@ -6,6 +6,8 @@ Created on 15.09.2015
 
 import math
 import time
+import copy
+import warnings
 import numpy as np
 import wrapper_cpu_float, wrapper_cpu_double
 
@@ -55,7 +57,7 @@ class KDTreeNN(object):
             if self.verbose > 0:
                 print("Exception occured while freeing external resources: " + unicode(e))
 
-    def get_params(self, deep=True):
+    def get_params(self):
         """ Get parameters for this estimator.
         
         Parameters
@@ -166,8 +168,8 @@ class KDTreeNN(object):
             X = np.ascontiguousarray(X)
             X = X.astype(self.numpy_dtype_float)
 
-        d_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_float)
-        idx_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_int)
+        d_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_float)
+        idx_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_int)
 
         self._get_wrapper_module().neighbors_extern(X, d_mins, idx_mins, self.wrapper_kdtree_struct, self.wrapper_params_struct)
 
@@ -189,74 +191,6 @@ class KDTreeNN(object):
             return wrapper_cpu_double
         else:
             raise Exception("Unknown float_type: " + unicode(self.float_type))
-
-    def compute_optimal_tree_depth(self, Xtrain, Xtest, target="test", tree_depths=None):
-        """ Computes the optimal tree depth.
-        
-        Returns
-        -------
-        opt_height : int
-            The optimal tree depth based
-            on the target provided.
-        """
-        
-        max_depth = int(math.floor(math.log(len(Xtrain), 2)))
-
-        if tree_depths is None:
-            tree_depths = range(4, max_depth - 1)
-
-        runtimes = {}
-        
-        if target == "test":            
-            
-            for tree_depth in tree_depths:
-
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                new_model.fit(Xtrain)
-
-                start = time.time()
-                new_model.kneighbors(Xtest)
-                end = time.time()
-
-                if new_model.verbose:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start 
-        
-        elif target == "train":
-
-            for tree_depth in tree_depths:
-
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                start = time.time()
-                new_model.fit(Xtrain)
-                end = time.time()
-                
-                if new_model.verbose:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start 
-                
-        elif target == "both":
-            
-            for tree_depth in tree_depths:
-                            
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                start = time.time()
-                new_model.fit(Xtrain)
-                new_model.kneighbors(Xtest)
-                end = time.time()
-                
-                if self.verbose > 0:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start
-
-        else:
-
-            raise Exception("Unknown target: " + unicode(target))
-                                                                        
-        return min(runtimes, key=runtimes.get)    
     
     def _compute_final_tree_depth(self, n, leaf_size, tree_depth):
         """ Computes tree depth for kd tree.
@@ -281,7 +215,7 @@ class KDTreeNN(object):
         if tree_depth is not None:
 
             if tree_depth > d:
-                raise Warning("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
+                warnings.warn("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
                 return d
             else:
                 return tree_depth
@@ -295,7 +229,7 @@ class KDTreeNN(object):
 
             if d - subtr < 0:
                 # tree consisting of single leaf
-                raise Warning("tree_depth smaller than 0; setting tree_depth to 0")
+                warnings.warn("tree_depth smaller than 0; setting tree_depth to 0")
                 return 0
             else:
                 return d - subtr

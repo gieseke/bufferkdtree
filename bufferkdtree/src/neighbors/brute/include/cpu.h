@@ -18,43 +18,40 @@
 #include "util.h"
 #include "global.h"
 
-FLOAT_TYPE *cpu_X;
-FLOAT_TYPE *cpu_Ytrain;
-int cpu_nX;
-int cpu_dX;
-
 /* -------------------------------------------------------------------------------- 
  * Intializes components if needed.
  * --------------------------------------------------------------------------------
  */
-void init_cpu(void);
+void init_cpu(BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params);
 
 /* --------------------------------------------------------------------------------
  * Fits a model given the training data (and parameters)
  * -------------------------------------------------------------------------------- 
  */
-void fit_cpu(FLOAT_TYPE *Xtrain, int nXtrain, int dXtrain, Parameters *params);
+void fit_cpu(FLOAT_TYPE *Xtrain, int nXtrain, int dXtrain, \
+		BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params);
 
 /* --------------------------------------------------------------------------------
  * Does some clean up (before exiting the program).
  * --------------------------------------------------------------------------------
  */
-void free_resources_cpu(void);
+void free_resources_cpu(BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params);
 
 /* -------------------------------------------------------------------------------- 
  * Computes the neighbors (for test patterns)
  * -------------------------------------------------------------------------------- 
  */
-void neighbors_cpu(FLOAT_TYPE *Xtest, int nXtest, int dXtest, FLOAT_TYPE *d_mins,
-		int *idx_mins, Parameters *params);
+void neighbors_cpu(FLOAT_TYPE *Xtest, int nXtest, int dXtest, \
+		FLOAT_TYPE *d_mins, int *idx_mins, \
+		BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params);
 
 /* -------------------------------------------------------------------------------- 
  * Computes nearest neighbors for a single test instance.
  * -------------------------------------------------------------------------------- 
  */
-void compute_neighbors_single_instance_cpu(FLOAT_TYPE *Xtrain, int nXtrain,
-		int dim, FLOAT_TYPE *test_pattern, FLOAT_TYPE *d_min, int *idx_min,
-		int K);
+void compute_neighbors_single_instance_cpu(FLOAT_TYPE *Xtrain, int nXtrain, \
+		int dim, FLOAT_TYPE *test_pattern, FLOAT_TYPE *d_min, \
+		int *idx_min, int K);
 
 /* -------------------------------------------------------------------------------- 
  * Inserts the value pattern_dist with index pattern_idx in the list nearest_dist

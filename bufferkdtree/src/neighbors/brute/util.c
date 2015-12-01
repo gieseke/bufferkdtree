@@ -9,9 +9,8 @@
  * Sets default parameters.
  * --------------------------------------------------------------------------------
  */
-void set_default_parameters(Parameters *params) {
+void set_default_parameters(BRUTE_PARAMETERS *params) {
 
-	// default parameter values
 	params->n_neighbors = 10;
 	params->num_threads = 1;
 	params->verbosity_level = 1;
@@ -22,11 +21,10 @@ void set_default_parameters(Parameters *params) {
  * Checks parameters.
  * --------------------------------------------------------------------------------
  */
-void check_parameters(Parameters *params) {
+void check_parameters(BRUTE_PARAMETERS *params) {
 
-	// parameter checks
-	if ((params->n_neighbors < 1) || (params->n_neighbors > 50)) {
-		printf("Error: The parameter k must be > 0 and <= 50)\nExiting ...\n");
+	if ((params->n_neighbors < 1) || (params->n_neighbors > 100)) {
+		printf("Error: The parameter k must be > 0 and <= 100)\nExiting ...\n");
 		exit(1);
 	}
 

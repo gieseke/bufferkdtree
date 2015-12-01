@@ -14,10 +14,13 @@ __kernel void nearest_neighbors(__global FLOAT_TYPE* Xtrain,
 								__global FLOAT_TYPE* d_min,
 								__global int* idx_min,
 								int nXtrain, 
-								int nXtest) {
+								int nXtest,
+                                int chunk_start) {
 
 	// one thread is assigned to each test query
 	int test_idx = get_global_id(0);
+
+    test_idx = chunk_start + test_idx;
 
 	// no processing if >= nXtest
 	if (test_idx >= nXtest) {

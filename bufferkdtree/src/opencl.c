@@ -74,11 +74,12 @@ void init_opencl(cl_uint platform_number, cl_platform_id *platform,
 
 		printf("\nDetected %i devices(s) on platform with id %i.\n", num_devices, platform_number);
 
-		char name[512];
-		char version[512];
-		char driver[512];
+		char name[1024];
+		char version[1024];
+		char driver[1024];
 		cl_int num_compute_units;
 		cl_ulong mem_in_bytes;
+		cl_ulong max_buff_alloc_in_bytes;
 
 		for (i=0; i<num_devices; i++){
 
@@ -88,6 +89,8 @@ void init_opencl(cl_uint platform_number, cl_platform_id *platform,
 			err |= clGetDeviceInfo(devices[i], CL_DRIVER_VERSION, sizeof(driver), driver, NULL);
 			err |= clGetDeviceInfo(devices[i], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_int), &num_compute_units, NULL);
 			err |= clGetDeviceInfo(devices[i], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &mem_in_bytes, NULL);
+			err |= clGetDeviceInfo(devices[i], CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &max_buff_alloc_in_bytes, NULL);
+
 			check_cl_error(err, __FILE__, __LINE__);
 
 			printf(" - Name: %s\n", name);
@@ -95,6 +98,7 @@ void init_opencl(cl_uint platform_number, cl_platform_id *platform,
 			printf(" - Driver: %s\n", driver);
 			printf(" - Number of compute units: %i\n", num_compute_units);
 			printf(" - Size of memory (GB): %f\n", ((double)mem_in_bytes) / 1073741824);
+			printf(" - Maximum memory allocation (GB): %f\n", ((double)max_buff_alloc_in_bytes) / 1073741824);
 
 		}
 
@@ -217,30 +221,36 @@ int get_device_infos(cl_uint platform_number, cl_uint device_number, \
 
 	cl_int num_compute_units;
 	cl_ulong mem_in_bytes;
+	cl_ulong max_buff_alloc_in_bytes;
 
 	err = clGetDeviceInfo(devices[device_number], CL_DEVICE_NAME, sizeof(name), name, NULL);
 	err |= clGetDeviceInfo(devices[device_number], CL_DEVICE_VERSION, sizeof(version), version, NULL);
 	err |= clGetDeviceInfo(devices[device_number], CL_DRIVER_VERSION, sizeof(driver), driver, NULL);
 	err |= clGetDeviceInfo(devices[device_number], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_int), &num_compute_units, NULL);
 	err |= clGetDeviceInfo(devices[device_number], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &mem_in_bytes, NULL);
+	err |= clGetDeviceInfo(devices[device_number], CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &max_buff_alloc_in_bytes, NULL);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	if (device_infos != NULL){
 		device_infos->device_mem_bytes = (long) mem_in_bytes;
+		device_infos->device_max_alloc_bytes = (long) max_buff_alloc_in_bytes;
 	}
 
 	return 0;
 }
+
 
 /* --------------------------------------------------------------------------------
  * Checks for OpenCL error.
  * --------------------------------------------------------------------------------
  */
 void check_cl_error(cl_int err, const char *file, int line) {
+
 	if (err != CL_SUCCESS) {
-		printf("OpenCL error occurred: Errorcode=%d in file %s and line %d \n", err, file, line);
+		printf("An OpenCL error with code %i in file %s and line %i occurred ...\n", err, file, line);
 		exit(1);
 	}
+
 }
 
 /* --------------------------------------------------------------------------------

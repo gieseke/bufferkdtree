@@ -12,7 +12,7 @@
  * Intializes components if needed.
  * --------------------------------------------------------------------------------
  */
-void init_cpu(void){
+void init_cpu(BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params){
 
 }
 
@@ -20,11 +20,12 @@ void init_cpu(void){
  * Fits a model given the training data (and parameters)
  * -------------------------------------------------------------------------------- 
  */
-void fit_cpu(FLOAT_TYPE *Xtrain, int nXtrain, int dXtrain, Parameters *params) {
+void fit_cpu(FLOAT_TYPE *Xtrain, int nXtrain, int dXtrain, \
+		BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params) {
 
-	cpu_X = Xtrain;
-	cpu_nX = nXtrain;
-	cpu_dX = dXtrain;
+	brute_record->Xtrain = Xtrain;
+	brute_record->nXtrain = nXtrain;
+	brute_record->dXtrain = dXtrain;
 
 }
 
@@ -32,7 +33,7 @@ void fit_cpu(FLOAT_TYPE *Xtrain, int nXtrain, int dXtrain, Parameters *params) {
  * Does some clean up (before exiting the program).
  * --------------------------------------------------------------------------------
  */
-void free_resources_cpu(void) {
+void free_resources_cpu(BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params) {
 
 	// nothing to do
 
@@ -42,14 +43,13 @@ void free_resources_cpu(void) {
  * Computes the neighbors (for test patterns)
  * --------------------------------------------------------------------------------
  */
-void neighbors_cpu(FLOAT_TYPE *Xtest, int nXtest, int dXtest, FLOAT_TYPE *d_mins, int *idx_mins,
-		Parameters *params) {
+void neighbors_cpu(FLOAT_TYPE *Xtest, int nXtest, int dXtest,
+		FLOAT_TYPE *d_mins, int *idx_mins, BRUTE_RECORD *brute_record,
+		BRUTE_PARAMETERS *params) {
 
 	int i;
 
-	int dim = cpu_dX;
 	int K = params->n_neighbors;
-	int num_threads = params->num_threads;
 
 	for (i = 0; i < nXtest * K; i++) {
 		idx_mins[i] = 0;
@@ -57,14 +57,16 @@ void neighbors_cpu(FLOAT_TYPE *Xtest, int nXtest, int dXtest, FLOAT_TYPE *d_mins
 	}
 
 	// number of threads (for parallel CPU version)
-	omp_set_num_threads(num_threads);
+	omp_set_num_threads(params->num_threads);
 
 	// parallel querying (one thread per test instance): by parallelizing over this loop,
 	// the training patterns will be accessed by all threads (caching, share same elements)
 #pragma omp parallel for
 	for (i = 0; i < nXtest; i++) {
-		compute_neighbors_single_instance_cpu(cpu_X, cpu_nX, dim,
-				Xtest + i * dim, d_mins + i * K, idx_mins + i * K, K);
+		compute_neighbors_single_instance_cpu(brute_record->Xtrain, \
+				brute_record->nXtrain, brute_record->dXtrain, \
+				Xtest + i * brute_record->dXtrain, d_mins + i * K, \
+				idx_mins + i * K, K);
 	}
 
 
@@ -91,6 +93,7 @@ void compute_neighbors_single_instance_cpu(FLOAT_TYPE *Xtrain, int nXtrain,
  * -------------------------------------------------------------------------------- 
  */
 inline FLOAT_TYPE squared_dist_cpu(FLOAT_TYPE *a, FLOAT_TYPE *b, int dim) {
+
 	int j;
 	FLOAT_TYPE d = 0.0;
 	FLOAT_TYPE tmp;
@@ -99,6 +102,7 @@ inline FLOAT_TYPE squared_dist_cpu(FLOAT_TYPE *a, FLOAT_TYPE *b, int dim) {
 		d += tmp * tmp;
 	}
 	return d;
+
 }
 
 /* -------------------------------------------------------------------------------- 
@@ -108,7 +112,8 @@ inline FLOAT_TYPE squared_dist_cpu(FLOAT_TYPE *a, FLOAT_TYPE *b, int dim) {
  * -------------------------------------------------------------------------------- 
  */
 void insert_cpu(FLOAT_TYPE pattern_dist, int pattern_idx,
-FLOAT_TYPE *nearest_dist, int *nearest_idx, int K) {
+	FLOAT_TYPE *nearest_dist, int *nearest_idx, int K) {
+
 	int j = K - 1;
 
 	if (nearest_dist[j] <= pattern_dist)

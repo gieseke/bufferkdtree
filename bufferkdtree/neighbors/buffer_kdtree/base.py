@@ -8,7 +8,7 @@ from __future__ import division
 
 import os
 import math
-import time
+import warnings
 import numpy as np
 import threading 
 import wrapper_cpu_float, wrapper_cpu_double
@@ -44,6 +44,9 @@ class DeviceQueryThread(threading.Thread):
                                                  self.tree_record, self.tree_params)
         else:
             
+            if self.verbose > 0:
+                print("Processing queries in chunks due to memory constraints on the device ...")   
+                         
             # split up in equal-sized chunks
             n_chunk = int(math.ceil(n_total / n_test_max))
             chunk_size = int(math.ceil(n_total / n_chunk))
@@ -105,8 +108,8 @@ class BufferKDTreeNN(object):
                  use_gpu=True, \
                  n_train_chunks=1, \
                  plat_dev_ids={0:[0]}, \
-                 allowed_train_mem_percent_chunk=0.2, \
-                 allowed_test_mem_percent=0.8, \
+                 allowed_train_mem_percent_chunk=0.15, \
+                 allowed_test_mem_percent=0.55, \
                  n_jobs=1, \
                  verbose=0):
         """ Model for unsupervised nearest neighbor search (buffer k-d-trees).
@@ -148,7 +151,7 @@ class BufferKDTreeNN(object):
             if self.verbose > 0:
                 print("Exception occured while freeing external resources: " + unicode(e))
 
-    def get_params(self, deep=True):
+    def get_params(self):
         """ Get parameters for this estimator.
         
         Parameters
@@ -195,6 +198,10 @@ class BufferKDTreeNN(object):
         
         assert self.float_type in self.ALLOWED_FLOAT_TYPES
         assert self.use_gpu in self.ALLOWED_USE_GPU
+        
+        assert self.allowed_test_mem_percent > 0.0
+        assert self.allowed_train_mem_percent_chunk > 0.0
+        assert self.allowed_test_mem_percent + self.allowed_train_mem_percent_chunk <= 1.0
 
         # set float and int type
         self._set_internal_data_types()
@@ -258,7 +265,7 @@ class BufferKDTreeNN(object):
                                                        self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], \
                                                        kernel_sources_dir, self.verbose, wrapper_tree_params)
                 wrapper_tree_record = self._get_wrapper_module().TREE_RECORD()
-                                
+                 
                 # store records
                 self.wrapper_instances[platform_id][device_id] = {}
                 self.wrapper_instances[platform_id][device_id]['tree_params'] = wrapper_tree_params
@@ -279,15 +286,17 @@ class BufferKDTreeNN(object):
         # start all threads
         if self.verbose > 0:
             print("Starting all build threads ...")
+        
         for thread in threads:
             thread.start()
             
         # wait for all threads to be completed
         for thread in threads:
             thread.join()
+        
         if self.verbose > 0:
             print("All build threads finished!")          
-
+        
     def kneighbors(self, X=None, n_neighbors=None, return_distance=True):
         """ Finds the K-neighbors of a point.
         
@@ -332,9 +341,9 @@ class BufferKDTreeNN(object):
             X = np.ascontiguousarray(X)
             X = X.astype(self.numpy_dtype_float)
 
-        d_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_float)
-        idx_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_int)
-        
+        d_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_float)
+        idx_mins = np.zeros((X.shape[0], self.n_neighbors), dtype=self.numpy_dtype_int)
+                    
         if self.use_gpu == True:
             self._kneighbors_gpu(X, n_neighbors, d_mins, idx_mins)
         else:
@@ -352,7 +361,15 @@ class BufferKDTreeNN(object):
                                                     wrapper_tree_params)
     
     def _kneighbors_gpu(self, X, n_neighbors, d_mins, idx_mins):
-        
+
+        if self.n_neighbors > 50:
+            warnings.warn(
+                """
+                The performance of the buffer k-d tree implementation
+                might decrease for large 'n_neighbors' due to too much
+                local memory used by the threads. 
+                """)
+                    
         # split up queries over all devices
         n_total_devices = self._get_n_total_devices()
         n_chunk = int(math.ceil(len(X) / n_total_devices))
@@ -449,74 +466,6 @@ class BufferKDTreeNN(object):
                 return wrapper_cpu_double
         else:
             raise Exception("Unknown 'float_type'!")
-
-    def compute_optimal_tree_depth(self, Xtrain, Xtest, target="test", tree_depths=None):
-        """ Computes the optimal tree depth.
-        
-        Returns
-        -------
-        opt_height : int
-            The optimal tree depth based
-            on the target provided.
-        """
-        
-        max_depth = int(math.floor(math.log(len(Xtrain), 2)))
-
-        if tree_depths is None:
-            tree_depths = range(2, max_depth - 1)
-
-        runtimes = {}
-        
-        if target == "test":            
-            
-            for tree_depth in tree_depths:
-
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                new_model.fit(Xtrain)
-
-                start = time.time()
-                new_model.kneighbors(Xtest)
-                end = time.time()
-
-                if new_model.verbose:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start 
-        
-        elif target == "train":
-
-            for tree_depth in tree_depths:
-
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                start = time.time()
-                new_model.fit(Xtrain)
-                end = time.time()
-                
-                if new_model.verbose:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start 
-                
-        elif target == "both":
-            
-            for tree_depth in tree_depths:
-                            
-                new_model = eval(self.__class__.__name__)(**self.get_params())
-                new_model.tree_depth = tree_depth
-                start = time.time()
-                new_model.fit(Xtrain)
-                new_model.kneighbors(Xtest)
-                end = time.time()
-                
-                if self.verbose > 0:
-                    print("tree_depth %i -> %f" % (tree_depth, end - start))
-                runtimes[tree_depth] = end - start
-
-        else:
-
-            raise Exception("Unknown target: " + unicode(target))
-
-        return min(runtimes, key=runtimes.get)
     
     def _compute_final_tree_depth(self, n, leaf_size, tree_depth):
         """ Computes tree depth for kd tree.
@@ -543,12 +492,12 @@ class BufferKDTreeNN(object):
         if tree_depth is not None:
 
             if tree_depth > d:
-                raise Warning("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
+                warnings.warn("tree_depth %i too large (using smaller depth): %i.\n" % (tree_depth, d))
                 return d
             else:
                 return tree_depth
         else:
-            raise Exception("Warning: Tree depth has to be adapted for buffer k-d trees ...")
+            raise Exception("Tree depth has to be adapted for buffer k-d trees ...")
 
     def _set_internal_data_types(self):
         """ Set numpy float and int dtypes

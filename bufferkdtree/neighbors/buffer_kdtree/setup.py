@@ -57,7 +57,7 @@ def configuration(parent_package='', top_path=None):
                                         ('TIMING', TIMING)
                                     ],
                                     libraries=['OpenCL', 'gomp', 'm'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     # CPU + DOUBLE
     config.add_extension("_wrapper_cpu_double", \
@@ -70,7 +70,7 @@ def configuration(parent_package='', top_path=None):
                                         ('TIMING', TIMING)
                                     ],
                                     libraries=['OpenCL', 'gomp', 'm'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     # GPU + FLOAT
     config.add_extension("_wrapper_gpu_opencl_float", \
@@ -91,7 +91,7 @@ def configuration(parent_package='', top_path=None):
                                         ('WORKGROUP_SIZE_COPY_DISTS_INDICES', WORKGROUP_SIZE_COPY_DISTS_INDICES),
                                     ],
                                     libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     # GPU + DOUBLE
     config.add_extension("_wrapper_gpu_opencl_double", \
@@ -112,7 +112,7 @@ def configuration(parent_package='', top_path=None):
                                         ('WORKGROUP_SIZE_COPY_DISTS_INDICES', WORKGROUP_SIZE_COPY_DISTS_INDICES),
                                     ],
                                     libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-Wall'] + ['-I' + ipath for ipath in include_paths])
+                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     return config
 

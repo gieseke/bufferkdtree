@@ -5,10 +5,52 @@ Created on 15.09.2015
 '''
 
 import os
+import math
+import threading
+import warnings
 import numpy as np
 import wrapper_cpu_float, wrapper_cpu_double
 import wrapper_gpu_opencl_float, wrapper_gpu_opencl_double
 
+class DeviceQueryThread(threading.Thread):
+     
+    def __init__(self, wrapper_module, params, record, X, d_mins, idx_mins, start_idx, end_idx, verbose=0):
+ 
+        threading.Thread.__init__(self)
+        
+        self.wrapper_module = wrapper_module 
+        self.params = params
+        self.record = record
+        self.X = X
+        self.d_mins = d_mins
+        self.idx_mins = idx_mins
+        self.start_idx = start_idx
+        self.end_idx = end_idx
+        self.verbose = verbose
+ 
+    def run(self):
+        
+        self.wrapper_module.neighbors_extern(self.X[self.start_idx:self.end_idx], \
+                                             self.d_mins[self.start_idx:self.end_idx], \
+                                             self.idx_mins[self.start_idx:self.end_idx], \
+                                             self.record, self.params)
+        
+        
+class FitThread(threading.Thread):
+     
+    def __init__(self, wrapper_module, params, record, X):
+ 
+        threading.Thread.__init__(self)
+        
+        self.wrapper_module = wrapper_module 
+        self.params = params
+        self.record = record
+        self.X = X
+ 
+    def run(self):
+        
+        self.wrapper_module.fit_extern(self.X, self.record, self.params)
+            
 class BruteNN(object):
     """ Brute-force nearest neighbor computations.
     """
@@ -16,6 +58,11 @@ class BruteNN(object):
     ALLOWED_FLOAT_TYPES = ['float', 'double']
     ALLOWED_USE_GPU = [True, False]
 
+    OPENCL_ERROR_MAPPINGS = {-1:"ERROR_NO_PLATFORMS",
+                             - 2:"ERROR_INVALID_PLATFORMS",
+                             - 3:"ERROR_NO_DEVICES",
+                             - 4:"ERROR_INVALID_DEVICE"}
+    
     def __init__(self, \
                  n_neighbors=5, \
                  float_type="float", \
@@ -43,16 +90,22 @@ class BruteNN(object):
     def __del__(self):
         """ Free external resources if needed
         """
-        
-        try:
-            if self.verbose > 0:
-                print("Freeing external resources ...")
-            self._get_wrapper_module().free_resources_extern()
-        except Exception as e:
-            if self.verbose > 0:
-                print("Exception occured while freeing external resources: " + unicode(e))
+
+        if self.verbose > 0:
+            print("Freeing external resources ...")        
+            
+        for platform_id in self.plat_dev_ids.keys():
+            for device_id in self.plat_dev_ids[platform_id]:
+                    
+                try:
+                    wrapper_params = self.wrapper_instances[platform_id][device_id]['params']
+                    wrapper_record = self.wrapper_instances[platform_id][device_id]['record']            
+                    self._get_wrapper_module().free_resources_extern(wrapper_record, wrapper_params)
+                except Exception as e:
+                    if self.verbose > 0:
+                        print("Exception occured while freeing external resources: " + unicode(e))
                       
-    def get_params(self, deep=True):
+    def get_params(self):
         """ Get parameters for this estimator.
         
         Parameters
@@ -92,19 +145,10 @@ class BruteNN(object):
 
         assert self.float_type in self.ALLOWED_FLOAT_TYPES
         assert self.use_gpu in self.ALLOWED_USE_GPU
-
+        
         # set float and int type
-        self._set_internal_data_types()
-                        
-        # initialize device
-        platform_id = self.plat_dev_ids.keys()[0]
-        device_id = self.plat_dev_ids[platform_id][0]
-        
-        root_path = os.path.dirname(os.path.realpath(__file__))
-        kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/brute/kernels/opencl/")
-        self._get_wrapper_module().init_extern(self.n_neighbors, self.n_jobs, platform_id, \
-                                               device_id, kernel_sources_dir, self.verbose)
-        
+        self._set_internal_data_types()        
+
         # make sure that the array is contiguous
         # (needed for the swig module)
         X = np.ascontiguousarray(X)
@@ -114,7 +158,7 @@ class BruteNN(object):
         self.X = X.astype(self.numpy_dtype_float)
         
         if self.X.shape[1] > 30:
-            raise Warning(
+            warnings.warn(
                 """
                 The brute-force implementatation is only used for comparison 
                 in relatively low-dimensional spaces; the performance is 
@@ -122,10 +166,57 @@ class BruteNN(object):
                 superior over other matrix based implementations making use
                 e.g., CUBLAS).            
                 """)
-        
-        # fit model
-        self._get_wrapper_module().fit_extern(self.X)
+            
+        self.wrapper_instances = {}
 
+        root_path = os.path.dirname(os.path.realpath(__file__))
+        kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/brute/kernels/opencl/")
+                                
+        # initialize devices
+        for platform_id in self.plat_dev_ids.keys():
+            self.wrapper_instances[platform_id] = {}
+
+            for device_id in self.plat_dev_ids[platform_id]:
+                
+                self._validate_device(platform_id, device_id)
+        
+                wrapper_params = self._get_wrapper_module().BRUTE_PARAMETERS()
+                
+                self._get_wrapper_module().init_extern(self.n_neighbors, self.n_jobs, platform_id, \
+                                                       device_id, kernel_sources_dir, self.verbose,
+                                                       wrapper_params)
+                wrapper_record = self._get_wrapper_module().BRUTE_RECORD()
+                        
+                self.wrapper_instances[platform_id][device_id] = {}
+                self.wrapper_instances[platform_id][device_id]['params'] = wrapper_params
+                self.wrapper_instances[platform_id][device_id]['record'] = wrapper_record
+
+        threads = []
+        
+        # fit all models
+        for platform_id in self.plat_dev_ids.keys():
+            for device_id in self.plat_dev_ids[platform_id]:
+                
+                wrapper_module = self._get_wrapper_module()
+                wrapper_params = self.wrapper_instances[platform_id][device_id]['params']
+                wrapper_record = self.wrapper_instances[platform_id][device_id]['record']
+                
+                thread = FitThread(wrapper_module, wrapper_params, wrapper_record, self.X)
+                threads.append(thread)                
+            
+        # start all threads
+        if self.verbose > 0:
+            print("Starting all fitting threads ...")
+         
+        for thread in threads:
+            thread.start()
+            
+        # wait for all threads to be completed
+        for thread in threads:
+            thread.join()
+        if self.verbose > 0:
+            print("All fitting threads finished!")                    
+        
         return self
 
     def kneighbors(self, X=None, n_neighbors=None, return_distance=True):
@@ -162,7 +253,7 @@ class BruteNN(object):
                 self.n_neighbors = n_neighbors
                 if self.verbose > 0:
                     print("\nMODEL MUST BE RETRAINED ...\n")
-                self.fit(self.X)         
+                self.fit(self.X)
 
         if X is None:
             X = self.X
@@ -172,10 +263,58 @@ class BruteNN(object):
             X = np.ascontiguousarray(X)            
             X = X.astype(self.numpy_dtype_float)
 
-        # compute distances and indices
+        # split up queries over all devices
+        n_total_devices = self._get_n_total_devices()
+        n_chunk = int(math.ceil(len(X) / n_total_devices))
+        
+        if self.verbose > 0:
+            print("Splitting queries into %i chunks." % int(n_total_devices))
+        
         d_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_float)
         idx_mins = np.zeros((X.shape[0], n_neighbors), dtype=self.numpy_dtype_int)
-        self._get_wrapper_module().neighbors_extern(X, d_mins, idx_mins)
+        
+        threads = []
+        
+        chunk_start = 0
+        chunk_end = n_chunk
+        
+        while chunk_end < len(X) + n_chunk / 2:
+            for platform_id in self.plat_dev_ids.keys():
+                for device_id in self.plat_dev_ids[platform_id]:
+                          
+                    if chunk_start < len(X):
+                        
+                        if chunk_end > len(X):
+                            chunk_end_cropped = len(X)
+                        else:
+                            chunk_end_cropped = chunk_end
+                        
+                        wrapper_module = self._get_wrapper_module()
+                        wrapper_params = self.wrapper_instances[platform_id][device_id]['params']
+                        wrapper_record = self.wrapper_instances[platform_id][device_id]['record']
+                        
+                        if self.verbose > 0:
+                            print("Initializing device thread for range %i-%i ..." % (chunk_start, chunk_end_cropped))
+                        thread = DeviceQueryThread(wrapper_module, wrapper_params, wrapper_record, \
+                                             X, d_mins, idx_mins, chunk_start, chunk_end_cropped, \
+                                             verbose=self.verbose)
+                        threads.append(thread)
+    
+                    chunk_start += n_chunk
+                    chunk_end += n_chunk
+                    
+
+        if self.verbose > 0:
+            print("Processing all query threads ...")
+            
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()         
+               
+        if self.verbose > 0:
+            print("All query threads finished!")  
 
         return np.sqrt(d_mins), idx_mins
 
@@ -209,7 +348,38 @@ class BruteNN(object):
         else:
             self.numpy_dtype_float = np.float64
         self.numpy_dtype_int = np.int32
+
+    def _validate_device(self, platform_id, device_id):
+        """ Checks if the platform and the devices are valid
         
+        platform_id : int
+            The platform id
+        device_id : int
+            The device id
+            
+        Raises an exception in case any of the 
+        platform devices is not valid
+        """
+         
+        err = self._get_wrapper_module().extern_check_platform_device(platform_id, device_id)
+        
+        if (err < 0):
+            raise Exception("Could not retrieve device infos. Error code: %s " % self.OPENCL_ERROR_MAPPINGS[err])
+        
+    def _get_n_total_devices(self):
+        """ Returns the total number of devices
+        that can be used for fitting and querying.
+        
+        Returns
+        int : the number of devices
+        """
+        
+        n_devices = 0
+        for platform_id in self.plat_dev_ids.keys():
+            n_devices += len(self.plat_dev_ids[platform_id])
+            
+        return n_devices
+            
     def __repr__(self):
         """ Reprentation of this object
         """

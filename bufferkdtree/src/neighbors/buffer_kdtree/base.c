@@ -63,33 +63,42 @@ void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain,
 	tree_record->max_visited = 6 * (tree_record->n_leaves - 3 + 1);
 
 	// variable buffer sizes: increase/decrease depending on the three depth
-	if (params->tree_depth > 15) {
-		tree_record->leaves_initial_buffer_sizes = 256;
+	if (params->tree_depth > 16) {
+		tree_record->leaves_initial_buffer_sizes = 128;
 		PRINT(params)("Warning: tree depth %i might be too large (memory consumption)!", params->tree_depth);
 	} else {
-		tree_record->leaves_initial_buffer_sizes = pow(2, 25 - params->tree_depth);
+		tree_record->leaves_initial_buffer_sizes = pow(2, 24 - params->tree_depth);
 	}
 
 	// memory needed for storing training data (in bytes)
-	double device_mem_bytes = tree_record->device_infos.device_mem_bytes;
+	double device_mem_bytes = (double)tree_record->device_infos.device_mem_bytes;
+	double device_max_alloc_bytes = (double)tree_record->device_infos.device_max_alloc_bytes;
+
 	double train_mem_bytes = get_raw_train_mem_device_bytes(tree_record, params);
 	PRINT(params)("Memory needed for all training patterns: %f (GB)\n", train_mem_bytes / MEM_GB);
 
 	if (train_mem_bytes / params->n_train_chunks > device_mem_bytes * params->allowed_train_mem_percent_chunk) {
-		params->n_train_chunks = (INT_TYPE) ceil(
-				train_mem_bytes / (device_mem_bytes * params->allowed_train_mem_percent_chunk));
+		params->n_train_chunks = (INT_TYPE) ceil(train_mem_bytes / (device_mem_bytes * params->allowed_train_mem_percent_chunk));
+		// if set automatically, then use at least 3 chunks (hide computations and data transfer)
+		if (params->n_train_chunks < 3){
+			params->n_train_chunks = 3;
+		}
+
 		PRINT(params)("WARNING: Increasing number of chunks to %i ...\n", params->n_train_chunks);
 	}
 
 	double train_chunk_gb = get_train_mem_with_chunks_device_bytes(tree_record, params);
-	PRINT(params)("Memory needed for training patterns chunk: %f (GB)\n", train_chunk_gb / MEM_GB);
+	if (params->n_train_chunks > 1){
+		PRINT(params)("Memory allocated for both chunks: %f (GB)\n", (2*train_chunk_gb) / MEM_GB);
+	}
+
 
 	// we empty a buffer as soon as it has reached a certain filling status (here: 50%)
-	tree_record->leaves_buffer_sizes_threshold = 0.7 * tree_record->leaves_initial_buffer_sizes;
+	tree_record->leaves_buffer_sizes_threshold = 0.9 * tree_record->leaves_initial_buffer_sizes;
 
 	// the amount of indices removed from both queues (input and reinsert) in each round; has to
 	// be reasonably large to provide sufficient work for a call to FIND_LEAF_IDX_BATCH
-	tree_record->approx_number_of_avail_buffer_slots = 20 * tree_record->leaves_initial_buffer_sizes;
+	tree_record->approx_number_of_avail_buffer_slots = 10 * tree_record->leaves_initial_buffer_sizes;
 
 	PRINT(params)("Number of nodes (internal and leaves) in the top tree: %i\n",
 			tree_record->n_nodes + tree_record->n_leaves);
@@ -300,8 +309,17 @@ void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
 	PRINT(params)("(I.B)  Do brute-force (do_brute.../process_buffers_...chunks_gpu : \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 18));
 	PRINT(params)("(I.B.1) -> Elapsed time for clEnqueueWriteBuffer (INTERLEAVED): \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 19));
 	PRINT(params)("(I.B.1) -> Elapsed time for memcpy (INTERLEAVED): \t\t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 21));
+	PRINT(params)("(I.B.1) -> Elapsed time for waiting for chunk (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 22));
 	PRINT(params)("(I.B.2) -> Number of copy calls: %i\n", tree_record->counters[0]);
 
+	if (!training_chunks_inactive(tree_record, params)) {
+		PRINT(params)("(I.B.4) -> Overhead distributing indices to chunks (in seconds): \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 23));
+		PRINT(params)("(I.B.5) -> Processing of whole chunk (all three phases, in seconds): \t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 24));
+		PRINT(params)("(I.B.6) -> Processing of chunk before brute (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 25));
+		PRINT(params)("(I.B.7) -> Processing of chunk after brute (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 26));
+		PRINT(params)("(I.B.8) -> Processing of chunk after brute, buffer release (in seconds): \t%2.10f\n", GET_MY_TIMER(tree_record->timers + 27));
+		PRINT(params)("(I.B.9) -> Number of release buffer calls: %i\n", tree_record->counters[0]);
+	}
 	if (USE_GPU) {
 
 		PRINT(params)("(I.B.3)   -> Elapsed time for TEST_SUBSET (in seconds): \t\t\t%2.10f\n", GET_MY_TIMER(tree_record->timers + 13));
@@ -335,8 +353,7 @@ void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
 			GET_MY_TIMER(tree_record->timers + 2) - GET_MY_TIMER(tree_record->timers + 12)
 					- GET_MY_TIMER(tree_record->timers + 16));
 	PRINT(params)("\n");
-	PRINT(params)(
-			"-----------------------------------------------------------------------------------------------------------------------------\n");
+	PRINT(params)("-----------------------------------------------------------------------------------------------------------------------------\n");
 
 	// free all allocated memory related to querying
 	for (i = 0; i < tree_record->n_leaves; i++) {
@@ -388,13 +405,19 @@ void extern_free_query_buffers(TREE_RECORD *tree_record, TREE_PARAMETERS *params
 long get_max_nXtest_extern(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
 	long device_mem_bytes = tree_record->device_infos.device_mem_bytes;
-	//double test_mem_bytes = get_test_tmp_mem_device_bytes(tree_record, params);
 
-	double X = sizeof(FLOAT_TYPE) * (2 * tree_record->dXtrain + 2 * params->n_neighbors);
-	X += sizeof(INT_TYPE) * (2 * params->n_neighbors + params->tree_depth + 2);
-	X += sizeof(INT_TYPE) * 3;
+	// w.r.t. to total memory consumption (see types.h)
+	double total_test_mem = sizeof(FLOAT_TYPE) * (2 * tree_record->dXtrain + 2 * params->n_neighbors);
+	total_test_mem += sizeof(INT_TYPE) * (2 * params->n_neighbors + params->tree_depth + 2);
+	total_test_mem += sizeof(INT_TYPE) * 3;
+	long n_max_total = (long) ((device_mem_bytes * params->allowed_test_mem_percent - 5E6 * sizeof(INT_TYPE)) / total_test_mem);
 
-	return (long) ((device_mem_bytes * params->allowed_test_mem_percent - 5E6 * sizeof(INT_TYPE)) / X);
+	// per single buffer
+	long device_max_alloc = tree_record->device_infos.device_max_alloc_bytes;
+	long n_max_buffer = device_max_alloc / (MAX(tree_record->dXtrain, params->n_neighbors) * sizeof(FLOAT_TYPE));
+	n_max_buffer = (long) (0.33 * (double)n_max_buffer);
+
+	return MIN(n_max_total, n_max_buffer);
 
 }
 

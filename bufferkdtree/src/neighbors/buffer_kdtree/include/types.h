@@ -15,14 +15,6 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
-// kernels
-//#define KERNEL_NAME_BRUTE_ALL_LEAVES STR(SOURCE_PATH)"/kernels/brute_all_leaves.cl"
-//#define KERNEL_NAME_BRUTE_ALL_LEAVES_NEAREST_NEIGHBORS STR(SOURCE_PATH)"/kernels/brute_all_leaves_nearest_neighbors.cl"
-//#define KERNEL_NAME_UPDATE_DISTANCES STR(SOURCE_PATH)"/kernels/update_distances.cl"
-//#define KERNEL_NAME_FIND_LEAVES_IDX_BATCH STR(SOURCE_PATH)"/kernels/find_leaves_idx_batch_float.cl"
-//#define KERNEL_NAME_GENERATE_SUBSET_TEST_PATTERNS STR(SOURCE_PATH)"/kernels/generate_subset_test_patterns.cl"
-//#define KERNEL_NAME_INIT_ARRAYS STR(SOURCE_PATH)"/kernels/init_arrays.cl"
-
 #define SPLITTING_TYPE_CYCLIC 0
 #define SPLITTING_TYPE_LONGEST_BOX 1
 
@@ -242,8 +234,8 @@ typedef struct tree_record {
 	cl_mem device_test_indices_removed_from_all_buffers; // n_test_indices * sizeof(INT_TYPE)
 	cl_mem device_all_next_indices; // tree_record->approx_number_of_avail_buffer_slots * sizeof(INT_TYPE)
 	cl_mem device_ret_vals; // tree_record->approx_number_of_avail_buffer_slots * sizeof(INT_TYPE)
-	cl_mem device_fr_indices; // n_test_indices * sizeof(INT_TYPE)
-	cl_mem device_to_indices; // n_test_indices * sizeof(INT_TYPE)
+	cl_mem device_fr_indices; // nXtest * sizeof(INT_TYPE)
+	cl_mem device_to_indices; // nXtest * sizeof(INT_TYPE)
 
 	// Memory Consumption (roughly)
 	// train: 2* n_train_chunks * dXtrain * sizeof(FLOAT_TYPE)
@@ -257,7 +249,7 @@ typedef struct tree_record {
 
 	int device_query_buffers_allocated;
 
-	TIMER timers[25];
+	TIMER timers[30];
 	INT_TYPE counters[10];
 
 } TREE_RECORD;
