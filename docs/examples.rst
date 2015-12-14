@@ -70,7 +70,7 @@ Note that either ``tree_depth`` or ``leaf_size`` is used to determine the final 
 
 .. literalinclude:: ../examples/astronomy.py
     :start-after: # get/download data
-    :end-before: print "----------------------------------------------------------------------"
+    :end-before: print("----------------------------------------------------------------------")
 
 Loading the data this way should yield an output like::
 
@@ -89,7 +89,7 @@ Loading the data this way should yield an output like::
 Finally, both implementations are invoked to compute the 10 nearest neighbors for each query point:
 
 .. literalinclude:: ../examples/astronomy.py
-    :start-after: print "----------------------------------------------------------------------"
+    :start-after: print("----------------------------------------------------------------------")
 
 The above code yields the folling output on an *Ubuntu 14.04* system (64 bit) with an *Intel(R) Core(TM) i7-4790K* running at 4.00GHz (4 cores, 8 hardware threads), 32GB RAM, two *Geforce Titan Z* GPUs (with two devices each), CUDA 6.5 and Nvidia driver version 340.76::
 
