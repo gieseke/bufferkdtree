@@ -3,7 +3,7 @@
 Examples
 ========
 
-The following two examples sketch the use of the different implementations and can be found in the *examples* directory of the bufferkdtree package.
+The following two examples sketch the use of the different implementations and can both be found in the *examples* subdirectory of the bufferkdtree package.
 
 Toy Example
 -----------
@@ -12,7 +12,7 @@ Toy Example
     :start-after: # Licence: GNU GPL (v2)
     :end-before: X = numpy.random.uniform(low=-1, high=1, size=(10000,10))
 
-All implementations are provided via the ``NearestNeighbors`` class, which exhibits a similar layout as the corresponding class of the `scikit-learn <http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestNeighbors.html>`_ package. The parameter ``n_jobs`` determines the number of threads that shall be used by the standard k-d tree implementation (CPU). The parameter ``plat_dev_ids`` determines the OpenCL devices that shall be used by the buffer k-d tree implementation (OpenCL): Each key of the dictionary corresponds to a OpenCL platform id and for each platform id, a list of associated device ids can be provided. For this example, the first platform and its first device are used. 
+All implementations are provided via the ``NearestNeighbors`` class, which exhibits a similar layout as the corresponding class of the `scikit-learn <http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestNeighbors.html>`_ package. The parameter ``n_jobs`` determines the number of threads that shall be used by the standard k-d tree implementation (CPU). The parameter ``plat_dev_ids`` determines the OpenCL devices that shall be used by the buffer k-d tree implementation (OpenCL): Each key of the dictionary corresponds to a OpenCL platform id and for each platform id, a list of associated device ids can be provided. For instance, the first platform (with id 0) and its first device (with id 0) is used for the current example.
 
 Next, a small artificial data set is generated, where ``X`` contains the points, one row per point:
 
@@ -49,7 +49,7 @@ For a detailed description of the remaining keywords, see the description of the
 
 .. admonition:: Brute-Force
 
-    The brute-force implementatation is only used for comparison in relatively low-dimensional spaces; the performance is suboptimal for higher dimensional feature spaces (but superior over other matrix based implementations making use e.g., CUBLAS, for low-dimensional spaces).
+    Note that the brute-force implementatation is only used for comparison purposes given data sets in relatively low-dimensional search spaces. Its performance is suboptimal for high-dimensional feature spaces compared to matrix-based implementations that make use of e.g. CUBLAS (but superior to such implementations given low-dimensional search spaces).
 
 Large-Scale Querying
 --------------------
@@ -60,7 +60,7 @@ The main purpose of the buffer k-d tree implementation is to speed up the queryi
     :start-after: # Licence: GNU GPL (v2)
     :end-before: def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
 
-Note that four devices of the first platform are used now (0,1,2,3). The helper function defined next is used to time the runtimes needed for the training and testing phases of each method:
+Note that four devices (with ids 0,1,2,3) of the first platform (with id 0) are used in this case. The helper function defined next is used to time the runtimes needed for the training and testing phases of each method:
 
 .. literalinclude:: ../examples/astronomy.py
     :start-after: n_neighbors=10
@@ -70,7 +70,7 @@ Note that either ``tree_depth`` or ``leaf_size`` is used to determine the final 
 
 .. literalinclude:: ../examples/astronomy.py
     :start-after: # get/download data
-    :end-before: print "----------------------------------------------------------------------"
+    :end-before: print("----------------------------------------------------------------------")
 
 Loading the data this way should yield an output like::
 
@@ -89,7 +89,7 @@ Loading the data this way should yield an output like::
 Finally, both implementations are invoked to compute the 10 nearest neighbors for each query point:
 
 .. literalinclude:: ../examples/astronomy.py
-    :start-after: print "----------------------------------------------------------------------"
+    :start-after: print("----------------------------------------------------------------------")
 
 The above code yields the folling output on an *Ubuntu 14.04* system (64 bit) with an *Intel(R) Core(TM) i7-4790K* running at 4.00GHz (4 cores, 8 hardware threads), 32GB RAM, two *Geforce Titan Z* GPUs (with two devices each), CUDA 6.5 and Nvidia driver version 340.76::
 

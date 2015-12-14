@@ -6,4 +6,4 @@ Created on 15.09.2015
 
 import os
 
-__version__ = '1.1'
+__version__ = '1.1.1'

@@ -3,18 +3,18 @@
 Installation
 ============
 
-Quick Installation
-------------------
-
 .. warning::
 
     The authors are not responsible for any implications that stem from the use of this software.
+
+Quick Installation
+------------------
 
 The package is available on `PyPI <https://pypi.python.org/pypi>`_, but can also be installed from the sources. For instance, to install the package via `PyPI <https://pypi.python.org/pypi>`_ on Linux machines, type::
 
   $ sudo pip install bufferkdtree
 
-To install the package from the sources, first get the current version via::
+To install the package from the sources, first get the current stable release via::
 
   $ git clone https://github.com/gieseke/bufferkdtree.git
 
@@ -50,24 +50,23 @@ On an OpenSUSE system, the corresponding command is::
 OpenCL
 ------
 
-OpenCL needs to be installed correctly. Make sure that the OpenCL header files are available, for example by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux systems. For instance, in case CUDA is installed with header files being located in ``/usr/local/cuda/include``, then the following command should update the environment variable::
+OpenCL needs to be installed correctly on the system. In addition, make sure that the OpenCL header files are available as well and accessible during the installation process, e.g., by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux-based systems. For instance, given CUDA along with OpenCL, the header files are probably located in ``/usr/local/cuda/include``. Hence, the following command would update the environment variable accordingly (if needed)::
 
    export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/cuda/include
 
 Virtualenv & Pip
 ----------------
 
-We recommend to install the package via virtualenv and pip. On Ubuntu 12.04/14.04, for instance, the following commands can be used to install virtualenv and pip::
+As for most Python packages, we recommend to make use of `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ to install the package. To install virtualenv on recent Debian/Ubuntu-based systems, the following commands can be used to install virtualenv and pip::
 
    $ sudo apt-get install python-virtualenv python-pip
 
-Afterwards, create a new virtual environment and install the Numpy package::
+Afterwards, a new virtual environment can be created to install the Numpy and the bufferkdtree package::
 
    $ mkdir ~/.virtualenvs
    $ cd ~/.virtualenvs
    $ virtualenv bufferkdtree
    $ source bufferkdtree/bin/activate
    $ pip install numpy==1.6.1
-
-Given the activated virtual environment, follow the instructions above to install the bufferkdtree package (Quick Installation).
+   $ pip install bufferkdtree
 
