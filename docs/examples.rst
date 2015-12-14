@@ -60,7 +60,7 @@ The main purpose of the buffer k-d tree implementation is to speed up the queryi
     :start-after: # Licence: GNU GPL (v2)
     :end-before: def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
 
-Note that four devices (with ids 0,1,2, and 3) of the first platform (with id 0) are used in this case. The helper function defined next is used to time the runtimes needed for the training and testing phases of each method:
+Note that four devices (with ids 0,1,2,3) of the first platform (with id 0) are used in this case. The helper function defined next is used to time the runtimes needed for the training and testing phases of each method:
 
 .. literalinclude:: ../examples/astronomy.py
     :start-after: n_neighbors=10
