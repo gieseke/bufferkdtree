@@ -69,7 +69,7 @@ Note that four devices (with ids 0,1,2,3) of the first platform (with id 0) are 
 Note that either ``tree_depth`` or ``leaf_size`` is used to determine the final tree depth, see the :ref:`documentation <reference>`. For this example, large sets of reference (two million) and query points (ten million) are generated: 
 
 .. literalinclude:: ../examples/astronomy.py
-    :start-after: # get/download data
+    :start-after: print("Parsing data ...")
     :end-before: print("----------------------------------------------------------------------")
 
 Loading the data this way should yield an output like::
