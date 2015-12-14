@@ -64,12 +64,12 @@ Note that four devices (with ids 0,1,2,3) of the first platform (with id 0) are 
 
 .. literalinclude:: ../examples/astronomy.py
     :start-after: n_neighbors=10
-    :end-before: # get/download data
+    :end-before: print("Parsing data ...")
 
 Note that either ``tree_depth`` or ``leaf_size`` is used to determine the final tree depth, see the :ref:`documentation <reference>`. For this example, large sets of reference (two million) and query points (ten million) are generated: 
 
 .. literalinclude:: ../examples/astronomy.py
-    :start-after: print("Parsing data ...")
+    :start-after:     print("Testing time: %f" % (end_time-start_time))
     :end-before: print("----------------------------------------------------------------------")
 
 Loading the data this way should yield an output like::
