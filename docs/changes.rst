@@ -3,6 +3,10 @@
 Changes
 =======
 
+Release 1.1.1 (Dezember 2015)
+-----------------------------
+* Updated documentation
+
 Release 1.1 (Dezember 2015)
 -----------------------------
 * Fixed wrong parameter assignment in 'kneighbors' method of both neighbors/kd_tree/base.py and neighbors/buffer_kdtree/base.py
