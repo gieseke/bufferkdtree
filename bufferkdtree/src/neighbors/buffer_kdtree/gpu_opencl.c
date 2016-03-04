@@ -48,9 +48,10 @@ void init_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 			#define K_NN %d\n\
 			#define MAX_VISITED %i\n\
 			#define TREE_DEPTH %i\n\
-			#define NUM_NODES %i\n",
+			#define NUM_NODES %i\n\
+			#define USE_DOUBLE %d\n",
 			tree_record->dXtrain, params->n_neighbors, params->n_neighbors, tree_record->max_visited,
-			params->tree_depth, tree_record->n_nodes);
+			params->tree_depth, tree_record->n_nodes, USE_DOUBLE);
 
     char kernel_final_path [4096];
 
