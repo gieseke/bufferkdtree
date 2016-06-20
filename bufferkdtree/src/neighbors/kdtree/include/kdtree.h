@@ -5,14 +5,16 @@
 #ifndef NEIGHBORS_KDTREE_INCLUDE_KDTREE_H_
 #define NEIGHBORS_KDTREE_INCLUDE_KDTREE_H_
 
-#include "global.h"
-#include "util.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
 
+#include "global.h"
+#include "util.h"
+
 #include "../../../include/util.h"
+
 
 /* --------------------------------------------------------------------------------
  * Initializes space for the kd tree (e.g., nodes and leaves)
