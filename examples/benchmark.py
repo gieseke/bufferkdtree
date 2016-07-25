@@ -4,6 +4,9 @@ Benchmark Nearest Neighbors
 
 This benchmark compares the performance of the different
 implementations on a large-scale data set.
+
+Note: The platform and the device needs to be specified below 
+(via the parameter 'plat_dev_ids').
 """
 print(__doc__)
 
@@ -91,7 +94,6 @@ def run_algorithm(n_test, tree_depth=None, algorithm="buffer_kd_tree"):
     # apply model (testing phase)
     start_time = time.time()
     dists, inds = nbrs.kneighbors(Xtest_local)
-    print "dists=", dists
     end_time = time.time()
     test_time = (end_time-start_time)
     print("Testing time: %f" % test_time)

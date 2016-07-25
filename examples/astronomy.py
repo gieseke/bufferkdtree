@@ -1,25 +1,31 @@
 """
-Nearest Neighbors
-=================
+Nearest Neighbors in Astronomy
+==============================
 
-This example demonstrates the use of both tree-based
-implementations on a large-scale data set.
+This example demonstrates the use of both k-d tree-based
+implementations on a large-scale astronomical data set that is 
+based on the Sloan Digitial Sky Survey (http://www.sdss.org). 
+The data set contains 2,000,000 training points and 10,000,000
+test points in a 10-dimensional feature space.
+
+Note: The platform and the device needs to be specified below 
+(via the parameter 'plat_dev_ids').
 """
 print(__doc__)
 
-# Authors: Fabian Gieseke 
+# Authors: Fabian Gieseke
 # Licence: GNU GPL (v2)
 
 import time
 import generate
-from bufferkdtree.neighbors import NearestNeighbors
+from bufferkdtree import NearestNeighbors
 
 # parameters
-plat_dev_ids = {1:[0]}
+plat_dev_ids = {0:[0]}
 n_jobs = 8
-verbose = 0
-n_neighbors=10
-float_type = "double" 
+verbose = 1
+n_neighbors = 10
+float_type = "float" 
 
 def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
 
@@ -28,19 +34,19 @@ def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
                             tree_depth=tree_depth, \
                             leaf_size=leaf_size, \
                             float_type=float_type, \
-                            n_jobs = n_jobs, \
+                            n_jobs=n_jobs, \
                             plat_dev_ids=plat_dev_ids, \
                             verbose=verbose)
 
     start_time = time.time()
     nbrs.fit(Xtrain)
     end_time = time.time()
-    print("Fitting time: %f" % (end_time-start_time))
+    print("Fitting time: %f" % (end_time - start_time))
 
     start_time = time.time()
     dists, inds = nbrs.kneighbors(Xtest)
     end_time = time.time()
-    print("Testing time: %f" % (end_time-start_time))
+    print("Testing time: %f" % (end_time - start_time))
 
 print("Parsing data ...")
 Xtrain, Ytrain, Xtest = generate.get_data_set(NUM_TRAIN=2000000, NUM_TEST=10000000)

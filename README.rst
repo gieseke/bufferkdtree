@@ -16,9 +16,9 @@ See the `documentation <http://bufferkdtree.readthedocs.org>`_ for details and e
 Dependencies
 ============
 
-The bufferkdtree package is tested under Python 2.6 and Python 2.7. The required Python dependencies are:
+The bufferkdtree package is tested under Python 2.6, Python 2.7, and Python 3.2. The required Python dependencies are:
 
-- NumPy >= 1.6.1
+- NumPy >= 1.11.0
 
 Further, `Swig <http://www.swig.org>`_, `OpenCL <https://www.khronos.org/opencl/OpenCL>`_, `setuptools <https://pypi.python.org/pypi/setuptools>`_, and a working C/C++ compiler need to be available. See the `documentation <http://bufferkdtree.readthedocs.org>`_ for more details.
 
@@ -48,4 +48,3 @@ Disclaimer
 ==========
 
 The source code is published under the GNU General Public License (GPLv2). The authors are not responsible for any implications that stem from the use of this software.
-

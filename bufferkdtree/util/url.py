@@ -8,7 +8,11 @@ from __future__ import print_function
 
 import os
 import sys
-import urllib2
+
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
 
 def download_from_url(url, fname):
     """ Downloads data from a given url.

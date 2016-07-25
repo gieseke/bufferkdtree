@@ -23,13 +23,13 @@ void init_extern(int n_neighbors, int tree_depth, int num_threads, int num_nXtra
 	params->num_threads = num_threads;
 	params->n_train_chunks = num_nXtrain_chunks;
 	params->splitting_type = splitting_type;
-	params->kernels_source_directory = kernels_source_directory;
+	params->kernels_source_directory = (char*) malloc((strlen(kernels_source_directory) + 10) * sizeof(char));
+	strcpy(params->kernels_source_directory, kernels_source_directory);
 	params->verbosity_level = verbosity_level;
 	params->platform_id = platform_id;
 	params->device_id = device_id;
 	params->allowed_train_mem_percent_chunk = allowed_train_mem_percent_chunk;
 	params->allowed_test_mem_percent = allowed_test_mem_percent;
-
 	check_parameters(params);
 
 	omp_set_num_threads(params->num_threads);
@@ -386,6 +386,8 @@ void extern_free_resources(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 	free(tree_record->Itrain_sorted);
 	free(tree_record->Xtrain_sorted);
 
+	free(params->kernels_source_directory);
+
 }
 
 /* --------------------------------------------------------------------------------
@@ -394,6 +396,7 @@ void extern_free_resources(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
  */
 void extern_free_query_buffers(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
+	free_train_buffers_gpu(tree_record, params);
 	free_query_buffers_gpu(tree_record, params);
 
 }

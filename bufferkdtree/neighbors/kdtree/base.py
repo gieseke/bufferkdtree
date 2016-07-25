@@ -9,7 +9,9 @@ import time
 import copy
 import warnings
 import numpy as np
-import wrapper_cpu_float, wrapper_cpu_double
+
+import bufferkdtree.neighbors.kdtree.wrapper_cpu_float as wrapper_cpu_float
+import bufferkdtree.neighbors.kdtree.wrapper_cpu_double as wrapper_cpu_double
 
 class KDTreeNN(object):
     """
@@ -53,7 +55,7 @@ class KDTreeNN(object):
             if self.verbose > 0:
                 print("Freeing external resources ...")
             self._get_wrapper_module().free_resources_extern()
-        except Exception, e:
+        except Exception as e:
             if self.verbose > 0:
                 print("Exception occured while freeing external resources: " + unicode(e))
 

@@ -5,6 +5,7 @@ Created on 15.09.2015
 '''
 
 import os
+import sys
 import numpy
 
 SOURCES_RELATIVE_PATH = "../../src/"
@@ -25,6 +26,11 @@ try:
 except AttributeError:
     numpy_include = numpy.get_numpy_include()
 
+if sys.version_info >= (3, 0):
+    swig_opts = ['-modern', '-py3']
+else:
+    swig_opts = ['-modern']
+
 def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
 
@@ -33,7 +39,7 @@ def configuration(parent_package='', top_path=None):
     # CPU + FLOAT
     config.add_extension("_wrapper_cpu_float", \
                                     sources=["swig/cpu_float.i"] + source_files,
-                                    swig_opts=['-modern'],
+                                    swig_opts=swig_opts,
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
                                         ('USE_DOUBLE', 0),
@@ -45,7 +51,7 @@ def configuration(parent_package='', top_path=None):
     # CPU + DOUBLE
     config.add_extension("_wrapper_cpu_double", \
                                     sources=["swig/cpu_double.i"] + source_files,
-                                    swig_opts=['-modern'],
+                                    swig_opts=swig_opts,
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
                                         ('USE_DOUBLE', 1),

@@ -117,8 +117,13 @@ void free_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
 	cl_int err;
 
-	free_train_buffers_gpu(tree_record, params);
-	free_query_buffers_gpu(tree_record, params);
+	err = clReleaseMemObject(tree_record->device_nodes);
+	check_cl_error(err, __FILE__, __LINE__);
+	err = clReleaseMemObject(tree_record->device_leave_bounds);
+	check_cl_error(err, __FILE__, __LINE__);
+
+	//free_train_buffers_gpu(tree_record, params);
+	//free_query_buffers_gpu(tree_record, params);
 
 	err = clReleaseKernel(tree_record->find_leaves_kernel);
 	check_cl_error(err, __FILE__, __LINE__);
@@ -148,9 +153,9 @@ void free_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 	err = clReleaseContext(tree_record->gpu_context);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	// see http://stackoverflow.com/questions/15855759/opencl-1-2-c-wrapper-undefined-reference-to-clreleasedevice
-	//err = clReleaseDevice(tree_record->gpu_device);
-	//check_cl_error(err, __FILE__, __LINE__);
+	// check: http://stackoverflow.com/questions/15855759/opencl-1-2-c-wrapper-undefined-reference-to-clreleasedevice
+	err = clReleaseDevice(tree_record->gpu_device);
+	check_cl_error(err, __FILE__, __LINE__);
 
 }
 
@@ -159,13 +164,6 @@ void free_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
  * --------------------------------------------------------------------------------
  */
 void free_train_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
-
-	cl_int err;
-
-	err = clReleaseMemObject(tree_record->device_nodes);
-	check_cl_error(err, __FILE__, __LINE__);
-	err = clReleaseMemObject(tree_record->device_leave_bounds);
-	check_cl_error(err, __FILE__, __LINE__);
 
 	free_train_patterns_device(tree_record, params, TRAIN_CHUNK_0);
 	if (!training_chunks_inactive(tree_record, params)) {
@@ -207,7 +205,6 @@ void free_query_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 		check_cl_error(err, __FILE__, __LINE__);
 		err = clReleaseMemObject(tree_record->device_test_indices_removed_from_all_buffers);
 		check_cl_error(err, __FILE__, __LINE__);
-
 
 		tree_record->device_query_buffers_allocated = 0;
 	}
@@ -300,30 +297,24 @@ void allocate_memory_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *p
 
 	// all_depths and all_idxs
 	num_elts = tree_record->nXtest;
-	size_t global_size_3[] = { WORKGROUP_SIZE_COPY_INIT * ((INT_TYPE) num_elts / WORKGROUP_SIZE_COPY_INIT)
-			+ WORKGROUP_SIZE_COPY_INIT };
+	size_t global_size_3[] = { WORKGROUP_SIZE_COPY_INIT * ((INT_TYPE) num_elts / WORKGROUP_SIZE_COPY_INIT) + WORKGROUP_SIZE_COPY_INIT };
 	size_t local_size_3[] = { WORKGROUP_SIZE_COPY_INIT };
 	err = clSetKernelArg(tree_record->init_depths_idxs_kernel, 0, sizeof(INT_TYPE), &num_elts);
 	err |= clSetKernelArg(tree_record->init_depths_idxs_kernel, 1, sizeof(cl_mem), &(tree_record->device_all_depths));
 	err |= clSetKernelArg(tree_record->init_depths_idxs_kernel, 2, sizeof(cl_mem), &(tree_record->device_all_idxs));
-	err |= clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->init_depths_idxs_kernel, 1,
-			NULL, global_size_3, local_size_3, 0, NULL, &event_all_depths_idxs);
+	err |= clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->init_depths_idxs_kernel, 1, NULL, global_size_3, local_size_3, 0, NULL, &event_all_depths_idxs);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	// we allocate host space for consecutive buffers to store intermediate results
 	// (we can have at most number_test_patterns elements in each round)
-	tree_record->device_dist_mins_tmp = clCreateBuffer(tree_record->gpu_context,
-	CL_MEM_READ_WRITE, tree_record->nXtest * params->n_neighbors * sizeof(FLOAT_TYPE),
-	NULL, &err);
+	tree_record->device_dist_mins_tmp = clCreateBuffer(tree_record->gpu_context, CL_MEM_READ_WRITE, tree_record->nXtest * params->n_neighbors * sizeof(FLOAT_TYPE),NULL, &err);
 	check_cl_error(err, __FILE__, __LINE__);
-	tree_record->device_idx_mins_tmp = clCreateBuffer(tree_record->gpu_context,
-	CL_MEM_READ_WRITE, tree_record->nXtest * params->n_neighbors * sizeof(INT_TYPE), NULL, &err);
+	tree_record->device_idx_mins_tmp = clCreateBuffer(tree_record->gpu_context, CL_MEM_READ_WRITE, tree_record->nXtest * params->n_neighbors * sizeof(INT_TYPE), NULL, &err);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	// we also allocate additional memory for the test patterns on the GPU device to
 	// store intermediate but consecutive subsets of the patterns in each iteration
-	tree_record->device_test_patterns_subset_tmp = clCreateBuffer(tree_record->gpu_context, CL_MEM_READ_WRITE,
-			tree_record->nXtest * tree_record->dXtrain * sizeof(FLOAT_TYPE), NULL, &err);
+	tree_record->device_test_patterns_subset_tmp = clCreateBuffer(tree_record->gpu_context, CL_MEM_READ_WRITE, tree_record->nXtest * tree_record->dXtrain * sizeof(FLOAT_TYPE), NULL, &err);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	err = clWaitForEvents(1, &event_copy_test);
@@ -403,7 +394,6 @@ void process_buffers_brute_force_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *
 	INT_TYPE *fr_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE *to_indices = (INT_TYPE *) malloc(tree_record->nXtest * sizeof(INT_TYPE));
 	INT_TYPE n_tindices_removed = retrieve_indices_from_buffers_gpu(tree_record, params, all_brute, tindices_removed, fr_indices, to_indices);
-	//printf("Removing %i test indices from buffers ...\n", n_tindices_removed);
 	STOP_MY_TIMER(tree_record->timers + 11);
 
 	START_MY_TIMER(tree_record->timers + 18);
@@ -851,12 +841,10 @@ void find_leaf_idx_batch_gpu(INT_TYPE *all_next_indices, INT_TYPE num_all_next_i
 	tree_record->find_leaf_idx_calls++;
 
 	// generate buffers on the GPU
-	tree_record->device_all_next_indices = clCreateBuffer(tree_record->gpu_context,
-	CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, num_all_next_indices * sizeof(INT_TYPE), all_next_indices, &err);
+	tree_record->device_all_next_indices = clCreateBuffer(tree_record->gpu_context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, num_all_next_indices * sizeof(INT_TYPE), all_next_indices, &err);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	tree_record->device_ret_vals = clCreateBuffer(tree_record->gpu_context,
-	CL_MEM_READ_WRITE, num_all_next_indices * sizeof(INT_TYPE), NULL, &err);
+	tree_record->device_ret_vals = clCreateBuffer(tree_record->gpu_context, CL_MEM_READ_WRITE, num_all_next_indices * sizeof(INT_TYPE), NULL, &err);
 	check_cl_error(err, __FILE__, __LINE__);
 
 	// set kernel parameters
@@ -874,12 +862,10 @@ void find_leaf_idx_batch_gpu(INT_TYPE *all_next_indices, INT_TYPE num_all_next_i
 	err |= clSetKernelArg(tree_record->find_leaves_kernel, 11, sizeof(cl_mem), &(tree_record->device_leave_bounds));
 	check_cl_error(err, __FILE__, __LINE__);
 
-	size_t global_size[] = { WORKGROUP_SIZE_LEAVES * ((INT_TYPE) num_all_next_indices / WORKGROUP_SIZE_LEAVES)
-			+ WORKGROUP_SIZE_LEAVES };
+	size_t global_size[] = { WORKGROUP_SIZE_LEAVES * ((INT_TYPE) num_all_next_indices / WORKGROUP_SIZE_LEAVES) + WORKGROUP_SIZE_LEAVES };
 	size_t local_size[] = { WORKGROUP_SIZE_LEAVES };
 
-	err = clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->find_leaves_kernel, 1,
-			NULL, global_size, local_size, 0, NULL, &event);
+	err = clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->find_leaves_kernel, 1, NULL, global_size, local_size, 0, NULL, &event);
 	// we wait here until the nearest neighbor computations are done (could be optimized)
 	err |= clWaitForEvents(1, &event);
 	err |= clReleaseEvent(event);
