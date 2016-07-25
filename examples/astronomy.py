@@ -21,11 +21,11 @@ import generate
 from bufferkdtree import NearestNeighbors
 
 # parameters
-plat_dev_ids = {0:[0]}
+plat_dev_ids = {0:[0,1,2,3]}
 n_jobs = 8
 verbose = 1
-n_neighbors = 10
 float_type = "float" 
+n_neighbors = 10
 
 def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
 

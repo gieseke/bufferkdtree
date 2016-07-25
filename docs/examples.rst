@@ -17,7 +17,7 @@ All implementations are provided via the ``NearestNeighbors`` class, which exhib
 Next, a small artificial data set is generated, where ``X`` contains the points, one row per point:
 
 .. literalinclude:: ../examples/artificial.py
-    :start-after: verbose = 0
+    :start-after: verbose = 1
     :end-before: # (1) apply buffer k-d tree implementation
 
 The package provides three implementations (``brute``, ``kd_tree``, or ``buffer_kd_tree``), which can be invoked via the ``algorithm`` keyword of the constructor:
@@ -63,13 +63,13 @@ The main purpose of the buffer k-d tree implementation is to speed up the queryi
 Note that four devices (with ids 0,1,2,3) of the first platform (with id 0) are used in this case. The helper function defined next is used to time the runtimes needed for the training and testing phases of each method:
 
 .. literalinclude:: ../examples/astronomy.py
-    :start-after: n_neighbors=10
+    :start-after: n_neighbors = 10
     :end-before: print("Parsing data ...")
 
 Note that either ``tree_depth`` or ``leaf_size`` is used to determine the final tree depth, see the :ref:`documentation <reference>`. For this example, large sets of reference (two million) and query points (ten million) are generated: 
 
 .. literalinclude:: ../examples/astronomy.py
-    :start-after:     print("Testing time: %f" % (end_time-start_time))
+    :start-after:     print("Testing time: %f" % (end_time - start_time))
     :end-before: print("----------------------------------------------------------------------")
 
 Loading the data this way should yield an output like::
@@ -105,7 +105,7 @@ The parameters ``tree_depth`` and ``leaf_size`` play an important role: In case 
 
 .. admonition:: Performance
 
-    The performance might depend on the particular OpenCL version Nvidia driver. For instance, we observed similar speed-ups (per device) with a weeker Gefore GTX 770 given CUDA 5.5 and Nvidia driver version 319.23. 
+    The performance might depend on the particular OpenCL version Nvidia driver. For instance, we observed similar speed-ups (per device) with a weaker Gefore GTX 770 given CUDA 5.5 and Nvidia driver version 319.23. 
 
 .. admonition:: Tree Construction
 

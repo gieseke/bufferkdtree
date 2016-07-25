@@ -16,7 +16,7 @@ See the `documentation <http://bufferkdtree.readthedocs.org>`_ for details and e
 Dependencies
 ============
 
-The bufferkdtree package is tested under Python 2.6, Python 2.7, and Python 3.2. The required Python dependencies are:
+The bufferkdtree package has been tested under Python 2.6/2.7/3.*. The required Python dependencies are:
 
 - NumPy >= 1.11.0
 

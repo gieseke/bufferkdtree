@@ -19,7 +19,7 @@ from bufferkdtree import NearestNeighbors
 n_neighbors = 10
 plat_dev_ids = {0:[0]}
 n_jobs = 1
-verbose = 0
+verbose = 1
 
 X = numpy.random.uniform(low=-1, high=1, size=(10000,10))
 

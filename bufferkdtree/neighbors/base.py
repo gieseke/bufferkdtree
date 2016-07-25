@@ -80,7 +80,7 @@ class NearestNeighbors(object):
     --------
            
       >>> import numpy
-      >>> from bufferkdtree.neighbors.base import NearestNeighbors
+      >>> from bufferkdtree.neighbors import NearestNeighbors
       >>> X = numpy.random.uniform(low=-1,high=1,size=(10000,10))
       >>> nbrs = NearestNeighbors(n_neighbors=10, algorithm="buffer_kd_tree", tree_depth=9, plat_dev_ids={0:[0]})    
       >>> nbrs.fit(X)
@@ -99,7 +99,6 @@ class NearestNeighbors(object):
     corresponding architecture. An important ingredient is 
     the support of automatic hardware caches.
     
-    Only single-precision is supported until now.
     """
 
     ALLOWED_ALGORITHMS = ["brute", "kd_tree", "buffer_kd_tree"]
