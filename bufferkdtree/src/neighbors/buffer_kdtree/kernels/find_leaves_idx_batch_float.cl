@@ -9,15 +9,9 @@
 #define MIN_FLOAT_TYPE     -3.402823466e+38
 #endif
 
-#if USE_LOCAL_MEM > 0 
-    #define INIT_STACK(); __local int stack_local[TREE_DEPTH*WORKGROUP_SIZE];for(k=TREE_DEPTH;k--;){stack_local[lid*TREE_DEPTH + k] = (all_stacks + test_idx*TREE_DEPTH)[k];} __local int *stack = stack_local+lid*TREE_DEPTH;   
-    #define COPY_STACK_BACK(); for(k=TREE_DEPTH;k--;){(all_stacks + test_idx*TREE_DEPTH)[k] = stack[k];}
-#else
-    #define INIT_STACK(); __global int *stack = all_stacks + test_idx*TREE_DEPTH;     
-    #define COPY_STACK_BACK();
-#endif
+#define INIT_STACK(); __global int *stack = all_stacks + test_idx*TREE_DEPTH;
+#define COPY_STACK_BACK();
 
-// struct for storing a single node
 typedef struct tree_node {
 
 	int axis;

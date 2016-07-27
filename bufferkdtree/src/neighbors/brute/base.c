@@ -21,7 +21,8 @@ void init_extern(int n_neighbors, int num_threads, int platform_id, \
 	params->num_threads = num_threads;
 	params->platform_id = platform_id;
 	params->device_id = device_id;
-	params->kernels_source_directory = kernels_source_directory;
+	params->kernels_source_directory = (char*) malloc((strlen(kernels_source_directory) + 10) * sizeof(char));
+	strcpy(params->kernels_source_directory, kernels_source_directory);
 	params->verbosity_level = verbosity_level;
 
 	check_parameters(params);
@@ -81,6 +82,8 @@ void neighbors_extern(FLOAT_TYPE *Xtest, int nXtest, int dXtest,
 void free_resources_extern(BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params) {
 
 	FREE_RESOURCES(brute_record, params);
+
+	free(params->kernels_source_directory);
 
 }
 

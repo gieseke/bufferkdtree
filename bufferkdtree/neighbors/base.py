@@ -80,7 +80,7 @@ class NearestNeighbors(object):
     --------
            
       >>> import numpy
-      >>> from bufferkdtree.neighbors.base import NearestNeighbors
+      >>> from bufferkdtree.neighbors import NearestNeighbors
       >>> X = numpy.random.uniform(low=-1,high=1,size=(10000,10))
       >>> nbrs = NearestNeighbors(n_neighbors=10, algorithm="buffer_kd_tree", tree_depth=9, plat_dev_ids={0:[0]})    
       >>> nbrs.fit(X)
@@ -99,7 +99,6 @@ class NearestNeighbors(object):
     corresponding architecture. An important ingredient is 
     the support of automatic hardware caches.
     
-    Only single-precision is supported until now.
     """
 
     ALLOWED_ALGORITHMS = ["brute", "kd_tree", "buffer_kd_tree"]
@@ -108,6 +107,7 @@ class NearestNeighbors(object):
     def __init__(self, \
                  n_neighbors=5, \
                  algorithm="buffer_kd_tree", \
+                 float_type="float", \
                  tree_depth=None, \
                  leaf_size=30, \
                  splitting_type="cyclic", \
@@ -133,8 +133,7 @@ class NearestNeighbors(object):
         self.allowed_test_mem_percent = allowed_test_mem_percent        
         self.n_jobs = n_jobs
         self.verbose = verbose
-        
-        self.float_type = "float" 
+        self.float_type = float_type
 
     def get_params(self):
         """ Get parameters for this estimator.
@@ -147,6 +146,7 @@ class NearestNeighbors(object):
         
         return {"n_neighbors": self.n_neighbors, \
                 "algorithm": self.algorithm, \
+                "float_type": self.float_type, \
                 "tree_depth": self.tree_depth, \
                 "leaf_size": self.leaf_size, \
                 "splitting_type": self.splitting_type, \

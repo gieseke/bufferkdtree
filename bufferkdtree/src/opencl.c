@@ -317,7 +317,9 @@ cl_kernel make_kernel_from_file(cl_context context, cl_device_id device,
 void readfile(char *filename, char **text, unsigned long *size) {
 	FILE *fp;
 	char ch;
+
 	fp = fopen(filename, "r");
+
 	if (fp == NULL) {
 		printf("Cannot open file %s\n", filename);
 

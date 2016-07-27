@@ -9,8 +9,10 @@ import math
 import threading
 import warnings
 import numpy as np
-import wrapper_cpu_float, wrapper_cpu_double
-import wrapper_gpu_opencl_float, wrapper_gpu_opencl_double
+import bufferkdtree.neighbors.brute.wrapper_cpu_float as wrapper_cpu_float
+import bufferkdtree.neighbors.brute.wrapper_cpu_double as wrapper_cpu_double
+import bufferkdtree.neighbors.brute.wrapper_gpu_opencl_float as wrapper_gpu_opencl_float
+import bufferkdtree.neighbors.brute.wrapper_gpu_opencl_double as wrapper_gpu_opencl_double
 
 class DeviceQueryThread(threading.Thread):
      

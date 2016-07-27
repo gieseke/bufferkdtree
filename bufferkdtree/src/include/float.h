@@ -4,10 +4,6 @@
 #ifndef INCLUDE_FLOAT_H_
 #define INCLUDE_FLOAT_H_
 
-#ifndef USE_DOUBLE
-#define USE_DOUBLE 0
-#endif
-
 #if USE_DOUBLE > 0
 #define FLOAT_TYPE double
 #define PARSE_FLOAT strtod

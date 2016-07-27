@@ -78,6 +78,10 @@ class CleanCommand(clean):
             for dirname in dirnames:
                 if dirname == '__pycache__' or dirname == 'build' or dirname == '_build':
                     shutil.rmtree(os.path.join(dirpath, dirname))
+        try:
+            shutil.rmtree("dist")
+        except:
+            pass
 
 def setup_package():
     
@@ -130,4 +134,4 @@ def setup_package():
 if __name__ == "__main__":
     
     setup_package()
-    
+

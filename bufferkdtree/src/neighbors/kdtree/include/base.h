@@ -8,13 +8,14 @@
 #ifndef NEIGHBORS_KDTREE_INCLUDE_BASE_H_
 #define NEIGHBORS_KDTREE_INCLUDE_BASE_H_
 
-#include "global.h"
-#include "util.h"
-#include "kdtree.h"
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
 #include <omp.h>
+
+#include "global.h"
+#include "util.h"
+#include "kdtree.h"
 
 /* --------------------------------------------------------------------------------
  * Interface (extern): Initialize components

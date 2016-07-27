@@ -11,8 +11,11 @@ import math
 import warnings
 import numpy as np
 import threading 
-import wrapper_cpu_float, wrapper_cpu_double
-import wrapper_gpu_opencl_float, wrapper_gpu_opencl_double
+
+import bufferkdtree.neighbors.buffer_kdtree.wrapper_cpu_float as wrapper_cpu_float
+import bufferkdtree.neighbors.buffer_kdtree.wrapper_cpu_double as wrapper_cpu_double
+import bufferkdtree.neighbors.buffer_kdtree.wrapper_gpu_opencl_float as wrapper_gpu_opencl_float
+import bufferkdtree.neighbors.buffer_kdtree.wrapper_gpu_opencl_double as wrapper_gpu_opencl_double
       
 class DeviceQueryThread(threading.Thread):
      
@@ -42,6 +45,9 @@ class DeviceQueryThread(threading.Thread):
                                                  self.d_mins[self.start_idx:self.end_idx], \
                                                  self.idx_mins[self.start_idx:self.end_idx], \
                                                  self.tree_record, self.tree_params)
+            
+            self.wrapper_module.extern_free_query_buffers(self.tree_record, self.tree_params)
+                        
         else:
             
             if self.verbose > 0:
@@ -147,9 +153,10 @@ class BufferKDTreeNN(object):
                     wrapper_tree_params = self.wrapper_instances[platform_id][device_id]['tree_params']
                     wrapper_tree_record = self.wrapper_instances[platform_id][device_id]['wrapper_tree_record']            
                     self._get_wrapper_module().extern_free_resources(wrapper_tree_record, wrapper_tree_params)
-        except Exception, e:
+                    
+        except Exception as e:
             if self.verbose > 0:
-                print("Exception occured while freeing external resources: " + unicode(e))
+                print("Exception occured while freeing external resources: " + str(e))
 
     def get_params(self):
         """ Get parameters for this estimator.
@@ -208,7 +215,7 @@ class BufferKDTreeNN(object):
 
         final_tree_depth = self._compute_final_tree_depth(len(X), self.leaf_size, self.tree_depth)
         if self.verbose > 0:
-            print("Final tree depth: " + unicode(final_tree_depth))
+            print("Final tree depth: " + str(final_tree_depth))
         
         # make sure that the array is contiguous
         # (needed for the swig module)
@@ -217,7 +224,10 @@ class BufferKDTreeNN(object):
         # convert input data to correct types (and generate local
         # variable to prevent destruction of external array)
         self.X = X.astype(self.numpy_dtype_float)
-        
+
+        # try to free fitting resources of previous runs
+        self._free_fitting_resources()
+                
         self.wrapper_instances = {}
         if self.use_gpu == True:
             self._fit_gpu(final_tree_depth)
@@ -225,14 +235,13 @@ class BufferKDTreeNN(object):
             self._fit_cpu(final_tree_depth)
             
         return self
-    
+                    
     def _fit_cpu(self, final_tree_depth):
         
         wrapper_tree_params = self._get_wrapper_module().TREE_PARAMETERS()
         
         root_path = os.path.dirname(os.path.realpath(__file__))
         kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
-                
         self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, \
                                                self.n_jobs, self.n_train_chunks, 0, 0, \
                                                self.allowed_train_mem_percent_chunk, \
@@ -249,12 +258,19 @@ class BufferKDTreeNN(object):
         
         root_path = os.path.dirname(os.path.realpath(__file__))
         kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
-                
+
+                    
+
+                    
+       
         for platform_id in self.plat_dev_ids.keys():
             self.wrapper_instances[platform_id] = {}
             for device_id in self.plat_dev_ids[platform_id]:
                 
                 self._validate_device(platform_id, device_id)
+                
+
+                                                    
                     
                 wrapper_tree_params = self._get_wrapper_module().TREE_PARAMETERS()                
                 self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, \
@@ -270,7 +286,9 @@ class BufferKDTreeNN(object):
                 self.wrapper_instances[platform_id][device_id] = {}
                 self.wrapper_instances[platform_id][device_id]['tree_params'] = wrapper_tree_params
                 self.wrapper_instances[platform_id][device_id]['wrapper_tree_record'] = wrapper_tree_record
+                self.wrapper_instances[platform_id][device_id]['initialized'] = True
 
+        
         threads = []
         
         for platform_id in self.plat_dev_ids.keys():
@@ -499,6 +517,23 @@ class BufferKDTreeNN(object):
         else:
             raise Exception("Tree depth has to be adapted for buffer k-d trees ...")
 
+    def _free_fitting_resources(self):
+        """ Frees fitting resources of (potential) previous 
+        runs (in particular, all OpenCL resources).
+        """
+        
+        try:
+            for platform_id in self.plat_dev_ids.keys():
+                for device_id in self.plat_dev_ids[platform_id]:                    
+                    if self.wrapper_instances[platform_id][device_id]['initialized'] == True:
+                        wrapper_tree_params = self.wrapper_instances[platform_id][device_id]['tree_params']
+                        wrapper_tree_record = self.wrapper_instances[platform_id][device_id]['wrapper_tree_record']            
+                        self._get_wrapper_module().extern_free_resources(wrapper_tree_record, wrapper_tree_params)
+                        self.wrapper_instances[platform_id][device_id]['initialized'] = False
+                        
+        except Exception as e:
+            pass    
+        
     def _set_internal_data_types(self):
         """ Set numpy float and int dtypes
         """

@@ -1,8 +1,13 @@
-'''
-Created on 15.09.2015
+"""
+bufferkdtree
+============
+The bufferkdtree package is a Python library that aims at 
+accelerating nearest neighbor computations using both 
+k-d trees and modern many-core devices such as graphics 
+processing units. The implementation is based on OpenCL. 
 
-@author: Fabian Gieseke
-'''
+See the http://bufferkdtree.readthedocs.org for details.
+"""
 
 def configuration(parent_package='', top_path=None):
 
