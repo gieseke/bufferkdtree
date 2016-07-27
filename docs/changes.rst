@@ -8,6 +8,7 @@ Release 1.2.0 (July 2016)
 * Added support for double precision
 * Added Python 3 support
 * Small bug fixes
+* Fixed memory leak (`GH1 <https://github.com/gieseke/bufferkdtree/issues/1>`_)
 
 Release 1.1.1 (Dezember 2015)
 -----------------------------
