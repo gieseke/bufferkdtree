@@ -3,7 +3,7 @@
 Changes
 =======
 
-Release 1.2.0 (July 2016)
+Release 1.2 (July 2016)
 -----------------------------
 * Added support for double precision
 * Added Python 3 support
