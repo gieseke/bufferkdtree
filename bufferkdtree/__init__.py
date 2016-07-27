@@ -13,7 +13,7 @@ import os
 
 # development branch marker of the form 'X.Y.dev' or 
 # 'X.Y.devN' with N being an integer.
-__version__ = '1.2'
+__version__ = '1.3.dev0'
 
 from .neighbors import NearestNeighbors
 
