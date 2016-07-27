@@ -104,7 +104,6 @@ void init_opencl_devices(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
 	tree_record->device_query_buffers_allocated = 0;
 
-
 	PRINT(params)("GPU initialized successfully!\n");
 
 }
@@ -207,6 +206,8 @@ void free_query_buffers_gpu(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 		check_cl_error(err, __FILE__, __LINE__);
 
 		tree_record->device_query_buffers_allocated = 0;
+	} else {
+		printf("no buffers allocated ...?\n");
 	}
 
 }
