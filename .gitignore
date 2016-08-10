@@ -72,3 +72,5 @@ target/
 .pydevproject
 .settings
 .venv
+*.cproject
+*.project
