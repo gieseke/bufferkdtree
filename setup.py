@@ -8,6 +8,15 @@ import os
 import sys
 import shutil
 from distutils.command.clean import clean
+
+# set flag to indicate that package
+# is installed (similar to scikit-learn
+# installation routine)
+if sys.version_info[0] < 3:
+    import __builtin__ as builtins
+else:
+    import builtins
+builtins.__BUFFERKDTREE_SETUP__ = True
  
 DISTNAME = 'bufferkdtree'
 DESCRIPTION = 'A Python library for large-scale exact nearest neighbor search using Buffer k-d Trees (bufferkdtree).'
@@ -18,16 +27,13 @@ URL = 'https://github.com/gieseke/bufferkdtree'
 LICENSE = 'GNU GENERAL PUBLIC LICENSE Version 2'
 DOWNLOAD_URL = 'https://github.com/gieseke/bufferkdtree'
 
-import bufferkdtree
-VERSION = bufferkdtree.__version__
-
 # adapted from scikit-learn
 if len(set(('develop', 'release')).intersection(sys.argv)) > 0:
     import setuptools
     extra_setuptools_args = dict(zip_safe=False)
 else:
     extra_setuptools_args = dict()
-    
+            
 def configuration(parent_package='', top_path=None):
 
     from numpy.distutils.misc_util import Configuration
@@ -83,8 +89,12 @@ class CleanCommand(clean):
         except:
             pass
 
+            
 def setup_package():
     
+    import bufferkdtree
+    VERSION = bufferkdtree.__version__
+
     metadata = dict(name=DISTNAME,
                     maintainer=MAINTAINER,
                     maintainer_email=MAINTAINER_EMAIL,
@@ -105,7 +115,8 @@ def setup_package():
                                  'Programming Language :: Python :: 2.7',
                                  ],
                     cmdclass={'clean': CleanCommand},
-                    install_requires=["numpy>=1.6.1"],
+                    setup_requires=["numpy>=1.11.0"],
+                    install_requires=["numpy>=1.11.0"],
                     include_package_data=True,
                     package_data={'bufferkdtree': ['src/neighbors/brute/kernels/opencl/*.cl',
                                                    'src/neighbors/buffer_kdtree/kernels/*.cl'
@@ -113,25 +124,26 @@ def setup_package():
                     **extra_setuptools_args)
 
     if (len(sys.argv) >= 2 and ('--help' in sys.argv[1:] or sys.argv[1] in ('--version', 'clean'))):
-
+ 
         try:
             from setuptools import setup
         except ImportError:
             from distutils.core import setup
         metadata['version'] = VERSION
-
+        setup(**metadata)
+        
     else:
-
+ 
         try:
-            from numpy.distutils.core import setup
+            import pip
+            pip.main(["install", "numpy>=1.11.0"])            
             metadata['configuration'] = configuration
-        except:
-            print("bufferkdtree requires numpy>=1.6.1")
+            from numpy.distutils.core import setup as numpy_setup
+            numpy_setup(**metadata)
+        except Exception as e:
+            print("Could not install package: %s" % str(e))
             sys.exit(0)
 
-    setup(**metadata)
-
 if __name__ == "__main__":
-    
-    setup_package()
 
+    setup_package()

@@ -3,6 +3,11 @@
 Changes
 =======
 
+Release 1.3 (October 2016)
+-----------------------------
+* Updated documentation
+* Small code modifications
+
 Release 1.2 (July 2016)
 -----------------------------
 * Added support for double precision

@@ -10,11 +10,19 @@ See the http://bufferkdtree.readthedocs.org for details.
 """
 
 import os
+import sys
 
 # development branch marker of the form 'X.Y.dev' or 
 # 'X.Y.devN' with N being an integer.
 __version__ = '1.3.dev0'
 
-from .neighbors import NearestNeighbors
+try:
+    __BUFFERKDTREE_SETUP__
+except NameError:
+    __BUFFERKDTREE_SETUP__ = False
 
-__all__ = ['NearestNeighbors']
+if __BUFFERKDTREE_SETUP__:
+    sys.stderr.write('Warning: Incomplete import (installation)\n')
+else:
+    from .neighbors import NearestNeighbors
+    __all__ = ['NearestNeighbors']

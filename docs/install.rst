@@ -33,7 +33,7 @@ Dependencies
 
 The bufferkdtree package has been tested under various Linux-based systems such as Ubuntu and OpenSUSE and requires Python 2.6/2.7/3.*. Below, some installation instructions are given for Linux-based systems; similar steps have to be conducted on other systems.
 
-To install the package, a working C/C++ compiler, `OpenCL <https://www.khronos.org/opencl/OpenCL>`_, `Swig <http://www.swig.org/>`_, and the Python development files (headers) along with `setuptools <https://pypi.python.org/pypi/setuptools>`_ need to be available. Further, the `NumPy <http://www.numpy.org>`_ package (>=1.11.0) is needed.
+To install the package, a working C/C++ compiler, `OpenCL <https://www.khronos.org/opencl>`_, `Swig <http://www.swig.org/>`_, and the Python development files (headers) along with `setuptools <https://pypi.python.org/pypi/setuptools>`_ need to be available. Further, the `NumPy <http://www.numpy.org>`_ package (>=1.11.0) is needed.
 
 On Ubuntu 12.04/14.04, for instance, the following command can be used to install most dependencies (except for OpenCL)::
 
