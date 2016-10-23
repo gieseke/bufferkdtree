@@ -22,7 +22,7 @@ DISTNAME = 'bufferkdtree'
 DESCRIPTION = 'A Python library for large-scale exact nearest neighbor search using Buffer k-d Trees (bufferkdtree).'
 LONG_DESCRIPTION = open('README.rst').read()
 MAINTAINER = 'Fabian Gieseke'
-MAINTAINER_EMAIL = 'fgieseke@cs.ru.nl'
+MAINTAINER_EMAIL = 'fabian.gieseke@di.ku.dk'
 URL = 'https://github.com/gieseke/bufferkdtree'
 LICENSE = 'GNU GENERAL PUBLIC LICENSE Version 2'
 DOWNLOAD_URL = 'https://github.com/gieseke/bufferkdtree'
@@ -41,7 +41,8 @@ def configuration(parent_package='', top_path=None):
     config.set_options(ignore_setup_xxx_py=True,
                        assume_default_configuration=True,
                        delegate_options_to_subpackages=True,
-                       quiet=True)
+                       quiet=True,
+                       )
     config.add_subpackage('bufferkdtree')
 
     return config
@@ -133,12 +134,19 @@ def setup_package():
         setup(**metadata)
         
     else:
- 
+
+        # if pip is installed, make sure that numpy
+        # is installed (pip is not a requirement
+        # for the bufferkdtree package) 
         try:
             import pip
-            pip.main(["install", "numpy>=1.11.0"])            
-            metadata['configuration'] = configuration
+            pip.main(["install", "numpy>=1.11.0"])
+        except:
+            pass
+                    
+        try:
             from numpy.distutils.core import setup as numpy_setup
+            metadata['configuration'] = configuration
             numpy_setup(**metadata)
         except Exception as e:
             print("Could not install package: %s" % str(e))

@@ -5,8 +5,6 @@ Created on 15.09.2015
 '''
 
 import math
-import time
-import copy
 import warnings
 import numpy as np
 

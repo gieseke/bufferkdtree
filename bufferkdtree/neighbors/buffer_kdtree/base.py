@@ -14,8 +14,13 @@ import threading
 
 import bufferkdtree.neighbors.buffer_kdtree.wrapper_cpu_float as wrapper_cpu_float
 import bufferkdtree.neighbors.buffer_kdtree.wrapper_cpu_double as wrapper_cpu_double
-import bufferkdtree.neighbors.buffer_kdtree.wrapper_gpu_opencl_float as wrapper_gpu_opencl_float
-import bufferkdtree.neighbors.buffer_kdtree.wrapper_gpu_opencl_double as wrapper_gpu_opencl_double
+
+try:
+    # in case the package is compiled without OpenCL
+    import bufferkdtree.neighbors.buffer_kdtree.wrapper_gpu_opencl_float as wrapper_gpu_opencl_float
+    import bufferkdtree.neighbors.buffer_kdtree.wrapper_gpu_opencl_double as wrapper_gpu_opencl_double
+except:
+    pass
       
 class DeviceQueryThread(threading.Thread):
      
