@@ -35,7 +35,7 @@ def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
 
     config = Configuration('neighbors/kdtree', parent_package, top_path)
-
+    
     # CPU + FLOAT
     config.add_extension("_wrapper_cpu_float", \
                                     sources=["swig/cpu_float.i"] + source_files,

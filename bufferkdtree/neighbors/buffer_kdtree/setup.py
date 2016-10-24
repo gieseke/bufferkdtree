@@ -56,78 +56,85 @@ else:
     swig_opts = ['-modern', '-threads']
 
 def configuration(parent_package='', top_path=None):
-
+    
     from numpy.distutils.misc_util import Configuration
     config = Configuration('neighbors/buffer_kdtree', parent_package, top_path)
+    
+    try:
+        
+        # CPU + FLOAT
+        config.add_extension("_wrapper_cpu_float", \
+                                        sources=["swig/cpu_float.i"] + source_files_cpu,
+                                        swig_opts=swig_opts,
+                                        include_dirs=[numpy_include] + [include_paths],
+                                        define_macros=[
+                                            ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
+                                            ('USE_DOUBLE', 0),
+                                            ('TIMING', TIMING)
+                                        ],
+                                        libraries=['OpenCL', 'gomp', 'm'],
+                                        extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
+    
+        # CPU + DOUBLE
+        config.add_extension("_wrapper_cpu_double", \
+                                        sources=["swig/cpu_double.i"] + source_files_cpu,
+                                        swig_opts=swig_opts,
+                                        include_dirs=[numpy_include] + [include_paths],
+                                        define_macros=[
+                                            ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
+                                            ('USE_DOUBLE', 1),
+                                            ('TIMING', TIMING)
+                                        ],
+                                        libraries=['OpenCL', 'gomp', 'm'],
+                                        extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
-    # CPU + FLOAT
-    config.add_extension("_wrapper_cpu_float", \
-                                    sources=["swig/cpu_float.i"] + source_files_cpu,
-                                    swig_opts=swig_opts,
-                                    include_dirs=[numpy_include] + [include_paths],
-                                    define_macros=[
-                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
-                                        ('USE_DOUBLE', 0),
-                                        ('TIMING', TIMING)
-                                    ],
-                                    libraries=['OpenCL', 'gomp', 'm'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
-    # CPU + DOUBLE
-    config.add_extension("_wrapper_cpu_double", \
-                                    sources=["swig/cpu_double.i"] + source_files_cpu,
-                                    swig_opts=swig_opts,
-                                    include_dirs=[numpy_include] + [include_paths],
-                                    define_macros=[
-                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
-                                        ('USE_DOUBLE', 1),
-                                        ('TIMING', TIMING)
-                                    ],
-                                    libraries=['OpenCL', 'gomp', 'm'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
+        # GPU + FLOAT
+        config.add_extension("_wrapper_gpu_opencl_float", \
+                                        sources=["swig/gpu_float.i"] + source_files_opencl,
+                                        swig_opts=swig_opts,
+                                        include_dirs=[numpy_include] + [include_paths],
+                                        define_macros=[
+                                            ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
+                                            ('USE_GPU', 1),
+                                            ('USE_DOUBLE', 0),
+                                            ('TIMING', TIMING),
+                                            ('WORKGROUP_SIZE_BRUTE', WORKGROUP_SIZE_BRUTE),
+                                            ('WORKGROUP_SIZE_LEAVES', WORKGROUP_SIZE_LEAVES),
+                                            ('WORKGROUP_SIZE_UPDATE', WORKGROUP_SIZE_UPDATE),
+                                            ('WORKGROUP_SIZE_COPY_INIT', WORKGROUP_SIZE_COPY_INIT),
+                                            ('WORKGROUP_SIZE_COMBINE', WORKGROUP_SIZE_COMBINE),
+                                            ('WORKGROUP_SIZE_TEST_SUBSET', WORKGROUP_SIZE_TEST_SUBSET),
+                                            ('WORKGROUP_SIZE_COPY_DISTS_INDICES', WORKGROUP_SIZE_COPY_DISTS_INDICES),
+                                        ],
+                                        libraries=['OpenCL', 'gomp'],
+                                        extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
+    
+        # GPU + DOUBLE
+        config.add_extension("_wrapper_gpu_opencl_double", \
+                                        sources=["swig/gpu_double.i"] + source_files_opencl,
+                                        swig_opts=swig_opts,
+                                        include_dirs=[numpy_include] + [include_paths],
+                                        define_macros=[
+                                            ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
+                                            ('USE_GPU', 1),
+                                            ('USE_DOUBLE', 1),
+                                            ('TIMING', TIMING),
+                                            ('WORKGROUP_SIZE_BRUTE', WORKGROUP_SIZE_BRUTE),
+                                            ('WORKGROUP_SIZE_LEAVES', WORKGROUP_SIZE_LEAVES),
+                                            ('WORKGROUP_SIZE_UPDATE', WORKGROUP_SIZE_UPDATE),
+                                            ('WORKGROUP_SIZE_COPY_INIT', WORKGROUP_SIZE_COPY_INIT),
+                                            ('WORKGROUP_SIZE_COMBINE', WORKGROUP_SIZE_COMBINE),
+                                            ('WORKGROUP_SIZE_TEST_SUBSET', WORKGROUP_SIZE_TEST_SUBSET),
+                                            ('WORKGROUP_SIZE_COPY_DISTS_INDICES', WORKGROUP_SIZE_COPY_DISTS_INDICES),
+                                        ],
+                                        libraries=['OpenCL', 'gomp'],
+                                        extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
-    # GPU + FLOAT
-    config.add_extension("_wrapper_gpu_opencl_float", \
-                                    sources=["swig/gpu_float.i"] + source_files_opencl,
-                                    swig_opts=swig_opts,
-                                    include_dirs=[numpy_include] + [include_paths],
-                                    define_macros=[
-                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
-                                        ('USE_GPU', 1),
-                                        ('USE_DOUBLE', 0),
-                                        ('TIMING', TIMING),
-                                        ('WORKGROUP_SIZE_BRUTE', WORKGROUP_SIZE_BRUTE),
-                                        ('WORKGROUP_SIZE_LEAVES', WORKGROUP_SIZE_LEAVES),
-                                        ('WORKGROUP_SIZE_UPDATE', WORKGROUP_SIZE_UPDATE),
-                                        ('WORKGROUP_SIZE_COPY_INIT', WORKGROUP_SIZE_COPY_INIT),
-                                        ('WORKGROUP_SIZE_COMBINE', WORKGROUP_SIZE_COMBINE),
-                                        ('WORKGROUP_SIZE_TEST_SUBSET', WORKGROUP_SIZE_TEST_SUBSET),
-                                        ('WORKGROUP_SIZE_COPY_DISTS_INDICES', WORKGROUP_SIZE_COPY_DISTS_INDICES),
-                                    ],
-                                    libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
-
-    # GPU + DOUBLE
-    config.add_extension("_wrapper_gpu_opencl_double", \
-                                    sources=["swig/gpu_double.i"] + source_files_opencl,
-                                    swig_opts=swig_opts,
-                                    include_dirs=[numpy_include] + [include_paths],
-                                    define_macros=[
-                                        ('SOURCE_PATH', os.path.join(SOURCES_RELATIVE_PATH, "neighbors/buffer_kdtree")),
-                                        ('USE_GPU', 1),
-                                        ('USE_DOUBLE', 1),
-                                        ('TIMING', TIMING),
-                                        ('WORKGROUP_SIZE_BRUTE', WORKGROUP_SIZE_BRUTE),
-                                        ('WORKGROUP_SIZE_LEAVES', WORKGROUP_SIZE_LEAVES),
-                                        ('WORKGROUP_SIZE_UPDATE', WORKGROUP_SIZE_UPDATE),
-                                        ('WORKGROUP_SIZE_COPY_INIT', WORKGROUP_SIZE_COPY_INIT),
-                                        ('WORKGROUP_SIZE_COMBINE', WORKGROUP_SIZE_COMBINE),
-                                        ('WORKGROUP_SIZE_TEST_SUBSET', WORKGROUP_SIZE_TEST_SUBSET),
-                                        ('WORKGROUP_SIZE_COPY_DISTS_INDICES', WORKGROUP_SIZE_COPY_DISTS_INDICES),
-                                    ],
-                                    libraries=['OpenCL', 'gomp'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
-
+    except:
+        
+        print("\nWarning: Could not compile (OpenCL) implementation for buffer k-d tree implementation!\n")
+        
     return config
 
 if __name__ == '__main__':
