@@ -1,5 +1,10 @@
 /*
  * util.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ *               1976 Niklaus Wirth
+ * License: GPL v2
+ *
  */
 #ifndef INCLUDE_UTIL_H_
 #define INCLUDE_UTIL_H_

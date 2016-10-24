@@ -1,5 +1,9 @@
 /*
  * float.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 #ifndef INCLUDE_FLOAT_H_
 #define INCLUDE_FLOAT_H_

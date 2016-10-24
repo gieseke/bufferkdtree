@@ -1,8 +1,7 @@
-'''
-Created on 15.09.2015
-
-@author: Fabian Gieseke
-'''
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
 
 from __future__ import division
 

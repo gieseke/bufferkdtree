@@ -1,5 +1,11 @@
-/* 
- * gpu.h
+/*
+ * gpu_opencl.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ *               2013-2016 Cosmin Oancea <cosmin.oancea@di.ku.dk> 
+ *               2013 Justin Heinermann <justin.heinermann@uni-oldenburg.de>
+ * License: GPL v2
+ *
  */
 
 #ifndef NEIGHBORS_BUFFER_KD_TREE_GPU_OPENCL_H_

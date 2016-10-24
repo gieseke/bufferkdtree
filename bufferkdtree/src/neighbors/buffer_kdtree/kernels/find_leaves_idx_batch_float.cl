@@ -1,3 +1,12 @@
+/*
+ * find_leaves_idx_batch_float.cl
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ *               2013-2016 Cosmin Oancea <cosmin.oancea@di.ku.dk> 
+ * License: GPL v2
+ *
+ */
+ 
 #if USE_DOUBLE > 0
 #pragma OPENCL EXTENSION cl_khr_fp64: enable
 #define FLOAT_TYPE double

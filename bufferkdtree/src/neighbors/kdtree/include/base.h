@@ -1,8 +1,9 @@
 /*
  * base.h
  *
- *  Created on: 31.10.2014
- *      Author: Fabian Gieseke
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 
 #ifndef NEIGHBORS_KDTREE_INCLUDE_BASE_H_

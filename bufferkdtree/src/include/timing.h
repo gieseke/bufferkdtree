@@ -1,5 +1,9 @@
 /*
  * timing.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 #ifndef INCLUDE_TIMING_H_
 #define INCLUDE_TIMING_H_

@@ -1,5 +1,9 @@
-/* 
+/*
  * util.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 #ifndef BRUTE_INCLUDE_UTIL_H_
 #define BRUTE_INCLUDE_UTIL_H_

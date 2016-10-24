@@ -50,7 +50,13 @@ On an OpenSUSE system, the corresponding command is::
 OpenCL
 ------
 
-OpenCL needs to be installed correctly on the system. In addition, make sure that the OpenCL header files are available as well and accessible during the installation process, e.g., by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux-based systems. For instance, given CUDA along with OpenCL, the header files are probably located in ``/usr/local/cuda/include``. Hence, the following command would update the environment variable accordingly (if needed)::
+OpenCL needs to be installed correctly on the system. The installation of OpenCL depends on the particular host system and the devices used, see, e.g.,
+
+* `Intel <https://software.intel.com/en-us/intel-opencl/download>`_
+* `Nvidia <https://developer.nvidia.com/opencl>`_
+* `AMD <http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/getting-started-with-opencl/>`_
+
+Please make sure that the the OpenCL header files are available as well and accessible during the installation process, e.g., by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux-based systems. For instance, given a Nvidia device alogn with CUDA and OpenCL being installed, the header files are probably located in ``/usr/local/cuda/include``. Hence, the following command would update the environment variable accordingly (if needed)::
 
    export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/cuda/include
 

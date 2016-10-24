@@ -1,3 +1,8 @@
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
+
 """
 bufferkdtree
 ============
@@ -15,18 +20,22 @@ from distutils.util import strtobool
 def configuration(parent_package='', top_path=None):
 
     from numpy.distutils.misc_util import Configuration
-
-    try:
-        kdtree_only = strtobool(os.environ['BUFFERKDTREE_KDTREE_ONLY'])
-    except:
-        kdtree_only = False
         
     config = Configuration('bufferkdtree', parent_package, top_path)
     config.add_subpackage('neighbors', subpackage_path='neighbors')
     config.add_subpackage('neighbors/kdtree', subpackage_path='neighbors/kdtree')
-    if kdtree_only == False:
+    
+    if strtobool(os.environ['BUFFERKDTREE_KDTREE_ONLY']) == False:
         config.add_subpackage('neighbors/brute', subpackage_path='neighbors/brute')
         config.add_subpackage('neighbors/buffer_kdtree', subpackage_path='neighbors/buffer_kdtree')
+    else:
+        print("\n\n--------------------------------------------------\n" + 
+              "--------------------- WARNING --------------------\n" +
+              "--------------------------------------------------\n" +  
+              "Only compiling k-d tree implementation (CPU) since\n" + 
+              "environment variable 'BUFFERKDTREE_KDTREE_ONLY' is\nset to " + 
+              "'%s'\n" % str(os.environ['BUFFERKDTREE_KDTREE_ONLY']) + 
+              "--------------------------------------------------\n\n")
     config.add_subpackage('tests')
     config.add_subpackage('util')
     

@@ -1,5 +1,9 @@
-/* 
+/*
  * gpu_opencl.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 #ifndef BRUTE_INCLUDE_GPU_OPENCL_H_
 #define BRUTE_INCLUDE_GPU_OPENCL_H_

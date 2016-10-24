@@ -1,8 +1,13 @@
-'''
-Created on 15.09.2015
-
-@author: Fabian Gieseke
-'''
+#! /usr/bin/env python
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
+#   Inspired by installation routine of https://github.com/scikit-learn
+#   Copyright (C) 2007-2009 Cournapeau David <cournape@gmail.com>
+#                 2010 Fabian Pedregosa <fabian.pedregosa@inria.fr>
+#   License: 3-clause BSD
+#
 
 import os
 import sys

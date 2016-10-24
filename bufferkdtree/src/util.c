@@ -1,3 +1,11 @@
+/*
+ * util.c
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ *               1976 Niklaus Wirth
+ * License: GPL v2
+ *
+ */
 #include "include/util.h"
 #include "include/float.h"
 
