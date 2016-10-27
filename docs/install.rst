@@ -56,9 +56,15 @@ OpenCL needs to be installed correctly on the system. The installation of OpenCL
 * `Nvidia <https://developer.nvidia.com/opencl>`_
 * `AMD <http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/getting-started-with-opencl/>`_
 
+We refer to Andreas Klöckner's `wiki <https://wiki.tiker.net/OpenCLHowTo>`_ page for an excellent description of the OpenCL installation process on Linux-based systems. OpenCL is installed on `macOS <https://developer.apple.com/opencl/>`_. For Windows, we refer to this `blog post <https://streamcomputing.eu/blog/2015-03-16/how-to-install-opencl-on-windows/>`_.
+
 Please make sure that the the OpenCL header files are available as well and accessible during the installation process, e.g., by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux-based systems. For instance, given a Nvidia device alogn with CUDA and OpenCL being installed, the header files are probably located in ``/usr/local/cuda/include``. Hence, the following command would update the environment variable accordingly (if needed)::
 
    export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/cuda/include
+
+Sometimes, one also needs to set the path to the OpenCL libraries (e.g., linking errors such as /usr/bin/ld: cannot find -lOpenCL). On Linux-based systems, adapting the library path usually fixes such problems::
+
+   export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/cuda/lib64
 
 Virtualenv & Pip
 ----------------

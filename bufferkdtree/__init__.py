@@ -26,7 +26,7 @@ except NameError:
     __BUFFERKDTREE_SETUP__ = False
 
 if __BUFFERKDTREE_SETUP__:
-    sys.stderr.write('Warning: Incomplete import (installation)\n')
+    sys.stderr.write("Warning: Incomplete import (installation)\n")
 else:
     from .neighbors import NearestNeighbors
     __all__ = ['NearestNeighbors']

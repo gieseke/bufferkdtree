@@ -3,7 +3,7 @@
 # Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
 # License: GPL v2
 #
-#   Inspired by installation routine of https://github.com/scikit-learn
+#   Inspired by https://github.com/scikit-learn/scikit-learn/blob/master/setup.py
 #   Copyright (C) 2007-2009 Cournapeau David <cournape@gmail.com>
 #                 2010 Fabian Pedregosa <fabian.pedregosa@inria.fr>
 #   License: 3-clause BSD

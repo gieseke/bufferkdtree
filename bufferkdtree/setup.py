@@ -24,17 +24,16 @@ def configuration(parent_package='', top_path=None):
     config = Configuration('bufferkdtree', parent_package, top_path)
     config.add_subpackage('neighbors', subpackage_path='neighbors')
     config.add_subpackage('neighbors/kdtree', subpackage_path='neighbors/kdtree')
-    
-    if strtobool(os.environ['BUFFERKDTREE_KDTREE_ONLY']) == False:
-        config.add_subpackage('neighbors/brute', subpackage_path='neighbors/brute')
-        config.add_subpackage('neighbors/buffer_kdtree', subpackage_path='neighbors/buffer_kdtree')
+    if ("BUFFERKDTREE_KDTREE_ONLY" not in os.environ) or (strtobool(os.environ['BUFFERKDTREE_KDTREE_ONLY']) == False):
+            config.add_subpackage('neighbors/brute', subpackage_path='neighbors/brute')
+            config.add_subpackage('neighbors/buffer_kdtree', subpackage_path='neighbors/buffer_kdtree')
     else:
         print("\n\n--------------------------------------------------\n" + 
               "--------------------- WARNING --------------------\n" +
               "--------------------------------------------------\n" +  
               "Only compiling k-d tree implementation (CPU) since\n" + 
               "environment variable 'BUFFERKDTREE_KDTREE_ONLY' is\nset to " + 
-              "'%s'\n" % str(os.environ['BUFFERKDTREE_KDTREE_ONLY']) + 
+              "'True' (or not set aat all)\n" + 
               "--------------------------------------------------\n\n")
     config.add_subpackage('tests')
     config.add_subpackage('util')
@@ -45,3 +44,4 @@ if __name__ == '__main__':
     
     from numpy.distutils.core import setup
     setup(**configuration(top_path='').todict())
+    

@@ -4,5 +4,6 @@
 #
 
 from .base import NearestNeighbors
+from .util import compute_optimal_tree_depth
 
 __all__ = ['NearestNeighbors']

@@ -9,8 +9,7 @@ import numpy
 
 SOURCES_RELATIVE_PATH = "../../src/"
 
-FILES_TO_BE_COMPILED_CPU = ["timing.c", "util.c", "neighbors/brute/base.c", "neighbors/brute/util.c", "neighbors/brute/cpu.c"]
-FILES_TO_BE_COMPILED_OPENCL = ["timing.c", "opencl.c", "util.c", "neighbors/brute/base.c", "neighbors/brute/util.c", "neighbors/brute/cpu.c", "neighbors/brute/gpu_opencl.c"]
+FILES_TO_BE_COMPILED = ["timing.c", "opencl.c", "util.c", "neighbors/brute/base.c", "neighbors/brute/util.c", "neighbors/brute/cpu.c", "neighbors/brute/gpu_opencl.c"]
 DIRS_TO_BE_INCLUDED = ["neighbors/brute/include"]
 
 # the absolute path to the sources
@@ -18,8 +17,7 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 sources_abs_path = os.path.abspath(os.path.join(current_path, SOURCES_RELATIVE_PATH))
 
 # all source files
-source_files_cpu = [os.path.abspath(os.path.join(sources_abs_path, x)) for x in FILES_TO_BE_COMPILED_CPU]
-source_files_opencl = [os.path.abspath(os.path.join(sources_abs_path, x)) for x in FILES_TO_BE_COMPILED_OPENCL] 
+source_files = [os.path.abspath(os.path.join(sources_abs_path, x)) for x in FILES_TO_BE_COMPILED] 
 include_paths = [os.path.abspath(os.path.join(sources_abs_path, x)) for x in DIRS_TO_BE_INCLUDED]
 
 try:
@@ -39,7 +37,7 @@ def configuration(parent_package='', top_path=None):
         
     # CPU + FLOAT
     config.add_extension("_wrapper_cpu_float", \
-                                    sources=["swig/cpu_float.i"] + source_files_cpu,
+                                    sources=["swig/cpu_float.i"] + source_files,
                                     swig_opts=swig_opts,
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
@@ -53,7 +51,7 @@ def configuration(parent_package='', top_path=None):
 
     # CPU + DOUBLE
     config.add_extension("_wrapper_cpu_double", \
-                                    sources=["swig/cpu_double.i"] + source_files_cpu,
+                                    sources=["swig/cpu_double.i"] + source_files,
                                     swig_opts=swig_opts,
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
@@ -67,7 +65,7 @@ def configuration(parent_package='', top_path=None):
     
     # GPU + FLOAT
     config.add_extension("_wrapper_gpu_opencl_float", \
-                                    sources=["swig/gpu_float.i"] + source_files_opencl,
+                                    sources=["swig/gpu_float.i"] + source_files,
                                     swig_opts=swig_opts,
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[
@@ -82,7 +80,7 @@ def configuration(parent_package='', top_path=None):
 
     # GPU + DOUBLE
     config.add_extension("_wrapper_gpu_opencl_double", \
-                                    sources=["swig/gpu_double.i"] + source_files_opencl,
+                                    sources=["swig/gpu_double.i"] + source_files,
                                     swig_opts=swig_opts,
                                     include_dirs=[numpy_include] + [include_paths],
                                     define_macros=[

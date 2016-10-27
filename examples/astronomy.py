@@ -49,7 +49,7 @@ def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
     print("Fitting time: %f" % (end_time - start_time))
 
     start_time = time.time()
-    dists, inds = nbrs.kneighbors(Xtest)
+    _, _ = nbrs.kneighbors(Xtest)
     end_time = time.time()
     print("Testing time: %f" % (end_time - start_time))
 
