@@ -5,7 +5,7 @@
 
 """
 Nearest Neighbors (Scikit-Learn)
-===============================
+================================
 
 Simple example comparing both CPU kd tree based 
 implementations on a large-scale data set.
@@ -18,10 +18,10 @@ from bufferkdtree.neighbors import NearestNeighbors
 from sklearn.neighbors import NearestNeighbors as NearestNeighborsSKLEARN
 
 # parameters
-n_jobs = 2
+n_jobs = 8
 leaf_size = 30
-n_test = 1000000
-algorithms = ["kd_tree", "kd_tree_sklearn"]
+n_test = 100000
+algorithms = ["kd_tree_sklearn"]
 
 verbose = 0
 n_neighbors = 10

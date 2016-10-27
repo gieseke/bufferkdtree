@@ -66,6 +66,13 @@ Sometimes, one also needs to set the path to the OpenCL libraries (e.g., linking
 
    export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/cuda/lib64
 
+.. admonition:: No OpenCL Support?
+
+   In case OpenCL is not supported on the system, one can still compile **standard k-d tree implementation** by setting the global variable `BUFFERKDTREE_KDTREE_ONLY` to `True`. On Linux-based systems, this can be achieved via 
+
+   export BUFFERKDTREE_KDTREE_ONLY=True
+   
+
 Virtualenv & Pip
 ----------------
 
