@@ -15,9 +15,6 @@ Note: The platform and the device needs to be specified below
 """
 print(__doc__)
 
-# Authors: Fabian Gieseke 
-# Licence: GNU GPL (v2)
-
 import numpy
 from bufferkdtree import NearestNeighbors
 

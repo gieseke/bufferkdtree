@@ -15,14 +15,10 @@ Note: The platform and the device needs to be specified below
 """
 print(__doc__)
 
-# Authors: Fabian Gieseke 
-# Licence: GNU GPL (v2)
-
 import json
 import time
 import generate
 from bufferkdtree.neighbors import NearestNeighbors, compute_optimal_tree_depth
-from sklearn.neighbors import NearestNeighbors as NearestNeighborsSKLEARN
 
 # NOTE: If the 'brute' implementation exits with error code -5 (OUT_OF_RESOURCES),
 # then the "watchdog timer" of the driver might have killed to scheme due to
@@ -37,7 +33,7 @@ n_jobs = 8
 # parameters
 ofilename = "results.json"
 n_test_range = [1000000, 2500000, 5000000, 7500000, 10000000]
-algorithms = ["brute", "kd_tree", "kd_tree_sklearn", "buffer_kd_tree"]
+algorithms = ["brute", "kd_tree", "buffer_kd_tree"]
 
 verbose = 0
 n_neighbors = 10
@@ -87,15 +83,12 @@ def run_algorithm(n_test, tree_depth=None, algorithm="buffer_kd_tree"):
     Xtest_local = Xtest[:n_test, :]
 
     # instantiate model
-    if algorithm != "kd_tree_sklearn":
-        nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
-                                algorithm=algorithm, \
-                                n_jobs=n_jobs, \
-                                tree_depth=opt_tree_depth, \
-                                plat_dev_ids=plat_dev_ids, \
-                                verbose=verbose)
-    else:
-        nbrs = NearestNeighborsSKLEARN()
+    nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
+                            algorithm=algorithm, \
+                            n_jobs=n_jobs, \
+                            tree_depth=opt_tree_depth, \
+                            plat_dev_ids=plat_dev_ids, \
+                            verbose=verbose)
                 
     # train model
     start_time = time.time()
@@ -126,12 +119,7 @@ for i in xrange(len(algorithms)):
     print("----------------------------------------------------------------------")
     print("\n\nRunning %s ...\n" % (algorithm))
     print("----------------------------------------------------------------------")
-    algorithm_opt_depth = algorithm
-    # we want to focus on a comparison of both CPU 
-    # implementations given the same tree depths
-    if algorithm == "kd_tree_sklearn":
-        algorithm_opt_depth = "kd_tree"
-    opt_tree_depth = compute_opt_tree_depth(algorithm_opt_depth, n_test_tree=2000000)
+    opt_tree_depth = compute_opt_tree_depth(algorithm, n_test_tree=2000000)
     for n_test in n_test_range:
         train_time, test_time = run_algorithm(n_test,
                                               tree_depth=opt_tree_depth,
