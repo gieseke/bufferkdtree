@@ -37,25 +37,47 @@ typedef struct {
 #define ERROR_NO_DEVICES -3
 #define ERROR_INVALID_DEVICE -4
 
-/* --------------------------------------------------------------------------------
+/**
  * Initializes the OpenCL context, command_queue, platform, and device.
- * --------------------------------------------------------------------------------
+ *
+ * @param platform_number The OpenCL platform number
+ * @param *platform Pointer to platform that shall be initialized
+ * @param device_number The OpenCL device id/number that shall be used
+ * @param *device Pointer to corresponding device
+ * @param *context The OpenCL context
+ * @param *command_queue The OpenCL command queue
+ * @param verbose The verbosity level (0==no output, 1==more output, ...)
+ *
  */
-void init_opencl(cl_uint platform_number, cl_platform_id *platform,
-		cl_uint device_number, cl_device_id *device, cl_context *context,
-		cl_command_queue *command_queue, int verbose);
+void init_opencl(cl_uint platform_number,
+		cl_platform_id *platform,
+		cl_uint device_number,
+		cl_device_id *device,
+		cl_context *context,
+		cl_command_queue *command_queue,
+		int verbose);
 
-/* --------------------------------------------------------------------------------
+/**
  * Initializes a command queue
- * --------------------------------------------------------------------------------
+ * 
+ * @param *command_queue The OpenCL command queue
+ * @param *device The OpenCL device
+ * @param *context The OpenCL context
+ * 
  */
-void init_command_queue(cl_command_queue *command_queue, cl_device_id *device, cl_context *context);
+void init_command_queue(cl_command_queue *command_queue,
+		cl_device_id *device,
+		cl_context *context);
 
-/* --------------------------------------------------------------------------------
+/**
  * Prints the build information that stems from a kernel.
- * --------------------------------------------------------------------------------
+ * 
+ * @param program The OpenCL program to be built
+ * @param device The OpenCL device
+ * 
  */
-void print_build_information(cl_program program, cl_device_id device);
+void print_build_information(cl_program program,
+		cl_device_id device);
 
 /* --------------------------------------------------------------------------------
  * Gets device infos

@@ -11,14 +11,35 @@
 // OUT_OF_RESOURCES (OpenCL error -5)
 // http://stackoverflow.com/questions/3988645/cl-out-of-resources-for-2-millions-floats-with-1gb-vram
 
-/* --------------------------------------------------------------------------------
- * Interface (extern): Initialize components
- * --------------------------------------------------------------------------------
+/**
+ * Initializes the *params struct with the parameters provided.
+ *
+ * @param n_neighbors The number of nearest neighbors to be found
+ * @param tree_depth The tree depth of the tree to be built
+ * @param num_threads The number of threads that should be used
+ * @param num_nXtrain_chunks The number of chunks the training data should be split into
+ * @param platform_id The OpenCL platform that should be used
+ * @param device_id The id of the OpenCL device that should be used
+ * @param allowed_train_mem_percent_chunk The amount of memory (percentage) that the training data may occupy
+ * @param allowed_test_mem_percent  The amount of memory (percentage) that the test data may occupy
+ * @param splitting_type The splitting type that can be used during the construction of the tree
+ * @param *kernels_source_directory Pointer to string that contains the path to the OpenCL kernels
+ * @param verbosity_level The verbosity level (0==no output, 1==more output, 2==...)
+ * @param *params Pointer to struct that is used to store all parameters
+ *
  */
-void init_extern(int n_neighbors, int tree_depth, int num_threads, int num_nXtrain_chunks, int platform_id,
-		int device_id, double allowed_train_mem_percent_chunk, double allowed_test_mem_percent,
-		int splitting_type, char *kernels_source_directory,
-		int verbosity_level, TREE_PARAMETERS *params) {
+void init_extern(int n_neighbors,
+		int tree_depth,
+		int num_threads,
+		int num_nXtrain_chunks,
+		int platform_id,
+		int device_id,
+		double allowed_train_mem_percent_chunk,
+		double allowed_test_mem_percent,
+		int splitting_type,
+		char *kernels_source_directory,
+		int verbosity_level,
+		TREE_PARAMETERS *params) {
 
 	set_default_parameters(params);
 
@@ -40,11 +61,19 @@ void init_extern(int n_neighbors, int tree_depth, int num_threads, int num_nXtra
 
 }
 
-/* -------------------------------------------------------------------------------- 
+/**
  * Builds a buffer k-d-tree
- * -------------------------------------------------------------------------------- 
+ *
+ * @param *Xtrain Pointer to array of type "FLOAT_TYPE" (either "float" or "double")
+ * @param nXtrain Number of rows in *X (i.e., points/patterns)
+ * @param dXtrain Number of columns in *X (one column per point/pattern)
+ * @param *tree_record Pointer to struct instance storing the model
+ * @param *params Pointer to struct instance storing all model parameters
  */
-void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain, TREE_RECORD *tree_record,
+void build_bufferkdtree(FLOAT_TYPE * Xtrain,
+		INT_TYPE nXtrain,
+		INT_TYPE dXtrain,
+		TREE_RECORD *tree_record,
 		TREE_PARAMETERS *params) {
 
 	int i;
@@ -141,14 +170,34 @@ void build_bufferkdtree(FLOAT_TYPE * Xtrain, INT_TYPE nXtrain, INT_TYPE dXtrain,
 
 }
 
-/* -------------------------------------------------------------------------------- 
- * Testing: Perform the test queries (using the buffer kd-tree).
- * -------------------------------------------------------------------------------- 
+/**
+ * Interface (extern): Computes the k nearest neighbors for a given set of test points
+ * stored in *Xtest and stores the results in two arrays *distances and *indices.
+ *
+ * @param *Xtest Pointer to the set of query/test points (stored as FLOAT_TYPE)
+ * @param nXtest The number of query points
+ * @param dXtest The dimension of each query point
+ * @param *distances The distances array (FLOAT_TYPE) used to store the computed distances
+ * @param ndistances The number of query points
+ * @param ddistances The number of distance values for each query point
+ * @param *indices Pointer to arrray storing the indices of the k nearest neighbors for each query point
+ * @param nindices The number of query points
+ * @param dindices The number of indices comptued for each query point
+ * @param *tree_record Pointer to struct storing all relevant information for model
+ * @param *params Pointer to struct containing all relevant parameters
+ *
  */
-void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
-		FLOAT_TYPE * distances, INT_TYPE ndistances, INT_TYPE ddistances,
-		INT_TYPE *indices, INT_TYPE nindices, INT_TYPE dindices,
-		TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
+void neighbors_extern(FLOAT_TYPE * Xtest,
+		INT_TYPE nXtest,
+		INT_TYPE dXtest,
+		FLOAT_TYPE *distances,
+		INT_TYPE ndistances,
+		INT_TYPE ddistances,
+		INT_TYPE *indices,
+		INT_TYPE nindices,
+		INT_TYPE dindices,
+		TREE_RECORD *tree_record,
+		TREE_PARAMETERS *params) {
 
 	START_MY_TIMER(tree_record->timers + 1);
 
@@ -374,11 +423,15 @@ void neighbors_extern(FLOAT_TYPE * Xtest, INT_TYPE nXtest, INT_TYPE dXtest,
 
 }
 
-/* -------------------------------------------------------------------------------- 
- * Frees host resources.
- * -------------------------------------------------------------------------------- 
+/**
+ * Frees resources (e.g., on the GPU)
+ *
+ * @param *tree_record Pointer to struct storing all relevant information for model
+ * @param *params Pointer to struct containing all relevant parameters
+ *
  */
-void extern_free_resources(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
+void extern_free_resources(TREE_RECORD *tree_record,
+		TREE_PARAMETERS *params) {
 
 	/* ------------------------------------- OPENCL -------------------------------------- */
 	FREE_OPENCL_DEVICES(tree_record, params);
@@ -394,22 +447,30 @@ void extern_free_resources(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
 }
 
-/* --------------------------------------------------------------------------------
+/**
  * Frees opencl test buffers
- * --------------------------------------------------------------------------------
+ *
+ * @param *tree_record Pointer to struct storing all relevant information for model
+ * @param *params Pointer to struct containing all relevant parameters
+ *
  */
-void extern_free_query_buffers(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
+void extern_free_query_buffers(TREE_RECORD *tree_record,
+		TREE_PARAMETERS *params) {
 
 	free_train_buffers_gpu(tree_record, params);
 	free_query_buffers_gpu(tree_record, params);
 
 }
 
-/* --------------------------------------------------------------------------------
- * Get maximum number of test queries that can be processed.
- * --------------------------------------------------------------------------------
+/**
+ * Returns maximum number of test queries that can be processed.
+ *
+ * @param *tree_record Pointer to struct storing all relevant information for model
+ * @param *params Pointer to struct containing all relevant parameters
+ * @return Maximum number of test instances that can be processed
  */
-long get_max_nXtest_extern(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
+long get_max_nXtest_extern(TREE_RECORD *tree_record,
+		TREE_PARAMETERS *params) {
 
 	long device_mem_bytes = tree_record->device_infos.device_mem_bytes;
 
@@ -428,11 +489,15 @@ long get_max_nXtest_extern(TREE_RECORD *tree_record, TREE_PARAMETERS *params) {
 
 }
 
-/* --------------------------------------------------------------------------------
+/**
  * Checks if platform and device are valid
- * --------------------------------------------------------------------------------
+ *
+ * @param platform_id The OpenCL platform id to be used
+ * @param device_id The OpenCL device id to be used
+ *
  */
-int extern_check_platform_device(int platform_id, int device_id){
+int extern_check_platform_device(int platform_id,
+		int device_id){
 
 	return get_device_infos(platform_id, device_id, NULL);
 
