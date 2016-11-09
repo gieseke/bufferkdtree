@@ -18,7 +18,12 @@
 #include "include/float.h"
 
 /**
- * Transposes an array (float)
+ * Transposes a given float array
+ *
+ * @param array Pointer to float array
+ * @param n number of "rows" in a
+ * @param d number of "columns" in a
+ * @param array_transposed The transposed array
  *
  */
 void transpose_array_float(float* array,
@@ -34,7 +39,12 @@ void transpose_array_float(float* array,
 }
 
 /**
- * Transposes an array (double)
+ * Transposes a given double array
+ *
+ * @param array Pointer to double array
+ * @param n number of "rows" in a
+ * @param d number of "columns" in a
+ * @param array_transposed The transposed array
  *
  */
 void transpose_array_double(double* array,
@@ -50,7 +60,12 @@ void transpose_array_double(double* array,
 }
 
 /**
- * Transposes an array (int)
+ * Transposes a given int array
+ *
+ * @param array Pointer to int array
+ * @param n number of "rows" in a
+ * @param d number of "columns" in a
+ * @param array_transposed The transposed array
  *
  */
 void transpose_array_int(int* array,
@@ -65,16 +80,12 @@ void transpose_array_int(int* array,
 	}
 }
 
-char* plot_precision_infos_double(void){
-	return "Floating point precision: double\n";
-}
-
-char* plot_precision_infos_float(void){
-	return "Floating point precision: float\n";
-}
 
 /**
  * Compares two float values
+ *
+ *@param Pointer to first float
+ *@param Pointer to second float
  */
 int compare_floats(const void *p1,
 		const void *p2) {
@@ -96,8 +107,12 @@ int compare_floats(const void *p1,
 /**
  * Compares to integers
  *
+ *
+ *@param Pointer to first int
+ *@param Pointer to second int
  */
-int compare_ints(const void *p1, const void *p2) {
+int compare_ints(const void *p1,
+		const void *p2) {
 
 	// the index is stored at the end of each element...
 	int *p1_point, *p2_point;
@@ -127,7 +142,6 @@ int compare_ints(const void *p1, const void *p2) {
  Publisher: Englewood Cliffs: Prentice-Hall, 1976
  Physical description: 366 p.
  Series: Prentice-Hall Series in Automatic Computation
-
 */
 elem_type kth_smallest(elem_type a[],
 		int n,
@@ -137,6 +151,10 @@ elem_type kth_smallest(elem_type a[],
 
 /**
  * Computes the kth smallest index
+ *
+ *@param a[] Array of type elem_type
+ *@param n Number of rows
+ *@param Number of columns
  */
 int kth_smallest_idx(elem_type a[],
 		int n,

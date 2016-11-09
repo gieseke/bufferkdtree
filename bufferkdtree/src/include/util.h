@@ -25,36 +25,70 @@
 #include <string.h>
 #include <ctype.h>
 
-/* --------------------------------------------------------------------------------
- * Transposes an array (float)
- * --------------------------------------------------------------------------------
+/**
+ * Transposes a given float array
+ * 
+ * @param array Pointer to float array
+ * @param n number of "rows" in a
+ * @param d number of "columns" in a
+ * @param array_transposed The transposed array
+ *
  */
-void transpose_array_float(float* array, int n, int d, float* array_transposed);
+void transpose_array_float(float* array,
+		int n,
+		int d,
+		float* array_transposed);
 
-/* --------------------------------------------------------------------------------
- * Transposes an array (double)
- * --------------------------------------------------------------------------------
+/**
+ * Transposes a given double array
+ *
+ * @param array Pointer to double array
+ * @param n number of "rows" in a
+ * @param d number of "columns" in a
+ * @param array_transposed The transposed array
+ *
  */
-void transpose_array_double(double* array, int n, int d, double* array_transposed);
+void transpose_array_double(double* array, 
+		int n, 
+		int d, 
+		double* array_transposed);
 
-/* --------------------------------------------------------------------------------
- * Transposes an array (int)
- * --------------------------------------------------------------------------------
+/**
+ * Transposes a given int array
+ *
+ * @param array Pointer to int array
+ * @param n number of "rows" in a
+ * @param d number of "columns" in a
+ * @param array_transposed The transposed array
+ *
  */
-void transpose_array_int(int* array, int n, int d, int* array_transposed);
+void transpose_array_int(int* array, 
+		int n, 
+		int d, 
+		int* array_transposed);
 
-char* plot_precision_infos_double(void);
+/**
+ * Compares two float values
+ *
+ *@param Pointer to first float
+ *@param Pointer to second float
+ */
+int compare_floats(const void *p1,
+		const void *p2);
 
-char* plot_precision_infos_float(void);
-
-int compare_floats(const void *p1, const void *p2);
-
-int compare_ints(const void *p1, const void *p2);
+/**
+ * Compares to integers
+ *
+ *
+ *@param Pointer to first int
+ *@param Pointer to second int
+ */
+int compare_ints(const void *p1, 
+		const void *p2);
 
 typedef FLOAT_TYPE elem_type;
 
 #define ELEM_SWAP(a,b) { register elem_type t=(a);(a)=(b);(b)=t; }
-//#define median(a,n) kth_smallest(a,n,(((n)&1)?((n)/2):(((n)/2)-1)))
 #define median(a,n) kth_smallest(a,n,((n)/2))
 
 /*---------------------------------------------------------------------------
@@ -75,6 +109,15 @@ typedef FLOAT_TYPE elem_type;
  ---------------------------------------------------------------------------*/
 elem_type kth_smallest(elem_type a[], int n, int k);
 
-int kth_smallest_idx(elem_type a[], int n, int k);
+/**
+ * Computes the kth smallest index
+ *
+ *@param a[] Array of type elem_type
+ *@param n Number of rows
+ *@param Number of columns
+ */
+int kth_smallest_idx(elem_type a[],
+		int n,
+		int k);
 
 #endif /* INCLUDE_UTIL_H_ */

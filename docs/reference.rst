@@ -16,7 +16,13 @@ All neighbor implementations can be invoked via the main ``NearestNeighbors`` cl
 Adapting Buffer K-D Trees
 -------------------------
 
-If you wish to adapt the buffer k-d tree implementation, then you might want have a look at the C and OpenCL code that is available in the `bufferkdtree/src` directory. A good starting point for diving into the details of the underlying implementation is the base.c file in bufferkdtree/src/neighbors/buffer_kdtree directory. 
+.. admonition:: C API
+
+    A separate documentation of this code can be found in bufferkdtree/docs/c_api subdirectory and is also available `online <https://github.com/gieseke/bufferkdtree/tree/master/docs/c_api>`_
+
+If you wish to adapt the buffer k-d tree implementation, then you might want have a look at the C and OpenCL code that is available in the `bufferkdtree/src` directory. 
+
+A good starting point for diving into the details of the underlying implementation is the base.c file in bufferkdtree/src/neighbors/buffer_kdtree directory. 
 
 Within this file, you can find two functions `build_bufferkdtree` and `neighbors_extern`: The first function is called via the Python interface to build a buffer k-d tree given a set of reference/training points. These points are stored in the array `FLOAT_TYPE * Xtrain` (one row per training pattern).
 

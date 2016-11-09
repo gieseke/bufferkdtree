@@ -1,5 +1,5 @@
-bufferkdtree (C code)
-=====================
+bufferkdtree
+============
 
 If you wish to adapt the buffer k-d tree implementation, then you might want have a look at the C and OpenCL code that is available in the `bufferkdtree/src` directory. A good starting point for diving into the details of the underlying implementation is the base.c file in bufferkdtree/src/neighbors/buffer_kdtree directory. 
 
@@ -13,7 +13,6 @@ The second function `neighbors_extern` can be called via the Python interface to
 
 The key idea of buffer k-d trees is to speed up the computation of nearest neighbors given many test queries. The two main algorithmic building blocks are two functions, `ProcessAllBuffers` and `FindLeafBatch`, that are called in an alternating fashion until all queries have been processed. For the algorithmic details, please have a look at 
 
-> Details: Buffer K-D Tree 
 > Fabian Gieseke, Justin Heinermann, Cosmin Oancea, and Christian Igel. *Buffer k-d Trees: Processing Massive Nearest Neighbor Queries on GPUs*. In: Proceedings of the 31st International Conference on Machine Learning (ICML) 32(1), 2014, 172-180. [[pdf](http://jmlr.org/proceedings/papers/v32/gieseke14.pdf)]
 
 For each of these two functions, a corresponding implementation in gpu_opencl.c can be found(`process_all_buffers_gpu` and `find_leaf_idx_batch_gpu`). The underlying workflow is quite complex; please get in touch with us in case you have trouble understanding certain parts of the code. 
