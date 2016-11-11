@@ -31,7 +31,7 @@ plat_dev_ids = {0:[0, 1, 2, 3]}
 n_jobs = 8
 
 # parameters
-ofilename = "results.json"
+ofilename = "benchmark.json"
 n_test_range = [1000000, 2500000, 5000000, 7500000, 10000000]
 algorithms = ["brute", "kd_tree", "buffer_kd_tree"]
 
@@ -103,10 +103,6 @@ def run_algorithm(n_test, tree_depth=None, algorithm="buffer_kd_tree"):
     end_time = time.time()
     test_time = (end_time - start_time)
     print("Testing time: %f" % test_time)
-
-    # store results 
-    if algorithm not in results.keys():
-        results[algorithm] = {}
     
     return train_time, test_time
 
@@ -116,6 +112,8 @@ results = {}
 for i in xrange(len(algorithms)):
     
     algorithm = algorithms[i]
+    results[algorithm] = {}
+
     print("----------------------------------------------------------------------")
     print("\n\nRunning %s ...\n" % (algorithm))
     print("----------------------------------------------------------------------")

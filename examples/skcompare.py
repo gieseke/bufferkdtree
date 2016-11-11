@@ -12,15 +12,17 @@ implementations on a large-scale data set.
 """
 print(__doc__)
 
+import json
 import time
 import generate
 from bufferkdtree.neighbors import NearestNeighbors
 from sklearn.neighbors import NearestNeighbors as NearestNeighborsSKLEARN
 
 # parameters
-n_jobs = 2
+n_jobs = 4
 leaf_size = 30
-n_test = 100000
+ofilename = "skcomparison.json"
+n_test_range = [100000, 250000, 500000, 750000, 1000000]
 algorithms = ["kd_tree_sklearn", "kd_tree"]
 
 verbose = 0
@@ -33,6 +35,8 @@ print("Number of training patterns:\t %i" % Xtrain.shape[0])
 print("Number of test patterns:\t %i" % Xtest.shape[0])
 print("Dimensionality of patterns:\t%i" % Xtrain.shape[1])
 print("----------------------------------------------------------------------")
+
+results = {}
 
 def run_algorithm(n_test_local, leaf_size=30, algorithm="kd_tree"):
 
@@ -75,8 +79,19 @@ def run_algorithm(n_test_local, leaf_size=30, algorithm="kd_tree"):
 for i in xrange(len(algorithms)):
     
     algorithm = algorithms[i]
+    results[algorithm] = {}
     print("----------------------------------------------------------------------")
     print("\n\nRunning %s ...\n" % (algorithm))
     print("----------------------------------------------------------------------")
-    run_algorithm(n_test, algorithm=algorithm, leaf_size=leaf_size)
-    
+    for n_test in n_test_range:
+        train_time, test_time = run_algorithm(n_test, 
+                                              algorithm=algorithm, 
+                                              leaf_size=leaf_size)
+        results[algorithm][n_test] = {'train':train_time,
+                                      'test':test_time,
+                                      }
+
+# write results after each step
+print("Writing results to %s ..." % ofilename)
+with open(ofilename, 'w') as f:
+    json.dump(results, f)    
