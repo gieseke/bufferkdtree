@@ -31,13 +31,13 @@ n_neighbors = 10
 
 def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
 
-    nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
-                            algorithm=algorithm, \
-                            tree_depth=tree_depth, \
-                            leaf_size=leaf_size, \
-                            float_type=float_type, \
-                            n_jobs=n_jobs, \
-                            plat_dev_ids=plat_dev_ids, \
+    nbrs = NearestNeighbors(n_neighbors=n_neighbors, 
+                            algorithm=algorithm, 
+                            tree_depth=tree_depth, 
+                            leaf_size=leaf_size, 
+                            float_type=float_type, 
+                            n_jobs=n_jobs, 
+                            plat_dev_ids=plat_dev_ids, 
                             verbose=verbose)
 
     start_time = time.time()

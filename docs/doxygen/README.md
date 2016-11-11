@@ -7,9 +7,7 @@ Within this file, you can find two functions `build_bufferkdtree` and `neighbors
 
 >   FLOAT_TYPE is either `float` or `double` depending on the compiler flag `USE_DOUBLE`, which is defined in `bufferkdtree/neighbors/buffer_kdtree/setup.py`.
 
-The corresponding tree is stored in the `tree_record` structure. All other parameters are defined via the params structure, which is initialized beforehand via an outer call of `init_extern`.
-
-The second function `neighbors_extern` can be called via the Python interface to compute the nearest neighbors for a buffer k-d tree already built via the first function: Here, `Xtest` corresponds to the test/query points. The distances and indices that are computed during the execution are stored in `distances` and `indices`, respectively. Similarly to `build_bufferkdtree`, the parameters are stored in `params` and the (already built tree) in `tree`.
+The corresponding tree is stored in the `tree_record` structure. All other parameters are defined via the params structure, which is initialized beforehand via an outer call of `init_extern`. The second function `neighbors_extern` can be called via the Python interface to compute the nearest neighbors for a buffer k-d tree already built via the first function: Here, `Xtest` corresponds to the test/query points. The distances and indices that are computed during the execution are stored in `distances` and `indices`, respectively. Similarly to `build_bufferkdtree`, the parameters are stored in `params` and the (already built tree) in `tree`.
 
 The key idea of buffer k-d trees is to speed up the computation of nearest neighbors given many test queries. The two main algorithmic building blocks are two functions, `ProcessAllBuffers` and `FindLeafBatch`, that are called in an alternating fashion until all queries have been processed. For the algorithmic details, please have a look at 
 
@@ -18,7 +16,3 @@ The key idea of buffer k-d trees is to speed up the computation of nearest neigh
 For each of these two functions, a corresponding implementation in gpu_opencl.c can be found(`process_all_buffers_gpu` and `find_leaf_idx_batch_gpu`). The underlying workflow is quite complex; please get in touch with us in case you have trouble understanding certain parts of the code. 
 
 If you are just interested in the OpenCL part, then you might want to have a look at `kernels` subdirectory: The most important kernel is given in `brute_all_leaves_nearest_neighbors.cl`, which implements the brute-force processing of nearest neighbors in the leaves of the buffer k-d tree. The kernel taking care of finding the next leaves is given in `find_leaves_idx_batch_float.cl`.
-
-
-
-

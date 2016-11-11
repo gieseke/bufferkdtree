@@ -94,9 +94,9 @@ int get_device_infos(cl_uint platform_number,
 /**
  * Helper function that checks for an OpenCL error
  *
- *@param err The OpenCL error code (int)
- *@param *file The source code file
- *@param line The associated line
+ * @param err The OpenCL error code (int)
+ * @param *file The source code file
+ * @param line The associated line
  *
  */
 void check_cl_error(cl_int err,
@@ -106,11 +106,11 @@ void check_cl_error(cl_int err,
 /**
  * Generates an OpenCL kernel from a source string.
  *
- *@param context The OpenCL context
- *@param device The OpenCL device
- *@param *kernel_constants Pointer to string that contains kernel constants that shall be added to the compiled kernel
- *@param *kernel_filename Pointer to string containing the kernel code
- *@param *kernel_name Pointer to string containing the kernel name
+ * @param context The OpenCL context
+ * @param device The OpenCL device
+ * @param *kernel_constants Pointer to string that contains kernel constants that shall be added to the compiled kernel
+ * @param *kernel_filename Pointer to string containing the kernel code
+ * @param *kernel_name Pointer to string containing the kernel name
  */
 cl_kernel make_kernel_from_file(cl_context context,
 		cl_device_id device,
@@ -121,9 +121,9 @@ cl_kernel make_kernel_from_file(cl_context context,
 /**
  * Helper function that can read text from a file and stores everything in a char array.
  *
- *@param *filename Pointer to string containing the filename
- *@param **text Pointer to char* that shall contain the parsed text
- *@param *size Number of bytes that shall be parsed
+ * @param *filename Pointer to string containing the filename
+ * @param **text Pointer to char* that shall contain the parsed text
+ * @param *size Number of bytes that shall be parsed
  */
 void readfile(char *filename,
 		char **text,

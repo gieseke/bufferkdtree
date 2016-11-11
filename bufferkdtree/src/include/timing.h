@@ -51,29 +51,29 @@ long get_system_time_in_microseconds(void);
 /**
  * Initializes a timer
  *
- *@param *timer Pointer to timer struct instance
+ * @param *timer Pointer to timer struct instance
  */
 void init_my_timer(TIMER *timer);
 
 /**
  * Starts a given timer
  *
- *@param *timer Pointer to timer struct instance
+ * @param *timer Pointer to timer struct instance
  */
 void start_my_timer(TIMER *timer);
 
 /**
  * Stops a given timer
  *
- *@param *timer Pointer to timer struct instance
+ * @param *timer Pointer to timer struct instance
  */
 void stop_my_timer(TIMER *timer);
 
 /**
  * Returns the time measured by a given timer
  *
- *@param *timer Pointer to timer struct instance
- *@return Passed time in seconds
+ * @param *timer Pointer to timer struct instance
+ * @return Passed time in seconds
  */
 double get_my_timer(TIMER *timer);
 

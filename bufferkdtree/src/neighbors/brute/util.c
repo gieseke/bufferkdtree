@@ -12,7 +12,7 @@
 /**
  * Sets default parameters.
  *
- *@param *params Pointer to struct containing the parameters
+ * @param *params Pointer to struct containing the parameters
  */
 void set_default_parameters(BRUTE_PARAMETERS *params) {
 
@@ -25,7 +25,7 @@ void set_default_parameters(BRUTE_PARAMETERS *params) {
 /**
  * Checks parameters.
  *
- *@param *params Pointer to struct containing the parameters
+ * @param *params Pointer to struct containing the parameters
  */
 void check_parameters(BRUTE_PARAMETERS *params) {
 

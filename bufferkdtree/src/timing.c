@@ -11,7 +11,7 @@
 /**
  * Helper method for computing the current time (w.r.t to an offset).
  *
- *@return System in in microseconds
+ * @return System in in microseconds
  */
 long get_system_time_in_microseconds(void) {
 	struct timeval tempo;
@@ -22,7 +22,7 @@ long get_system_time_in_microseconds(void) {
 /**
  * Initializes a timer
  *
- *@param *timer Pointer to timer struct instance
+ * @param *timer Pointer to timer struct instance
  */
 void init_my_timer(TIMER *timer){
 	timer->start_time = 0;
@@ -33,7 +33,7 @@ void init_my_timer(TIMER *timer){
 /**
  * Starts a given timer
  *
- *@param *timer Pointer to timer struct instance
+ * @param *timer Pointer to timer struct instance
  */
 void start_my_timer(TIMER *timer){
 	timer->start_time = get_system_time_in_microseconds();
@@ -42,7 +42,7 @@ void start_my_timer(TIMER *timer){
 /**
  * Stops a given timer
  *
- *@param *timer Pointer to timer struct instance
+ * @param *timer Pointer to timer struct instance
  */
 void stop_my_timer(TIMER *timer){
 	timer->elapsed_time = (double)get_system_time_in_microseconds() - timer->start_time;
@@ -52,8 +52,8 @@ void stop_my_timer(TIMER *timer){
 /**
  * Returns the time measured by a given timer
  *
- *@param *timer Pointer to timer struct instance
- *@return Passed time in seconds
+ * @param *timer Pointer to timer struct instance
+ * @return Passed time in seconds
  */
 double get_my_timer(TIMER *timer){
 	return (double)(1.0*timer->elapsed_time_total / 1000000.0);

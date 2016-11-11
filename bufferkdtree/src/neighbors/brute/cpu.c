@@ -15,8 +15,8 @@
 /**
  * Intializes components if needed.
  *
- *@param *brute_record Pointer to record storing the model
- *@param *params Pointer to struct storing the parameters
+ * @param *brute_record Pointer to record storing the model
+ * @param *params Pointer to struct storing the parameters
  */
 void init_cpu(BRUTE_RECORD *brute_record,
 		BRUTE_PARAMETERS *params){
@@ -26,11 +26,11 @@ void init_cpu(BRUTE_RECORD *brute_record,
 /**
  * Fits a model given the training data (and parameters)
  *
- *@param *Xtrain Training patterns
- *@param nXtrain Number of training patterns
- *@param dXtrain Dimensionality of training patterns
- *@param *brute_record Pointer to record storing the model
- *@param *params Pointer to struct storing the parameters
+ * @param *Xtrain Training patterns
+ * @param nXtrain Number of training patterns
+ * @param dXtrain Dimensionality of training patterns
+ * @param *brute_record Pointer to record storing the model
+ * @param *params Pointer to struct storing the parameters
  */
 void fit_cpu(FLOAT_TYPE *Xtrain,
 		int nXtrain,
@@ -47,8 +47,8 @@ void fit_cpu(FLOAT_TYPE *Xtrain,
 /**
  * Does some clean up (before exiting the program).
  *
- *@param *brute_record Pointer to record storing the model
- *@param *params Pointer to struct storing the parameters
+ * @param *brute_record Pointer to record storing the model
+ * @param *params Pointer to struct storing the parameters
  */
 void free_resources_cpu(BRUTE_RECORD *brute_record,
 		BRUTE_PARAMETERS *params) {
@@ -105,13 +105,13 @@ void neighbors_cpu(FLOAT_TYPE *Xtest,
 /**
  * Computes nearest neighbors for a single test instance.
  *
- *@param *Xtrain Training patterns
- *@param nXtrain Number of training patterns
- *@param dim Dimensionality of training patterns
- *@param *test_pattern Test pattern
- *@param *d_min Pointer to array that shall be used to store the distances
- *@param *idx_min Pointer ot array that shall be used to store the indices
- *@param K The number of neighbors
+ * @param *Xtrain Training patterns
+ * @param nXtrain Number of training patterns
+ * @param dim Dimensionality of training patterns
+ * @param *test_pattern Test pattern
+ * @param *d_min Pointer to array that shall be used to store the distances
+ * @param *idx_min Pointer ot array that shall be used to store the indices
+ * @param K The number of neighbors
  */
 void compute_neighbors_single_instance_cpu(FLOAT_TYPE *Xtrain,
 		int nXtrain,
@@ -132,9 +132,9 @@ void compute_neighbors_single_instance_cpu(FLOAT_TYPE *Xtrain,
 /**
  * Computes the distance between point a and b in R^dim
  *
- *@param *a Pointer to first point
- *@param *b Pointer to second point
- *@param dim Dimensionality of the points
+ * @param *a Pointer to first point
+ * @param *b Pointer to second point
+ * @param dim Dimensionality of the points
  */
 inline FLOAT_TYPE squared_dist_cpu(FLOAT_TYPE *a,
 		FLOAT_TYPE *b,
@@ -156,11 +156,11 @@ inline FLOAT_TYPE squared_dist_cpu(FLOAT_TYPE *a,
  * of FLOAT_TYPEs and the list nearest_idx of indices. Both lists contain at most K
  * elements.
  *
- *@param pattern_dist Distance to the current pattern
- *@param pattern_idx Associated index
- *@param *nearest_dist Array of distances to be updated
- *@param *nearest_idx Arra of indices to be updated
- *@param K Number of nearest neighbors
+ * @param pattern_dist Distance to the current pattern
+ * @param pattern_idx Associated index
+ * @param *nearest_dist Array of distances to be updated
+ * @param *nearest_idx Arra of indices to be updated
+ * @param K Number of nearest neighbors
  */
 void insert_cpu(FLOAT_TYPE pattern_dist,
 		int pattern_idx,

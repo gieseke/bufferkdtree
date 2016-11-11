@@ -26,25 +26,25 @@ verbose = 1
 X = numpy.random.uniform(low=-1, high=1, size=(10000,10))
 
 # (1) apply buffer k-d tree implementation
-nbrs_buffer_kd_tree = NearestNeighbors(algorithm="buffer_kd_tree", \
-                        tree_depth=9, \
-                        plat_dev_ids=plat_dev_ids, \
+nbrs_buffer_kd_tree = NearestNeighbors(algorithm="buffer_kd_tree", 
+                        tree_depth=9, 
+                        plat_dev_ids=plat_dev_ids, 
                         verbose=verbose)    
 nbrs_buffer_kd_tree.fit(X)
 dists, inds = nbrs_buffer_kd_tree.kneighbors(X, n_neighbors=n_neighbors)
 print("\nbuffer_kd_tree output\n" + str(dists[0]))
 
 # (2) apply brute-force implementation
-nbrs_brute = NearestNeighbors(algorithm="brute", \
-                        plat_dev_ids=plat_dev_ids, \
+nbrs_brute = NearestNeighbors(algorithm="brute", 
+                        plat_dev_ids=plat_dev_ids, 
                         verbose=verbose)    
 nbrs_brute.fit(X)
 dists, inds = nbrs_brute.kneighbors(X, n_neighbors=n_neighbors)
 print("\nbrute output\n" + str(dists[0]))
 
 # (3) apply k-d tree mplementation
-nbrs_kd_tree = NearestNeighbors(algorithm="kd_tree", \
-                        n_jobs=n_jobs, \
+nbrs_kd_tree = NearestNeighbors(algorithm="kd_tree", 
+                        n_jobs=n_jobs, 
                         verbose=verbose)    
 nbrs_kd_tree.fit(X)
 dists, inds = nbrs_kd_tree.kneighbors(X, n_neighbors=n_neighbors)

@@ -70,8 +70,8 @@ void transpose_array_int(int* array,
 /**
  * Compares two float values
  *
- *@param Pointer to first float
- *@param Pointer to second float
+ * @param Pointer to first float
+ * @param Pointer to second float
  */
 int compare_floats(const void *p1,
 		const void *p2);
@@ -80,8 +80,8 @@ int compare_floats(const void *p1,
  * Compares to integers
  *
  *
- *@param Pointer to first int
- *@param Pointer to second int
+ * @param Pointer to first int
+ * @param Pointer to second int
  */
 int compare_ints(const void *p1, 
 		const void *p2);
@@ -112,9 +112,9 @@ elem_type kth_smallest(elem_type a[], int n, int k);
 /**
  * Computes the kth smallest index
  *
- *@param a[] Array of type elem_type
- *@param n Number of rows
- *@param Number of columns
+ * @param a[] Array of type elem_type
+ * @param n Number of rows
+ * @param Number of columns
  */
 int kth_smallest_idx(elem_type a[],
 		int n,

@@ -374,6 +374,11 @@ numpydoc_show_class_members = False
 numpydoc_class_members_toctree = True
 autodoc_member_order = 'bysource'
 
-
+import subprocess
+subprocess.call("pwd")
+try:
+    subprocess.call('cd doxygen; doxygen bufferkdtree; cd ..', shell=True)
+except Exception as e:
+    print("Could not build doxygen documentation: %s" % str(e))
 
 

@@ -9,7 +9,7 @@ Toy Example
 -----------
 
 .. literalinclude:: ../examples/artificial.py
-    :start-after: # Licence: GNU GPL (v2)
+    :start-after: # License: GPL v2
     :end-before: X = numpy.random.uniform(low=-1, high=1, size=(10000,10))
 
 All implementations are provided via the ``NearestNeighbors`` class, which exhibits a similar layout as the corresponding class of the `scikit-learn <http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.NearestNeighbors.html>`_ package. The parameter ``n_jobs`` determines the number of threads that shall be used by the standard k-d tree implementation (CPU). The parameter ``plat_dev_ids`` determines the OpenCL devices that shall be used by the buffer k-d tree implementation (OpenCL): Each key of the dictionary corresponds to a OpenCL platform id and for each platform id, a list of associated device ids can be provided. For instance, the first platform (with id 0) and its first device (with id 0) is used for the current example.
@@ -57,10 +57,16 @@ Large-Scale Querying
 The main purpose of the buffer k-d tree implementation is to speed up the querying phase given both a large number of reference and a huge number of query points. The next data example is based on astronomical data from the `Sloan Digital Sky Survey <http://www.sdss.org/collaboration/citing-sdss>`_ (the data set will be downloaded automatically):
 
 .. literalinclude:: ../examples/astronomy.py
-    :start-after: # Licence: GNU GPL (v2)
+    :start-after: # License: GPL v2
     :end-before: def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
 
-Note that four devices (with ids 0,1,2,3) of the first platform (with id 0) are used in this case. The helper function defined next is used to time the runtimes needed for the training and testing phases of each method:
+Note that four devices (with ids 0,1,2,3) of the first platform (with id 0) are used in this case. 
+
+.. admonition:: Platform ID and Devices
+
+    Most likely, you will have to adapt these numbers! A common setting is *plat_dev_ids = {0:[0]}*, i.e., the first OpenCL platform and the first OpenCL device are used.
+
+The helper function defined next is used to time the runtimes needed for the training and testing phases of each method:
 
 .. literalinclude:: ../examples/astronomy.py
     :start-after: n_neighbors = 10
@@ -105,7 +111,7 @@ The parameters ``tree_depth`` and ``leaf_size`` play an important role: In case 
 
 .. admonition:: Performance
 
-    The performance might depend on the particular OpenCL version Nvidia driver. For instance, we observed similar speed-ups (per device) with a weaker Gefore GTX 770 given CUDA 5.5 and Nvidia driver version 319.23. 
+    The performance might depend on the particular OpenCL version and on the particular Nvidia driver that are installed. For instance, we observed similar speed-ups (per device) with a *weaker* Gefore GTX 770 given CUDA 5.5, OpenCL 1.2, and Nvidia driver version 319.23. 
 
 .. admonition:: Tree Construction
 

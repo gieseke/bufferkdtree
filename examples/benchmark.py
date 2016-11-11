@@ -60,10 +60,10 @@ def compute_opt_tree_depth(algorithm, n_test_tree=2000000):
             tree_depths = range(8, 16)
 
         # search for optimal tree depth
-        model = NearestNeighbors(n_neighbors=n_neighbors, \
-                                 algorithm=algorithm, \
-                                 n_jobs=n_jobs, \
-                                 plat_dev_ids=plat_dev_ids, \
+        model = NearestNeighbors(n_neighbors=n_neighbors, 
+                                 algorithm=algorithm, 
+                                 n_jobs=n_jobs, 
+                                 plat_dev_ids=plat_dev_ids, 
                                  verbose=verbose)
         opt_tree_depth = compute_optimal_tree_depth(model, 
                                                     Xtrain, 
@@ -119,7 +119,11 @@ for i in xrange(len(algorithms)):
     print("----------------------------------------------------------------------")
     print("\n\nRunning %s ...\n" % (algorithm))
     print("----------------------------------------------------------------------")
+
+    print("Searching for optimal tree depth. This may " + 
+          "take a while for the k-d tree based schemes ...")
     opt_tree_depth = compute_opt_tree_depth(algorithm, n_test_tree=2000000)
+
     for n_test in n_test_range:
         train_time, test_time = run_algorithm(n_test,
                                               tree_depth=opt_tree_depth,

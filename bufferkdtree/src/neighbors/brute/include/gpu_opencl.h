@@ -36,19 +36,19 @@
 /**
  * Initializes components if needed.
  * 
- *@param *brute_record Pointer to struct containing the model
- *@param *params Pointer to struct containing the parameters
+ * @param *brute_record Pointer to struct containing the model
+ * @param *params Pointer to struct containing the parameters
  */
 void init_gpu(BRUTE_RECORD *brute_record, BRUTE_PARAMETERS *params);
 
 /**
  * Fits a model given the training data (and parameters)
  *
- *@param *X Array containing the training patterns
- *@param nX Number of patterns
- *@param dX Dimensionality of patterns
- *@param *brute_record Pointer to struct containing the model
- *@param *params Pointer to struct containing the parameters
+ * @param *X Array containing the training patterns
+ * @param nX Number of patterns
+ * @param dX Dimensionality of patterns
+ * @param *brute_record Pointer to struct containing the model
+ * @param *params Pointer to struct containing the parameters
  */
 void fit_gpu(FLOAT_TYPE *X,
 		int nX,
@@ -59,8 +59,8 @@ void fit_gpu(FLOAT_TYPE *X,
 /**
  * Does some clean up (before exiting the program).
  *
- *@param *brute_record Pointer to struct containing the model
- *@param *params Pointer to struct containing the parameters
+ * @param *brute_record Pointer to struct containing the model
+ * @param *params Pointer to struct containing the parameters
  */
 void free_resources_gpu(BRUTE_RECORD *brute_record,
 		BRUTE_PARAMETERS *params);
@@ -68,13 +68,13 @@ void free_resources_gpu(BRUTE_RECORD *brute_record,
 /**
  * Computes the predictions (for test patterns)
  *
- *@param *Xtest Array of test patterns
- *@param nXest Number of test patterns
- *@param dXtest Dimensionality of test patterns
- *@param *d_mins Array to store all distances
- *@param *idx_mins Array for storing all indices
- *@param *brute_record Pointer to struct containing the model
- *@param *params Pointer to struct containing the parameters
+ * @param *Xtest Array of test patterns
+ * @param nXest Number of test patterns
+ * @param dXtest Dimensionality of test patterns
+ * @param *d_mins Array to store all distances
+ * @param *idx_mins Array for storing all indices
+ * @param *brute_record Pointer to struct containing the model
+ * @param *params Pointer to struct containing the parameters
  */
 void neighbors_gpu(FLOAT_TYPE *Xtest,
 		int nXtest,
