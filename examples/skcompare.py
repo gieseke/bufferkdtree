@@ -21,7 +21,7 @@ from sklearn.neighbors import NearestNeighbors as NearestNeighborsSKLEARN
 # parameters
 n_jobs = 4
 leaf_size = 30
-ofilename = "skcomparison.json"
+ofilename = "skcompare.json"
 n_test_range = [100000, 250000, 500000, 750000, 1000000]
 algorithms = ["kd_tree_sklearn", "kd_tree"]
 
