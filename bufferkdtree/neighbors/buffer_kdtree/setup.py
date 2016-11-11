@@ -1,8 +1,7 @@
-'''
-Created on 15.09.2015
-
-@author: Fabian Gieseke
-'''
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
 
 import os
 import sys
@@ -48,10 +47,10 @@ else:
     swig_opts = ['-modern', '-threads']
 
 def configuration(parent_package='', top_path=None):
-
+    
     from numpy.distutils.misc_util import Configuration
     config = Configuration('neighbors/buffer_kdtree', parent_package, top_path)
-
+        
     # CPU + FLOAT
     config.add_extension("_wrapper_cpu_float", \
                                     sources=["swig/cpu_float.i"] + source_files,
@@ -77,6 +76,7 @@ def configuration(parent_package='', top_path=None):
                                     ],
                                     libraries=['OpenCL', 'gomp', 'm'],
                                     extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
+
 
     # GPU + FLOAT
     config.add_extension("_wrapper_gpu_opencl_float", \
@@ -119,11 +119,11 @@ def configuration(parent_package='', top_path=None):
                                     ],
                                     libraries=['OpenCL', 'gomp'],
                                     extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
-
+        
     return config
 
 if __name__ == '__main__':
     
     from numpy.distutils.core import setup
     setup(**configuration(top_path='').todict())
-
+    

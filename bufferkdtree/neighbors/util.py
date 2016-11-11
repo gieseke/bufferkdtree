@@ -1,14 +1,12 @@
-'''
-Created on 18.11.2015
-
-@author: Fabian Gieseke
-'''
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
 
 import math
 import time
-from bufferkdtree.neighbors import NearestNeighbors
 
-def compute_optimal_tree_depth(params, Xtrain, Xtest, target="test", tree_depths=None, verbose=1):
+def compute_optimal_tree_depth(model, Xtrain, Xtest, target="test", tree_depths=None, verbose=1):
     """ Computes the optimal tree depth.
     
     Returns
@@ -22,24 +20,17 @@ def compute_optimal_tree_depth(params, Xtrain, Xtest, target="test", tree_depths
     if target not in ALLOWED_TARGETS:
         raise Exception("Target is not valid (allowed ones are " + \
                         unicode(ALLOWED_TARGETS) + ": " + unicode(target))        
-        
-    if params["algorithm"] not in ["kd_tree", "buffer_kd_tree"]:
-        raise Exception("Optimal tree depth can only be \
-                determined for tree-based methods!")        
-    
-    max_depth = int(math.floor(math.log(len(Xtrain), 2)))
-
+            
     if tree_depths is None:
+        max_depth = int(math.floor(math.log(len(Xtrain), 2)))
         tree_depths = range(2, max_depth - 1)
 
     kwargs = {'target':target, 'tree_depths':tree_depths, 'verbose':verbose}    
-    return _conduct_tree_depths_comparison(params, Xtrain, Xtest, **kwargs)
+    return _conduct_tree_depths_comparison(model, Xtrain, Xtest, **kwargs)
 
-def _conduct_tree_depths_comparison(params, Xtrain, Xtest, target="test", tree_depths=None, verbose=1):
+def _conduct_tree_depths_comparison(model, Xtrain, Xtest, target="test", tree_depths=None, verbose=1):
     
     runtimes = {}
-    
-    model = NearestNeighbors(**params)
     
     if target == "test":            
         

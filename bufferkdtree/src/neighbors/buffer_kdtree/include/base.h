@@ -1,5 +1,9 @@
-/* 
- * bufferkdtree.h
+/*
+ * base.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 
 #ifndef NEIGHBORS_BUFFER_KD_TREE_BASE_H_

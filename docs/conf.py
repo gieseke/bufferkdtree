@@ -61,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'bufferkdtree'
-copyright = u'2014 - 2015, Fabian Gieseke'
+copyright = u'2013 - 2016, Fabian Gieseke'
 author = u'Fabian Gieseke'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -374,6 +374,11 @@ numpydoc_show_class_members = False
 numpydoc_class_members_toctree = True
 autodoc_member_order = 'bysource'
 
-
+import subprocess
+subprocess.call("pwd")
+try:
+    subprocess.call('cd doxygen; doxygen bufferkdtree; cd ..', shell=True)
+except Exception as e:
+    print("Could not build doxygen documentation: %s" % str(e))
 
 

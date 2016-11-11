@@ -1,3 +1,8 @@
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
+
 """
 Nearest Neighbors in Astronomy
 ==============================
@@ -13,9 +18,6 @@ Note: The platform and the device needs to be specified below
 """
 print(__doc__)
 
-# Authors: Fabian Gieseke
-# Licence: GNU GPL (v2)
-
 import time
 import generate
 from bufferkdtree import NearestNeighbors
@@ -29,13 +31,13 @@ n_neighbors = 10
 
 def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
 
-    nbrs = NearestNeighbors(n_neighbors=n_neighbors, \
-                            algorithm=algorithm, \
-                            tree_depth=tree_depth, \
-                            leaf_size=leaf_size, \
-                            float_type=float_type, \
-                            n_jobs=n_jobs, \
-                            plat_dev_ids=plat_dev_ids, \
+    nbrs = NearestNeighbors(n_neighbors=n_neighbors, 
+                            algorithm=algorithm, 
+                            tree_depth=tree_depth, 
+                            leaf_size=leaf_size, 
+                            float_type=float_type, 
+                            n_jobs=n_jobs, 
+                            plat_dev_ids=plat_dev_ids, 
                             verbose=verbose)
 
     start_time = time.time()
@@ -44,7 +46,7 @@ def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
     print("Fitting time: %f" % (end_time - start_time))
 
     start_time = time.time()
-    dists, inds = nbrs.kneighbors(Xtest)
+    _, _ = nbrs.kneighbors(Xtest)
     end_time = time.time()
     print("Testing time: %f" % (end_time - start_time))
 

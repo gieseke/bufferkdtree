@@ -1,18 +1,23 @@
-'''
-Created on 15.09.2015
-
-@author: Fabian Gieseke
-'''
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
 
 import os
 import math
 import threading
 import warnings
 import numpy as np
+
 import bufferkdtree.neighbors.brute.wrapper_cpu_float as wrapper_cpu_float
 import bufferkdtree.neighbors.brute.wrapper_cpu_double as wrapper_cpu_double
-import bufferkdtree.neighbors.brute.wrapper_gpu_opencl_float as wrapper_gpu_opencl_float
-import bufferkdtree.neighbors.brute.wrapper_gpu_opencl_double as wrapper_gpu_opencl_double
+
+try:
+    # in case the package is compiled without OpenCL
+    import bufferkdtree.neighbors.brute.wrapper_gpu_opencl_float as wrapper_gpu_opencl_float
+    import bufferkdtree.neighbors.brute.wrapper_gpu_opencl_double as wrapper_gpu_opencl_double
+except:
+    pass
 
 class DeviceQueryThread(threading.Thread):
      

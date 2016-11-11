@@ -1,5 +1,9 @@
-/* 
+/*
  * brute.h
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 #ifndef BRUTE_INCLUDE_BASE_H_
 #define BRUTE_INCLUDE_BASE_H_
@@ -25,8 +29,8 @@
  * Interface (extern): Initialize components
  * --------------------------------------------------------------------------------
  */
-void init_extern(int n_neighbors, int num_threads, int platform_id, \
-		int device_id, char *kernels_source_directory, int verbosity_level, \
+void init_extern(int n_neighbors, int num_threads, int platform_id, 
+		int device_id, char *kernels_source_directory, int verbosity_level, 
 		BRUTE_PARAMETERS *params);
 
 /* --------------------------------------------------------------------------------

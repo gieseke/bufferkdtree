@@ -1,8 +1,7 @@
-'''
-Created on 15.09.2015
-
-@author: Fabian Gieseke
-'''
+#
+# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# License: GPL v2
+#
 
 import os
 import sys
@@ -35,7 +34,7 @@ def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
 
     config = Configuration('neighbors/kdtree', parent_package, top_path)
-
+    
     # CPU + FLOAT
     config.add_extension("_wrapper_cpu_float", \
                                     sources=["swig/cpu_float.i"] + source_files,

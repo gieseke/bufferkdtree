@@ -10,7 +10,7 @@ Installation
 Quick Installation
 ------------------
 
-The package is available on `PyPI <https://pypi.python.org/pypi>`_, but can also be installed from the sources. For instance, to install the package via `PyPI <https://pypi.python.org/pypi>`_ on Linux machines, type::
+The package is available on `PyPI <https://pypi.python.org/pypi>`_, but can also be installed from the sources. We recommend to use `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ to install the package and all dependencies (see below). The installation process has been tested on various Linux-based machines: To install the package via `PyPI <https://pypi.python.org/pypi>`_ on Linux systems, type::
 
   $ sudo pip install bufferkdtree
 
@@ -33,9 +33,9 @@ Dependencies
 
 The bufferkdtree package has been tested under various Linux-based systems such as Ubuntu and OpenSUSE and requires Python 2.6/2.7/3.*. Below, some installation instructions are given for Linux-based systems; similar steps have to be conducted on other systems.
 
-To install the package, a working C/C++ compiler, `OpenCL <https://www.khronos.org/opencl/OpenCL>`_, `Swig <http://www.swig.org/>`_, and the Python development files (headers) along with `setuptools <https://pypi.python.org/pypi/setuptools>`_ need to be available. Further, the `NumPy <http://www.numpy.org>`_ package (>=1.11.0) is needed.
+To install the package, a working C/C++ compiler, `OpenCL <https://www.khronos.org/opencl>`_ (version 1.2 or higher), `Swig <http://www.swig.org/>`_, and the Python development files (headers) along with `setuptools <https://pypi.python.org/pypi/setuptools>`_ need to be available. Further, the `NumPy <http://www.numpy.org>`_ package (>=1.11.0) is needed.
 
-On Ubuntu 12.04/14.04, for instance, the following command can be used to install most dependencies (except for OpenCL)::
+On Ubuntu 12.04/14.04/16.04, for instance, the following command can be used to install most dependencies (except for OpenCL)::
 
    $ sudo apt-get install python2.7 python-dev swig build-essential python-numpy python-setuptools
 
@@ -50,9 +50,28 @@ On an OpenSUSE system, the corresponding command is::
 OpenCL
 ------
 
-OpenCL needs to be installed correctly on the system. In addition, make sure that the OpenCL header files are available as well and accessible during the installation process, e.g., by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux-based systems. For instance, given CUDA along with OpenCL, the header files are probably located in ``/usr/local/cuda/include``. Hence, the following command would update the environment variable accordingly (if needed)::
+`OpenCL <https://www.khronos.org/opencl>`_ (version 1.2 or higher) needs to be installed correctly on the system. The installation of OpenCL depends on the particular host system and the devices used, see, e.g.,
+
+- `Intel <https://software.intel.com/en-us/intel-opencl/download>`_
+- `Nvidia <https://developer.nvidia.com/opencl>`_
+- `AMD <http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/getting-started-with-opencl/>`_
+
+We refer to Andreas Klöckner's `wiki <https://wiki.tiker.net/OpenCLHowTo>`_ page for an excellent description of the OpenCL installation process on Linux-based systems. OpenCL is installed on `macOS <https://developer.apple.com/opencl/>`_. For Windows, we refer to this `blog post <https://streamcomputing.eu/blog/2015-03-16/how-to-install-opencl-on-windows/>`_.
+
+Please make sure that the the OpenCL header files are available as well and accessible during the installation process, e.g., by setting the C_INCLUDE_PATH environment variable in the .bashrc file on Linux-based systems. For instance, given a Nvidia device alogn with CUDA and OpenCL being installed, the header files are probably located in ``/usr/local/cuda/include``. Hence, the following command would update the environment variable accordingly (if needed)::
 
    export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/cuda/include
+
+Sometimes, one also needs to set the path to the OpenCL libraries (e.g., linking errors such as /usr/bin/ld: cannot find -lOpenCL). On Linux-based systems, adapting the library path usually fixes such problems::
+
+   export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/cuda/lib64
+
+.. admonition:: No OpenCL Support?
+
+   In case OpenCL is not supported on the system, one can still compile **standard k-d tree implementation** by setting the global variable `BUFFERKDTREE_KDTREE_ONLY` to `True`. On Linux-based systems, this can be achieved via 
+
+   export BUFFERKDTREE_KDTREE_ONLY=True
+   
 
 Virtualenv & Pip
 ----------------

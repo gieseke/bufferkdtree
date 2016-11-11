@@ -1,13 +1,18 @@
-/* 
+/*
  * util.c
+ *
+ * Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+ * License: GPL v2
+ *
  */
 
 #include "include/util.h"
 #include "include/global.h"
 
-/* --------------------------------------------------------------------------------
+/**
  * Sets default parameters.
- * --------------------------------------------------------------------------------
+ *
+ * @param *params Pointer to struct containing the parameters
  */
 void set_default_parameters(BRUTE_PARAMETERS *params) {
 
@@ -17,9 +22,10 @@ void set_default_parameters(BRUTE_PARAMETERS *params) {
 
 }
 
-/* --------------------------------------------------------------------------------
+/**
  * Checks parameters.
- * --------------------------------------------------------------------------------
+ *
+ * @param *params Pointer to struct containing the parameters
  */
 void check_parameters(BRUTE_PARAMETERS *params) {
 
