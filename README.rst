@@ -20,7 +20,7 @@ The bufferkdtree package has been tested under Python 2.6/2.7/3.*. The required 
 
 - NumPy >= 1.11.0
 
-Further, `Swig <http://www.swig.org>`_, `OpenCL <https://www.khronos.org/opencl>`_, `setuptools <https://pypi.python.org/pypi/setuptools>`_, and a working C/C++ compiler need to be available. See the `documentation <http://bufferkdtree.readthedocs.org>`_ for more details.
+Further, `Swig <http://www.swig.org>`_, `OpenCL <https://www.khronos.org/opencl>`_ (version >= 1.2), `setuptools <https://pypi.python.org/pypi/setuptools>`_, and a working C/C++ compiler need to be available. See the `documentation <http://bufferkdtree.readthedocs.org>`_ for more details.
 
 ==========
 Quickstart

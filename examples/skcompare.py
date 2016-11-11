@@ -18,10 +18,10 @@ from bufferkdtree.neighbors import NearestNeighbors
 from sklearn.neighbors import NearestNeighbors as NearestNeighborsSKLEARN
 
 # parameters
-n_jobs = 8
+n_jobs = 2
 leaf_size = 30
 n_test = 100000
-algorithms = ["kd_tree_sklearn"]
+algorithms = ["kd_tree_sklearn", "kd_tree"]
 
 verbose = 0
 n_neighbors = 10

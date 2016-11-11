@@ -3,12 +3,12 @@
 Changes
 =======
 
-Release 1.3 (October 2016)
+Release 1.3 (November 2016)
 -----------------------------
-* Updated documentation
-* Additional examples
-* Installation process: CPU based k-d trees can now be built without OpenCL
-* Small code modifications
+* Updated documentation (which now also includes a documentation of the C/OpenCL source code)
+* Adapted/Added examples
+* Adapted installation process (e.g., CPU based k-d trees can now be built without OpenCL support)
+* Small code modifications and bugfixes
 
 Release 1.2 (July 2016)
 -----------------------------
