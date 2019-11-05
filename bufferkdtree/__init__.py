@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# Copyright (C) 2013-2019 Fabian Gieseke <fabian.gieseke@di.ku.dk>
 # License: GPL v2
 #
 
@@ -18,7 +18,7 @@ import sys
     
 # development branch marker of the form 'X.Y.dev' or 
 # 'X.Y.devN' with N being an integer.
-__version__ = '1.3'
+__version__ = '1.4.dev0'
 
 try:
     __BUFFERKDTREE_SETUP__

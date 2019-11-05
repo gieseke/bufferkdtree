@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# Copyright (C) 2013-2019 Fabian Gieseke <fabian.gieseke@di.ku.dk>
 # License: GPL v2
 #
 #   Inspired by https://github.com/scikit-learn/scikit-learn/blob/master/setup.py
@@ -116,13 +116,12 @@ def setup_package():
                                  'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
                                  'Programming Language :: C',
                                  'Programming Language :: Python',
-                                 'Programming Language :: Python :: 2',
-                                 'Programming Language :: Python :: 2.6',
                                  'Programming Language :: Python :: 2.7',
+                                 "Programming Language :: Python :: 3",
                                  ],
                     cmdclass={'clean': CleanCommand},
-                    setup_requires=["numpy>=1.11.0"],
-                    install_requires=["numpy>=1.11.0"],
+                    setup_requires=["numpy>=1.17.3"],
+                    install_requires=["numpy>=1.17.3"],
                     include_package_data=True,
                     package_data={'bufferkdtree': ['src/neighbors/brute/kernels/opencl/*.cl',
                                                    'src/neighbors/buffer_kdtree/kernels/*.cl'
@@ -145,7 +144,7 @@ def setup_package():
         # for the bufferkdtree package) 
         try:
             import pip
-            pip.main(["install", "numpy>=1.11.0"])
+            pip.main(["install", "numpy>=1.17.3"])
         except:
             pass
                     

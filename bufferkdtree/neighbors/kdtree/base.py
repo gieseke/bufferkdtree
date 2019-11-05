@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# Copyright (C) 2013-2019 Fabian Gieseke <fabian.gieseke@di.ku.dk>
 # License: GPL v2
 #
 
@@ -18,13 +18,13 @@ class KDTreeNN(object):
     SPLITTING_TYPE_MAPPINGS = {'cyclic': 0, 'longest': 1}
     ALLOWED_FLOAT_TYPES = ['float', 'double']
 
-    def __init__(self, \
-                 n_neighbors=5, \
-                 leaf_size=30, \
-                 tree_depth=None, \
-                 float_type="float", \
-                 splitting_type="cyclic", \
-                 n_jobs=1, \
+    def __init__(self, 
+                 n_neighbors=5, 
+                 leaf_size=30, 
+                 tree_depth=None, 
+                 float_type="float", 
+                 splitting_type="cyclic", 
+                 n_jobs=1, 
                  verbose=0):
         """ Model for unsupervised nearest neighbor search (k-d-trees).
         
@@ -71,12 +71,12 @@ class KDTreeNN(object):
             Parameter names mapped to their values.
         """
         
-        return {"n_neighbors": self.n_neighbors, \
-                "leaf_size": self.leaf_size, \
-                "tree_depth": self.tree_depth, \
-                "float_type": self.float_type, \
-                "splitting_type": self.splitting_type, \
-                "n_jobs": self.n_jobs, \
+        return {"n_neighbors": self.n_neighbors, 
+                "leaf_size": self.leaf_size, 
+                "tree_depth": self.tree_depth, 
+                "float_type": self.float_type, 
+                "splitting_type": self.splitting_type, 
+                "n_jobs": self.n_jobs, 
                 "verbose": self.verbose}
                     
     def fit(self, X):
@@ -115,8 +115,8 @@ class KDTreeNN(object):
         
         # initialize device
         self.wrapper_params_struct = self._get_wrapper_module().KD_TREE_PARAMETERS()
-        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, self.n_jobs, \
-                                               self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], \
+        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, self.n_jobs, 
+                                               self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], 
                                                self.verbose, self.wrapper_params_struct)
         self.wrapper_kdtree_struct = self._get_wrapper_module().KD_TREE_RECORD()
         self._get_wrapper_module().fit_extern(self.X, self.wrapper_kdtree_struct, self.wrapper_params_struct)

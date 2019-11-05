@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# Copyright (C) 2013-2019 Fabian Gieseke <fabian.gieseke@di.ku.dk>
 # License: GPL v2
 #
 
@@ -9,7 +9,10 @@ import numpy
 
 SOURCES_RELATIVE_PATH = "../../src/"
 
-FILES_TO_BE_COMPILED = ["neighbors/kdtree/base.c", "neighbors/kdtree/util.c", "neighbors/kdtree/kdtree.c", "timing.c", "util.c"]
+FILES_TO_BE_COMPILED = ["neighbors/kdtree/base.c", 
+                        "neighbors/kdtree/util.c", 
+                        "neighbors/kdtree/kdtree.c", 
+                        "timing.c", "util.c"]
 DIRS_TO_BE_INCLUDED = ["neighbors/kdtree/include"]
 
 # the absolute path to the sources
@@ -36,28 +39,28 @@ def configuration(parent_package='', top_path=None):
     config = Configuration('neighbors/kdtree', parent_package, top_path)
     
     # CPU + FLOAT
-    config.add_extension("_wrapper_cpu_float", \
-                                    sources=["swig/cpu_float.i"] + source_files,
-                                    swig_opts=swig_opts,
-                                    include_dirs=[numpy_include] + [include_paths],
-                                    define_macros=[
-                                        ('USE_DOUBLE', 0),
-                                        ('TIMING', 1)
-                                    ],
-                                    libraries=['gomp', 'm'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
+    config.add_extension("_wrapper_cpu_float", 
+                        sources=["swig/cpu_float.i"] + source_files,
+                        swig_opts=swig_opts,
+                        include_dirs=[numpy_include] + [include_paths],
+                        define_macros=[
+                            ('USE_DOUBLE', 0),
+                            ('TIMING', 1)
+                        ],
+                        libraries=['gomp', 'm'],
+                        extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     # CPU + DOUBLE
-    config.add_extension("_wrapper_cpu_double", \
-                                    sources=["swig/cpu_double.i"] + source_files,
-                                    swig_opts=swig_opts,
-                                    include_dirs=[numpy_include] + [include_paths],
-                                    define_macros=[
-                                        ('USE_DOUBLE', 1),
-                                        ('TIMING', 1)
-                                    ],
-                                    libraries=['gomp', 'm'],
-                                    extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
+    config.add_extension("_wrapper_cpu_double", 
+                        sources=["swig/cpu_double.i"] + source_files,
+                        swig_opts=swig_opts,
+                        include_dirs=[numpy_include] + [include_paths],
+                        define_macros=[
+                            ('USE_DOUBLE', 1),
+                            ('TIMING', 1)
+                        ],
+                        libraries=['gomp', 'm'],
+                        extra_compile_args=["-fopenmp", '-O3', '-w'] + ['-I' + ipath for ipath in include_paths])
 
     return config
 

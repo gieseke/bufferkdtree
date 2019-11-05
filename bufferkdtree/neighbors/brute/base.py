@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# Copyright (C) 2013-2019 Fabian Gieseke <fabian.gieseke@di.ku.dk>
 # License: GPL v2
 #
 
@@ -37,9 +37,9 @@ class DeviceQueryThread(threading.Thread):
  
     def run(self):
         
-        self.wrapper_module.neighbors_extern(self.X[self.start_idx:self.end_idx], \
-                                             self.d_mins[self.start_idx:self.end_idx], \
-                                             self.idx_mins[self.start_idx:self.end_idx], \
+        self.wrapper_module.neighbors_extern(self.X[self.start_idx:self.end_idx], 
+                                             self.d_mins[self.start_idx:self.end_idx], 
+                                             self.idx_mins[self.start_idx:self.end_idx], 
                                              self.record, self.params)
         
         
@@ -70,12 +70,12 @@ class BruteNN(object):
                              - 3:"ERROR_NO_DEVICES",
                              - 4:"ERROR_INVALID_DEVICE"}
     
-    def __init__(self, \
-                 n_neighbors=5, \
-                 float_type="float", \
-                 use_gpu=False, \
-                 plat_dev_ids={0:[0]}, \
-                 n_jobs=1, \
+    def __init__(self, 
+                 n_neighbors=5, 
+                 float_type="float", 
+                 use_gpu=False, 
+                 plat_dev_ids={0:[0]}, 
+                 n_jobs=1, 
                  verbose=0):
         """ Model for unsupervised nearest neighbor search (brute-force).
         
@@ -127,11 +127,11 @@ class BruteNN(object):
             Parameter names mapped to their values.
         """
         
-        return {"n_neighbors": self.n_neighbors, \
-                "float_type": self.float_type, \
-                "use_gpu": self.use_gpu, \
-                "plat_dev_ids": self.plat_dev_ids, \
-                "n_jobs": self.n_jobs, \
+        return {"n_neighbors": self.n_neighbors, 
+                "float_type": self.float_type, 
+                "use_gpu": self.use_gpu, 
+                "plat_dev_ids": self.plat_dev_ids, 
+                "n_jobs": self.n_jobs, 
                 "verbose": self.verbose}
                     
     def fit(self, X):
@@ -189,8 +189,12 @@ class BruteNN(object):
         
                 wrapper_params = self._get_wrapper_module().BRUTE_PARAMETERS()
                 
-                self._get_wrapper_module().init_extern(self.n_neighbors, self.n_jobs, platform_id, \
-                                                       device_id, kernel_sources_dir, self.verbose,
+                self._get_wrapper_module().init_extern(self.n_neighbors, 
+                                                       self.n_jobs, 
+                                                       platform_id, 
+                                                       device_id, 
+                                                       kernel_sources_dir, 
+                                                       self.verbose,
                                                        wrapper_params)
                 wrapper_record = self._get_wrapper_module().BRUTE_RECORD()
                         
@@ -302,15 +306,20 @@ class BruteNN(object):
                         
                         if self.verbose > 0:
                             print("Initializing device thread for range %i-%i ..." % (chunk_start, chunk_end_cropped))
-                        thread = DeviceQueryThread(wrapper_module, wrapper_params, wrapper_record, \
-                                             X, d_mins, idx_mins, chunk_start, chunk_end_cropped, \
-                                             verbose=self.verbose)
+                        thread = DeviceQueryThread(wrapper_module, 
+                                                   wrapper_params, 
+                                                   wrapper_record, 
+                                                   X, 
+                                                   d_mins, 
+                                                   idx_mins, 
+                                                   chunk_start, 
+                                                   chunk_end_cropped, 
+                                                   verbose=self.verbose)
                         threads.append(thread)
     
                     chunk_start += n_chunk
                     chunk_end += n_chunk
                     
-
         if self.verbose > 0:
             print("Processing all query threads ...")
             

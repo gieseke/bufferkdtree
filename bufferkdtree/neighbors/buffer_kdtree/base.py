@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013-2016 Fabian Gieseke <fabian.gieseke@di.ku.dk>
+# Copyright (C) 2013-2019 Fabian Gieseke <fabian.gieseke@di.ku.dk>
 # License: GPL v2
 #
 
@@ -45,9 +45,9 @@ class DeviceQueryThread(threading.Thread):
         
         if n_total <= n_test_max:
             
-            self.wrapper_module.neighbors_extern(self.X[self.start_idx:self.end_idx], \
-                                                 self.d_mins[self.start_idx:self.end_idx], \
-                                                 self.idx_mins[self.start_idx:self.end_idx], \
+            self.wrapper_module.neighbors_extern(self.X[self.start_idx:self.end_idx], 
+                                                 self.d_mins[self.start_idx:self.end_idx], 
+                                                 self.idx_mins[self.start_idx:self.end_idx], 
                                                  self.tree_record, self.tree_params)
             
             self.wrapper_module.extern_free_query_buffers(self.tree_record, self.tree_params)
@@ -73,9 +73,9 @@ class DeviceQueryThread(threading.Thread):
                 if self.verbose > 0:
                     print("Processing query chunk %i -> %i" % (chunk_start, chunk_end_cropped))
 
-                self.wrapper_module.neighbors_extern(self.X[chunk_start:chunk_end_cropped], \
-                                                     self.d_mins[chunk_start:chunk_end_cropped], \
-                                                     self.idx_mins[chunk_start:chunk_end_cropped], \
+                self.wrapper_module.neighbors_extern(self.X[chunk_start:chunk_end_cropped], 
+                                                     self.d_mins[chunk_start:chunk_end_cropped], 
+                                                     self.idx_mins[chunk_start:chunk_end_cropped], 
                                                      self.tree_record, self.tree_params)
                 self.wrapper_module.extern_free_query_buffers(self.tree_record, self.tree_params)
                 
@@ -110,17 +110,17 @@ class BufferKDTreeNN(object):
                              -3:"ERROR_NO_DEVICES",
                              -4:"ERROR_INVALID_DEVICE"}
 
-    def __init__(self, n_neighbors=5, \
-                 leaf_size=2, \
-                 tree_depth=None, \
-                 float_type="float", \
-                 splitting_type="cyclic", \
-                 use_gpu=True, \
-                 n_train_chunks=1, \
-                 plat_dev_ids={0:[0]}, \
-                 allowed_train_mem_percent_chunk=0.15, \
-                 allowed_test_mem_percent=0.55, \
-                 n_jobs=1, \
+    def __init__(self, n_neighbors=5, 
+                 leaf_size=2, 
+                 tree_depth=None, 
+                 float_type="float", 
+                 splitting_type="cyclic", 
+                 use_gpu=True, 
+                 n_train_chunks=1, 
+                 plat_dev_ids={0:[0]}, 
+                 allowed_train_mem_percent_chunk=0.15, 
+                 allowed_test_mem_percent=0.55, 
+                 n_jobs=1, 
                  verbose=0):
         """ Model for unsupervised nearest neighbor search (buffer k-d-trees).
         
@@ -177,17 +177,17 @@ class BufferKDTreeNN(object):
             Parameter names mapped to their values.
         """
         
-        return {"n_neighbors": self.n_neighbors, \
-                "tree_depth": self.tree_depth, \
-                "leaf_size": self.leaf_size, \
-                "float_type": self.float_type, \
-                "splitting_type": self.splitting_type, \
-                "use_gpu": self.use_gpu, \
-                "n_train_chunks": self.n_train_chunks, \
-                "plat_dev_ids": self.plat_dev_ids, \
-                "allowed_train_mem_percent_chunk": self.allowed_train_mem_percent_chunk, \
-                "allowed_test_mem_percent": self.allowed_test_mem_percent, \
-                "n_jobs": self.n_jobs, \
+        return {"n_neighbors": self.n_neighbors, 
+                "tree_depth": self.tree_depth, 
+                "leaf_size": self.leaf_size, 
+                "float_type": self.float_type, 
+                "splitting_type": self.splitting_type, 
+                "use_gpu": self.use_gpu, 
+                "n_train_chunks": self.n_train_chunks, 
+                "plat_dev_ids": self.plat_dev_ids, 
+                "allowed_train_mem_percent_chunk": self.allowed_train_mem_percent_chunk, 
+                "allowed_test_mem_percent": self.allowed_test_mem_percent, 
+                "n_jobs": self.n_jobs, 
                 "verbose": self.verbose
                 }
         
@@ -246,11 +246,11 @@ class BufferKDTreeNN(object):
         
         root_path = os.path.dirname(os.path.realpath(__file__))
         kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
-        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, \
-                                               self.n_jobs, self.n_train_chunks, 0, 0, \
-                                               self.allowed_train_mem_percent_chunk, \
-                                               self.allowed_test_mem_percent, \
-                                               self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], \
+        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, 
+                                               self.n_jobs, self.n_train_chunks, 0, 0, 
+                                               self.allowed_train_mem_percent_chunk, 
+                                               self.allowed_test_mem_percent, 
+                                               self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], 
                                                kernel_sources_dir, self.verbose, wrapper_tree_params)        
         wrapper_tree_record = self._get_wrapper_module().TREE_RECORD()
         
@@ -262,27 +262,20 @@ class BufferKDTreeNN(object):
         
         root_path = os.path.dirname(os.path.realpath(__file__))
         kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
-
-                    
-
-                    
        
         for platform_id in self.plat_dev_ids.keys():
             self.wrapper_instances[platform_id] = {}
             for device_id in self.plat_dev_ids[platform_id]:
                 
                 self._validate_device(platform_id, device_id)
-                
-
-                                                    
                     
                 wrapper_tree_params = self._get_wrapper_module().TREE_PARAMETERS()                
-                self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, \
+                self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, 
                                                        self.n_jobs, self.n_train_chunks, 
-                                                       platform_id, device_id, \
-                                                       self.allowed_train_mem_percent_chunk, \
-                                                       self.allowed_test_mem_percent, \
-                                                       self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], \
+                                                       platform_id, device_id, 
+                                                       self.allowed_train_mem_percent_chunk, 
+                                                       self.allowed_test_mem_percent, 
+                                                       self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], 
                                                        kernel_sources_dir, self.verbose, wrapper_tree_params)
                 wrapper_tree_record = self._get_wrapper_module().TREE_RECORD()
                  
@@ -378,8 +371,8 @@ class BufferKDTreeNN(object):
         wrapper_tree_params = self.wrapper_instances['tree_params']
         wrapper_tree_record = self.wrapper_instances['wrapper_tree_record']
 
-        self._get_wrapper_module().neighbors_extern(X, d_mins, idx_mins, \
-                                                    wrapper_tree_record, \
+        self._get_wrapper_module().neighbors_extern(X, d_mins, idx_mins, 
+                                                    wrapper_tree_record, 
                                                     wrapper_tree_params)
     
     def _kneighbors_gpu(self, X, n_neighbors, d_mins, idx_mins):
@@ -418,13 +411,12 @@ class BufferKDTreeNN(object):
                         
                         if self.verbose > 0:
                             print("Initializing device thread for range %i-%i ..." % (chunk_start, chunk_end_cropped))
-                        thread = DeviceQueryThread(wrapper_module, wrapper_tree_params, wrapper_tree_record, \
+                        thread = DeviceQueryThread(wrapper_module, wrapper_tree_params, wrapper_tree_record, 
                                              X, d_mins, idx_mins, chunk_start, chunk_end_cropped, verbose=self.verbose)
                         thread_list.append(thread)
     
                     chunk_start += n_chunk
                     chunk_end += n_chunk
-                    
 
         if self.verbose > 0:
             print("Processing all query thread_list ...")
