@@ -3,15 +3,8 @@
 # License: GPL v2
 #
 
-from __future__ import print_function
-
 import os
-import sys
-
-try:
-    import urllib.request as urllib2
-except ImportError:
-    import urllib2
+import wget
 
 def download_from_url(url, fname):
     """ Downloads data from a given url.
@@ -31,35 +24,5 @@ def download_from_url(url, fname):
     if not os.path.exists(d):
         os.makedirs(d)
 
-    # open local file
-    f = open(fname, 'wb')
+    wget.download(url, fname)
 
-    # get data from url; based on 
-    # http://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
-    u = urllib2.urlopen(url)
-    meta = u.info()
-    fsize = int(meta.getheaders("Content-Length")[0])
-    print("Downloading from %s (%i bytes) ... \n" % (url, fsize))
-
-    fsize_current = 0
-    block_size = 8192
-
-    print("Progress")
-    while True:
-
-        buff = u.read(block_size)
-        if not buff:
-            break
-
-        fsize_current += len(buff)
-        f.write(buff)
-        
-        percent = fsize_current * 100. / fsize
-        
-        sys.stdout.flush()        
-        sys.stdout.write("\r%2d%%" % percent)
-                
-        sys.stdout.flush()        
-
-    print("\n")
-    f.close()

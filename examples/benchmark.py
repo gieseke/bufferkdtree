@@ -27,7 +27,7 @@ from bufferkdtree.neighbors import NearestNeighbors, compute_optimal_tree_depth
 
 # platform dependent parameters
 # (might have to be adapted!)
-plat_dev_ids = {0:[0, 1, 2, 3]}
+plat_dev_ids = {0:[0, 1]}
 n_jobs = 8
 
 # parameters
@@ -109,7 +109,7 @@ def run_algorithm(n_test, tree_depth=None, algorithm="buffer_kd_tree"):
 results = {}
 
 # run all algorithms and all n_tests
-for i in xrange(len(algorithms)):
+for i in range(len(algorithms)):
     
     algorithm = algorithms[i]
     results[algorithm] = {}

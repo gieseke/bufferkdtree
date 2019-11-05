@@ -110,7 +110,7 @@ class BruteNN(object):
                     self._get_wrapper_module().free_resources_extern(wrapper_record, wrapper_params)
                 except Exception as e:
                     if self.verbose > 0:
-                        print("Exception occured while freeing external resources: " + unicode(e))
+                        print("Exception occured while freeing external resources: " + str(e))
                       
     def get_params(self):
         """ Get parameters for this estimator.

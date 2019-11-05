@@ -14,11 +14,11 @@ def neighbors_artificial(ntrain=4096, ntest=4096, dim=32, seed=0):
     Xtrain = numpy.empty(ntrain*dim, dtype=numpy.float64).reshape((ntrain,dim))
     Xtest = numpy.empty(ntest*dim, dtype=numpy.float64).reshape((ntest,dim))
 
-    for i in xrange(ntrain):
-        for j in xrange(dim):
+    for i in range(ntrain):
+        for j in range(dim):
             Xtrain[i][j] = random.random()
-    for i in xrange(ntest):
-        for j in xrange(dim):
+    for i in range(ntest):
+        for j in range(dim):
             Xtest[i][j] = random.random()
 
     return Xtrain, Xtest
@@ -65,11 +65,11 @@ def test():
 
             dists_ref, inds_ref = run(Xtrain, Xtest, algorithms[0], float_type)
 
-            for i in xrange(1, len(algorithms)):
+            for i in range(1, len(algorithms)):
 
 
                 algorithm = algorithms[i]
-                print("\tChecking " + unicode(algorithm) + " ...")
+                print("\tChecking " + str(algorithm) + " ...")
                 dists, inds = run(Xtrain, Xtest, algorithms[i], float_type)
                 
                 assert numpy.allclose(dists_ref, dists)

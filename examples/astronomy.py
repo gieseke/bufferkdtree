@@ -23,7 +23,7 @@ import generate
 from bufferkdtree import NearestNeighbors
 
 # parameters
-plat_dev_ids = {0:[0,1,2,3]}
+plat_dev_ids = {0:[0,1]}
 n_jobs = 8
 verbose = 1
 float_type = "float" 

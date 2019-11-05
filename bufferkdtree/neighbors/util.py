@@ -19,7 +19,7 @@ def compute_optimal_tree_depth(model, Xtrain, Xtest, target="test", tree_depths=
     ALLOWED_TARGETS = ['train', 'test', 'both']
     if target not in ALLOWED_TARGETS:
         raise Exception("Target is not valid (allowed ones are " + \
-                        unicode(ALLOWED_TARGETS) + ": " + unicode(target))        
+                        str(ALLOWED_TARGETS) + ": " + str(target))        
             
     if tree_depths is None:
         max_depth = int(math.floor(math.log(len(Xtrain), 2)))
@@ -79,6 +79,6 @@ def _conduct_tree_depths_comparison(model, Xtrain, Xtest, target="test", tree_de
 
     else:
 
-        raise Exception("Unknown target: " + unicode(target))
+        raise Exception("Unknown target: " + str(target))
 
     return min(runtimes, key=runtimes.get)

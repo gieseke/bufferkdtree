@@ -76,7 +76,7 @@ def run_algorithm(n_test_local, leaf_size=30, algorithm="kd_tree"):
     
     return train_time, test_time
 
-for i in xrange(len(algorithms)):
+for i in range(len(algorithms)):
     
     algorithm = algorithms[i]
     results[algorithm] = {}

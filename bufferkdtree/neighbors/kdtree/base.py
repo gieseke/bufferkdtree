@@ -54,7 +54,7 @@ class KDTreeNN(object):
             self._get_wrapper_module().free_resources_extern()
         except Exception as e:
             if self.verbose > 0:
-                print("Exception occured while freeing external resources: " + unicode(e))
+                print("Exception occured while freeing external resources: " + str(e))
 
     def get_params(self):
         """ Get parameters for this estimator.
@@ -103,7 +103,7 @@ class KDTreeNN(object):
         # compute final tree depth (based on X and desired leaf size)
         final_tree_depth = self._compute_final_tree_depth(len(X), self.leaf_size, self.tree_depth)
         if self.verbose > 0:
-            print("Final tree depth: " + unicode(final_tree_depth))
+            print("Final tree depth: " + str(final_tree_depth))
             
         # make sure that the array is contiguous
         # (needed for the swig module)
@@ -189,7 +189,7 @@ class KDTreeNN(object):
         elif self.float_type == "double":
             return wrapper_cpu_double
         else:
-            raise Exception("Unknown float_type: " + unicode(self.float_type))
+            raise Exception("Unknown float_type: " + str(self.float_type))
     
     def _compute_final_tree_depth(self, n, leaf_size, tree_depth):
         """ Computes tree depth for kd tree.

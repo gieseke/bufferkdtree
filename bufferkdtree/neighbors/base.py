@@ -318,7 +318,7 @@ class NearestNeighbors(object):
                             verbose=self.verbose)
 
         else:
-            raise Exception("Invalid assignment for 'algorithm':" + unicode(self.algorithm))
+            raise Exception("Invalid assignment for 'algorithm':" + str(self.algorithm))
         
     def __repr__(self):
         """ String representation.
