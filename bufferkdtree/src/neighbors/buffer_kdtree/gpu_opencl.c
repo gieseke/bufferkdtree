@@ -136,8 +136,8 @@ void free_opencl_devices(TREE_RECORD *tree_record,
 	err = clReleaseMemObject(tree_record->device_leave_bounds);
 	check_cl_error(err, __FILE__, __LINE__);
 
-	free_train_buffers_gpu(tree_record, params);
-	free_query_buffers_gpu(tree_record, params);
+	//free_train_buffers_gpu(tree_record, params);
+	//free_query_buffers_gpu(tree_record, params);
 
 	err = clReleaseKernel(tree_record->find_leaves_kernel);
 	check_cl_error(err, __FILE__, __LINE__);
