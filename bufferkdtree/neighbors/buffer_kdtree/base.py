@@ -112,6 +112,7 @@ class BufferKDTreeNN(object):
 
     def __init__(self, n_neighbors=5, 
                  leaf_size=2, 
+                 max_leaves=None,
                  tree_depth=None, 
                  float_type="float", 
                  splitting_type="cyclic", 
@@ -134,6 +135,7 @@ class BufferKDTreeNN(object):
         
         self.n_neighbors = n_neighbors
         self.leaf_size = leaf_size
+        self.max_leaves = max_leaves
         self.tree_depth = tree_depth
         self.float_type = float_type
         self.splitting_type = splitting_type        
@@ -179,7 +181,8 @@ class BufferKDTreeNN(object):
         
         return {"n_neighbors": self.n_neighbors, 
                 "tree_depth": self.tree_depth, 
-                "leaf_size": self.leaf_size, 
+                "leaf_size": self.leaf_size,
+                "max_leaves": self.max_leaves, 
                 "float_type": self.float_type, 
                 "splitting_type": self.splitting_type, 
                 "use_gpu": self.use_gpu, 

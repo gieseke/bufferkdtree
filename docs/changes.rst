@@ -3,6 +3,11 @@
 Changes
 =======
 
+Release 1.4 (November 2019)
+-----------------------------
+* Updated documentation 
+* Python3 support
+
 Release 1.3 (November 2016)
 -----------------------------
 * Updated documentation (which now also includes a documentation of the C/OpenCL source code)

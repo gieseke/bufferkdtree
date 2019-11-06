@@ -33,11 +33,11 @@ Dependencies
 
 The bufferkdtree package has been tested under various Linux-based systems such as Ubuntu and OpenSUSE and requires Python 2.6/2.7/3.*. Below, some installation instructions are given for Linux-based systems; similar steps have to be conducted on other systems.
 
-To install the package, a working C/C++ compiler, `OpenCL <https://www.khronos.org/opencl>`_ (version 1.2 or higher), `Swig <http://www.swig.org/>`_, and the Python development files (headers) along with `setuptools <https://pypi.python.org/pypi/setuptools>`_ need to be available. Further, the `NumPy <http://www.numpy.org>`_ package (>=1.11.0) is needed.
+To install the package, a working C/C++ compiler, `OpenCL <https://www.khronos.org/opencl>`_ (version 1.2 or higher), `Swig <http://www.swig.org/>`_, and the Python development files (headers) along with `setuptools <https://pypi.python.org/pypi/setuptools>`_ need to be available. Further, the `NumPy <http://www.numpy.org>`_ package (>=1.17.3) is needed.
 
-On Ubuntu 12.04/14.04/16.04, for instance, the following command can be used to install most dependencies (except for OpenCL)::
+On Ubuntu 18.04, for instance, the following command can be used to install most dependencies (except for OpenCL)::
 
-   $ sudo apt-get install python2.7 python-dev swig build-essential python-numpy python-setuptools
+   $ sudo apt-get install python3-dev swig build-essential python3-numpy python3-setuptools
 
 On an OpenSUSE system, the corresponding command is::
 
@@ -45,7 +45,7 @@ On an OpenSUSE system, the corresponding command is::
 
 .. admonition:: Compatibility
 
-   The implementation is based on the efficient use of implicit hardware caches. Thus, to obtain good speed-ups, the system's GPU has to support this feature! Current architectures such as Nvidia's Kepler architecture exhibit such caches, see, e.g., the `Kepler GK110 Whitepaper <http://www.nvidia.com/content/PDF/kepler/NVIDIA-Kepler-GK110-Architecture-Whitepaper.pdf>`_. 
+   The implementation is based on the efficient use of implicit hardware caches. Thus, to obtain good speed-ups, the system's GPU has to support this feature! Most modern architectures exhibit such caches (e.g., `Kepler GK110 Whitepaper <http://www.nvidia.com/content/PDF/kepler/NVIDIA-Kepler-GK110-Architecture-Whitepaper.pdf>`_).
 
 OpenCL
 ------
@@ -54,7 +54,7 @@ OpenCL
 
 - `Intel <https://software.intel.com/en-us/intel-opencl/download>`_
 - `Nvidia <https://developer.nvidia.com/opencl>`_
-- `AMD <http://developer.amd.com/tools-and-sdks/opencl-zone/opencl-resources/getting-started-with-opencl/>`_
+- `AMD <https://www.amd.com/en/support/kb/release-notes/amdgpu-installation/>`_
 
 We refer to Andreas Klöckner's `wiki <https://wiki.tiker.net/OpenCLHowTo>`_ page for an excellent description of the OpenCL installation process on Linux-based systems. OpenCL is installed on `macOS <https://developer.apple.com/opencl/>`_. For Windows, we refer to this `blog post <https://streamcomputing.eu/blog/2015-03-16/how-to-install-opencl-on-windows/>`_.
 
@@ -78,7 +78,7 @@ Virtualenv & Pip
 
 As for most Python packages, we recommend to make use of `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ to install the package. To install virtualenv on recent Debian/Ubuntu-based systems, the following commands can be used to install virtualenv and pip::
 
-   $ sudo apt-get install python-virtualenv python-pip
+   $ sudo apt-get install python3-virtualenv python3-pip
 
 Afterwards, a new virtual environment can be created to install the Numpy and the bufferkdtree package::
 
@@ -86,6 +86,6 @@ Afterwards, a new virtual environment can be created to install the Numpy and th
    $ cd ~/.virtualenvs
    $ virtualenv bufferkdtree
    $ source bufferkdtree/bin/activate
-   $ pip install numpy==1.6.1
+   $ pip install numpy==1.17.3
    $ pip install bufferkdtree
 

@@ -38,6 +38,11 @@ class NearestNeighbors(object):
         In case 'leaf_size' is set, the corresponding tree depth
         is computed (is ignored in case tree_depth is not None).
         
+    max_leaves : int or None, optional (default None)
+        The nearest neibhbor search is stopped as soon as 
+        max_leaves leaves have been visited per query (only
+        for algorithm="kd_tree" or algorithm="buffer_kd_tree").
+        
     splitting_type : {'cyclic'}, optional (default='cyclic')
         Passed to the 'kd_tree' and 'buffer_kd_tree' implementation.
         The splitting rule that shall be used to 
@@ -108,7 +113,8 @@ class NearestNeighbors(object):
                  algorithm="buffer_kd_tree", 
                  float_type="float", 
                  tree_depth=None, 
-                 leaf_size=30, 
+                 leaf_size=30,
+                 max_leaves=None, 
                  splitting_type="cyclic", 
                  n_train_chunks=1, 
                  plat_dev_ids={0:[0]}, 
@@ -125,6 +131,7 @@ class NearestNeighbors(object):
         self.algorithm = algorithm
         self.tree_depth = tree_depth
         self.leaf_size = leaf_size
+        self.max_leaves = max_leaves
         self.splitting_type = splitting_type        
         self.n_train_chunks = n_train_chunks        
         self.plat_dev_ids = plat_dev_ids
@@ -147,7 +154,8 @@ class NearestNeighbors(object):
                 "algorithm": self.algorithm, 
                 "float_type": self.float_type, 
                 "tree_depth": self.tree_depth, 
-                "leaf_size": self.leaf_size, 
+                "leaf_size": self.leaf_size,
+                "max_leaves": self.max_leaves, 
                 "splitting_type": self.splitting_type, 
                 "n_train_chunks": self.n_train_chunks, 
                 "plat_dev_ids": self.plat_dev_ids, 
@@ -296,28 +304,46 @@ class NearestNeighbors(object):
         from bufferkdtree.neighbors.buffer_kdtree.base import BufferKDTreeNN
         
         if self.algorithm == "brute":
-            return BruteNN(n_neighbors=self.n_neighbors, float_type=self.float_type, 
-                            use_gpu=True, plat_dev_ids=self.plat_dev_ids, 
-                            n_jobs=self.n_jobs, verbose=self.verbose)
+            
+            return BruteNN(n_neighbors=self.n_neighbors, 
+                           float_type=self.float_type, 
+                           use_gpu=True, 
+                           plat_dev_ids=self.plat_dev_ids, 
+                           n_jobs=self.n_jobs, 
+                           verbose=self.verbose
+                       )
 
         elif self.algorithm == "kd_tree":
-            return KDTreeNN(n_neighbors=self.n_neighbors, float_type=self.float_type, 
-                            tree_depth=self.tree_depth, leaf_size=self.leaf_size, 
+            
+            return KDTreeNN(n_neighbors=self.n_neighbors, 
+                            float_type=self.float_type, 
+                            tree_depth=self.tree_depth, 
+                            leaf_size=self.leaf_size,
+                            max_leaves=self.max_leaves, 
                             splitting_type=self.splitting_type, 
-                            n_jobs=self.n_jobs, verbose=self.verbose)
+                            n_jobs=self.n_jobs, 
+                            verbose=self.verbose
+                        )
 
         elif self.algorithm == "buffer_kd_tree":
-            return BufferKDTreeNN(n_neighbors=self.n_neighbors, float_type=self.float_type, 
-                            tree_depth=self.tree_depth, leaf_size=self.leaf_size, 
-                            splitting_type=self.splitting_type, 
-                            n_train_chunks=self.n_train_chunks, use_gpu=True, 
-                            plat_dev_ids=self.plat_dev_ids, 
-                            allowed_train_mem_percent_chunk=self.allowed_train_mem_percent_chunk, 
-                            allowed_test_mem_percent=self.allowed_test_mem_percent, 
-                            n_jobs=self.n_jobs, 
-                            verbose=self.verbose)
+            
+            return BufferKDTreeNN(n_neighbors=self.n_neighbors, 
+                                  float_type=self.float_type, 
+                                  tree_depth=self.tree_depth, 
+                                  leaf_size=self.leaf_size,
+                                  max_leaves=self.max_leaves, 
+                                  splitting_type=self.splitting_type, 
+                                  n_train_chunks=self.n_train_chunks, 
+                                  use_gpu=True, 
+                                  plat_dev_ids=self.plat_dev_ids, 
+                                  allowed_train_mem_percent_chunk=self.allowed_train_mem_percent_chunk, 
+                                  allowed_test_mem_percent=self.allowed_test_mem_percent, 
+                                  n_jobs=self.n_jobs, 
+                                  verbose=self.verbose
+                              )
 
         else:
+            
             raise Exception("Invalid assignment for 'algorithm':" + str(self.algorithm))
         
     def __repr__(self):

@@ -20,7 +20,8 @@ class KDTreeNN(object):
 
     def __init__(self, 
                  n_neighbors=5, 
-                 leaf_size=30, 
+                 leaf_size=30,
+                 max_leaves=None, 
                  tree_depth=None, 
                  float_type="float", 
                  splitting_type="cyclic", 
@@ -38,6 +39,7 @@ class KDTreeNN(object):
         
         self.n_neighbors = n_neighbors
         self.leaf_size = leaf_size
+        self.max_leaves = max_leaves
         self.tree_depth = tree_depth
         self.float_type = float_type
         self.splitting_type = splitting_type
@@ -72,7 +74,8 @@ class KDTreeNN(object):
         """
         
         return {"n_neighbors": self.n_neighbors, 
-                "leaf_size": self.leaf_size, 
+                "leaf_size": self.leaf_size,
+                "max_leaves": self.max_leaves, 
                 "tree_depth": self.tree_depth, 
                 "float_type": self.float_type, 
                 "splitting_type": self.splitting_type, 
