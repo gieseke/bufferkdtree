@@ -19,6 +19,7 @@ typedef struct kd_tree_parameters {
 
 	int n_neighbors;
 	int tree_depth;
+	int max_leaves;
 	int num_threads;
 	int verbosity_level;
 	int splitting_type;

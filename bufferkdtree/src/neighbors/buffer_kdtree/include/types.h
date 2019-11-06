@@ -90,6 +90,7 @@ typedef struct tree_parameters {
 
 	INT_TYPE n_neighbors;
 	INT_TYPE tree_depth;
+	INT_TYPE max_leaves;
 	INT_TYPE num_threads;
 	INT_TYPE splitting_type;
 	char *kernels_source_directory;
@@ -177,6 +178,8 @@ typedef struct tree_record {
 
 	// all idxs
 	INT_TYPE *all_idxs;
+	
+	INT_TYPE *leaf_visits; // nXtest * sizeof(INT_TYPE)
 
 	// global distances to be returned by a query
 	FLOAT_TYPE *dist_mins_global;
@@ -230,6 +233,7 @@ typedef struct tree_record {
 	cl_mem device_all_stacks; // nXtest * tree_depth * sizeof(INT_TYPE)
 	cl_mem device_all_depths; // nXtest * sizeof(INT_TYPE)
 	cl_mem device_all_idxs; // nXtest * sizeof(INT_TYPE)
+	cl_mem device_leaf_visits; // nXtest * sizeof(INT_TYPE)
 	cl_mem device_idx_mins_tmp; // nXtest * n_neighbors * sizeof(FLOAT_TYPE)
 	cl_mem device_dist_mins_tmp; // nXtest * n_neighbors * sizeof(INT_TYPE)
 	cl_mem device_test_patterns_subset_tmp; // nXtest * dXtest * sizeof(FLOAT_TYPE)

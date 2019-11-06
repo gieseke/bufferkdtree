@@ -75,12 +75,14 @@ void kd_tree_build_recursive(KD_TREE_RECORD *kdtree_record,
  * @param *d_min Float array that shall contain the distances
  * @param *idx_min Integer array to store the nearest neighbor indices
  * @param K Number of nearest neigbhors that shall be found
+ * @param max_leaves Number of max visits per query
  * @param *record A kd tree record instance
  */
 void kd_tree_query_tree_sequential(FLOAT_TYPE *test_pattern, 
 		FLOAT_TYPE *d_min,
 		int *idx_min, 
 		int K, 
+		int max_leaves,
 		KD_TREE_RECORD *record);
 
 /**

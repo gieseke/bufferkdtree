@@ -57,10 +57,11 @@ void init_opencl_devices(TREE_RECORD *tree_record,
 			#define NUM_NEIGHBORS %d\n\
 			#define K_NN %d\n\
 			#define MAX_VISITED %i\n\
+			#define MAX_LEAF_VISITS %i\n\
 			#define TREE_DEPTH %i\n\
 			#define NUM_NODES %i\n\
 			#define USE_DOUBLE %d\n",
-			tree_record->dXtrain, params->n_neighbors, params->n_neighbors, tree_record->max_visited,
+			tree_record->dXtrain, params->n_neighbors, params->n_neighbors, tree_record->max_visited, params->max_leaves,
 			params->tree_depth, tree_record->n_nodes, USE_DOUBLE);
 
     char kernel_final_path [4096];
@@ -214,6 +215,8 @@ void free_query_buffers_gpu(TREE_RECORD *tree_record,
 		check_cl_error(err, __FILE__, __LINE__);
 		err = clReleaseMemObject(tree_record->device_all_idxs);
 		check_cl_error(err, __FILE__, __LINE__);
+		err = clReleaseMemObject(tree_record->device_leaf_visits);
+		check_cl_error(err, __FILE__, __LINE__);		
 		err = clReleaseMemObject(tree_record->device_dist_mins_tmp);
 		check_cl_error(err, __FILE__, __LINE__);
 		err = clReleaseMemObject(tree_record->device_idx_mins_tmp);
@@ -286,7 +289,12 @@ void allocate_memory_opencl_devices(TREE_RECORD *tree_record,
 	tree_record->device_all_idxs = clCreateBuffer(tree_record->gpu_context,
 	CL_MEM_READ_WRITE, tree_record->nXtest * sizeof(INT_TYPE), NULL, &err);
 	check_cl_error(err, __FILE__, __LINE__);
-
+	
+	// leaf_visits	
+	tree_record->device_leaf_visits = clCreateBuffer(tree_record->gpu_context,
+	CL_MEM_READ_WRITE, tree_record->nXtest * sizeof(INT_TYPE), NULL, &err);
+	check_cl_error(err, __FILE__, __LINE__);
+	
 	// dist_mins_global
 	tree_record->device_d_mins = clCreateBuffer(tree_record->gpu_context, CL_MEM_READ_WRITE,
 			tree_record->nXtest * params->n_neighbors * sizeof(FLOAT_TYPE), NULL, &err);
@@ -329,6 +337,7 @@ void allocate_memory_opencl_devices(TREE_RECORD *tree_record,
 	err = clSetKernelArg(tree_record->init_depths_idxs_kernel, 0, sizeof(INT_TYPE), &num_elts);
 	err |= clSetKernelArg(tree_record->init_depths_idxs_kernel, 1, sizeof(cl_mem), &(tree_record->device_all_depths));
 	err |= clSetKernelArg(tree_record->init_depths_idxs_kernel, 2, sizeof(cl_mem), &(tree_record->device_all_idxs));
+	err |= clSetKernelArg(tree_record->init_depths_idxs_kernel, 3, sizeof(cl_mem), &(tree_record->device_leaf_visits));
 	err |= clEnqueueNDRangeKernel(tree_record->gpu_command_queue, tree_record->init_depths_idxs_kernel, 1, NULL, global_size_3, local_size_3, 0, NULL, &event_all_depths_idxs);
 	check_cl_error(err, __FILE__, __LINE__);
 
@@ -972,12 +981,13 @@ void find_leaf_idx_batch_gpu(INT_TYPE *all_next_indices,
 	err |= clSetKernelArg(tree_record->find_leaves_kernel, 3, sizeof(cl_mem), &(tree_record->device_ret_vals));
 	err |= clSetKernelArg(tree_record->find_leaves_kernel, 4, sizeof(cl_mem), &(tree_record->device_all_depths));
 	err |= clSetKernelArg(tree_record->find_leaves_kernel, 5, sizeof(cl_mem), &(tree_record->device_all_idxs));
-	err |= clSetKernelArg(tree_record->find_leaves_kernel, 6, sizeof(cl_mem), &(tree_record->device_all_stacks));
-	err |= clSetKernelArg(tree_record->find_leaves_kernel, 7, sizeof(INT_TYPE), &(params->tree_depth));
-	err |= clSetKernelArg(tree_record->find_leaves_kernel, 8, sizeof(cl_mem), &(tree_record->device_d_mins));
-	err |= clSetKernelArg(tree_record->find_leaves_kernel, 9, sizeof(cl_mem), &(tree_record->device_idx_mins));
-	err |= clSetKernelArg(tree_record->find_leaves_kernel, 10, sizeof(cl_mem), &(tree_record->device_nodes));
-	err |= clSetKernelArg(tree_record->find_leaves_kernel, 11, sizeof(cl_mem), &(tree_record->device_leave_bounds));
+	err |= clSetKernelArg(tree_record->find_leaves_kernel, 6, sizeof(cl_mem), &(tree_record->device_leaf_visits));
+	err |= clSetKernelArg(tree_record->find_leaves_kernel, 7, sizeof(cl_mem), &(tree_record->device_all_stacks));
+	err |= clSetKernelArg(tree_record->find_leaves_kernel, 8, sizeof(INT_TYPE), &(params->tree_depth));
+	err |= clSetKernelArg(tree_record->find_leaves_kernel, 9, sizeof(cl_mem), &(tree_record->device_d_mins));
+	err |= clSetKernelArg(tree_record->find_leaves_kernel, 10, sizeof(cl_mem), &(tree_record->device_idx_mins));
+	err |= clSetKernelArg(tree_record->find_leaves_kernel, 11, sizeof(cl_mem), &(tree_record->device_nodes));
+	err |= clSetKernelArg(tree_record->find_leaves_kernel, 12, sizeof(cl_mem), &(tree_record->device_leave_bounds));
 	check_cl_error(err, __FILE__, __LINE__);
 
 	size_t global_size[] = { WORKGROUP_SIZE_LEAVES * ((INT_TYPE) num_all_next_indices / WORKGROUP_SIZE_LEAVES) + WORKGROUP_SIZE_LEAVES };

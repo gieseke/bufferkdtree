@@ -116,9 +116,16 @@ class KDTreeNN(object):
         # variable to prevent destruction of external array)
         self.X = X.astype(self.numpy_dtype_float)
         
+        if self.max_leaves is None:
+            final_max_leaves = 0
+        else:
+            if self.max_leaves < 0:
+                raise Exception("max_leaves must be a positive integer")
+            final_max_leaves = int(self.max_leaves)
+            
         # initialize device
         self.wrapper_params_struct = self._get_wrapper_module().KD_TREE_PARAMETERS()
-        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, self.n_jobs, 
+        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, final_max_leaves, self.n_jobs, 
                                                self.SPLITTING_TYPE_MAPPINGS[self.splitting_type], 
                                                self.verbose, self.wrapper_params_struct)
         self.wrapper_kdtree_struct = self._get_wrapper_module().KD_TREE_RECORD()

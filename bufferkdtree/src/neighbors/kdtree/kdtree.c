@@ -111,12 +111,14 @@ void kd_tree_build_recursive(KD_TREE_RECORD *kdtree_record,
  * @param *d_min Float array that shall contain the distances
  * @param *idx_min Integer array to store the nearest neighbor indices
  * @param K Number of nearest neigbhors that shall be found
+ * @param max_leaves Number of max visits per query
  * @param *record A kd tree record instance
  */
 void kd_tree_query_tree_sequential(FLOAT_TYPE *test_pattern,
 		FLOAT_TYPE *d_min,
 		int *idx_min,
 		int K,
+		int max_leaves,
 		KD_TREE_RECORD *record) {
 
 	int i;
@@ -146,12 +148,17 @@ void kd_tree_query_tree_sequential(FLOAT_TYPE *test_pattern,
 	int status = -1;            // the current (stack) status
 	int leaf_width = 2;         // the width of each leaf (in leaves)
 
+	int num_leaves_visited = 0;
+	
 	// until root has not been visited twice ...
 	while (1) {
 
 		// if leaf is reached
 		if (depth == kd_tree_depth) {
 
+			num_leaves_visited++;
+			if (num_leaves_visited > max_leaves){break;}
+			
 			int leaf_idx = idx - (pow(2, kd_tree_depth) - 1);
 			int fr_idx = leaves[leaf_idx * leaf_width];
 			int to_idx = leaves[leaf_idx * leaf_width + 1];
@@ -161,6 +168,7 @@ void kd_tree_query_tree_sequential(FLOAT_TYPE *test_pattern,
 			idx = (idx - 1) / 2;
 			depth--;
 			if (depth < 0){break;}
+			
 
 		} else {
 

@@ -234,22 +234,29 @@ class BufferKDTreeNN(object):
 
         # try to free fitting resources of previous runs
         self._free_fitting_resources()
-                
+
+        if self.max_leaves is None:
+            final_max_leaves = 0
+        else:
+            if self.max_leaves < 0:
+                raise Exception("max_leaves must be a positive integer")
+            final_max_leaves = int(self.max_leaves)
+                            
         self.wrapper_instances = {}
         if self.use_gpu == True:
-            self._fit_gpu(final_tree_depth)
+            self._fit_gpu(final_tree_depth, final_max_leaves)
         else:
-            self._fit_cpu(final_tree_depth)
+            self._fit_cpu(final_tree_depth, final_max_leaves)
             
         return self
                     
-    def _fit_cpu(self, final_tree_depth):
+    def _fit_cpu(self, final_tree_depth, final_max_leaves):
         
         wrapper_tree_params = self._get_wrapper_module().TREE_PARAMETERS()
         
         root_path = os.path.dirname(os.path.realpath(__file__))
         kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
-        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, 
+        self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, final_max_leaves,
                                                self.n_jobs, self.n_train_chunks, 0, 0, 
                                                self.allowed_train_mem_percent_chunk, 
                                                self.allowed_test_mem_percent, 
@@ -261,7 +268,7 @@ class BufferKDTreeNN(object):
         self.wrapper_instances['tree_params'] = wrapper_tree_params
         self.wrapper_instances['wrapper_tree_record'] = wrapper_tree_record    
                 
-    def _fit_gpu(self, final_tree_depth):        
+    def _fit_gpu(self, final_tree_depth, final_max_leaves):        
         
         root_path = os.path.dirname(os.path.realpath(__file__))
         kernel_sources_dir = os.path.join(root_path, "../../src/neighbors/buffer_kdtree/kernels/")
@@ -273,7 +280,7 @@ class BufferKDTreeNN(object):
                 self._validate_device(platform_id, device_id)
                     
                 wrapper_tree_params = self._get_wrapper_module().TREE_PARAMETERS()                
-                self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, 
+                self._get_wrapper_module().init_extern(self.n_neighbors, final_tree_depth, final_max_leaves,
                                                        self.n_jobs, self.n_train_chunks, 
                                                        platform_id, device_id, 
                                                        self.allowed_train_mem_percent_chunk, 

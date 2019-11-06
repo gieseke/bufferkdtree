@@ -12,6 +12,7 @@
  *
  * @param n_neighbors The number of nearest neighbors to be found
  * @param tree_depth The tree depth of the tree to be built
+ * @param max_leaves The maximum number of leaf visits for each query.
  * @param num_threads The number of threads that should be used
  * @param splitting_type The splitting type that can be used during the construction of the tree
  * @param verbosity_level The verbosity level (0==no output, 1==more output, 2==...)
@@ -20,6 +21,7 @@
  */
 void init_extern(int n_neighbors,
 		int tree_depth,
+		int max_leaves,
 		int num_threads,
 		int splitting_type,
 		int verbosity_level,
@@ -29,6 +31,7 @@ void init_extern(int n_neighbors,
 
 	params->n_neighbors = n_neighbors;
 	params->tree_depth = tree_depth;
+	params->max_leaves = max_leaves;
 	params->num_threads = num_threads;
 	params->verbosity_level = verbosity_level;
 	params->splitting_type = splitting_type;
@@ -91,13 +94,18 @@ void neighbors_extern(FLOAT_TYPE * Xtest,
 
 	int i, j;
 	int K = params->n_neighbors;
+	int max_leaves = params->max_leaves;
 
 	// simply parallelize over queries
 #pragma omp parallel for
 	for (i = 0; i < nXtest; i++) {
 		FLOAT_TYPE *tpattern = Xtest + i * dXtest;
-		kd_tree_query_tree_sequential(tpattern, distances + i * K,
-				indices + i * K, K, kdtree_record);
+		kd_tree_query_tree_sequential(tpattern, 
+									  distances + i * K,
+									  indices + i * K, 
+									  K,
+									  max_leaves, 
+									  kdtree_record);
 	}
 
 	char *XI = kdtree_record->XI;

@@ -16,6 +16,7 @@
  *
  * @param n_neighbors The number of nearest neighbors to be found
  * @param tree_depth The tree depth of the tree to be built
+ * @param max_leaves The maximum number of leaf visits for each query.
  * @param num_threads The number of threads that should be used
  * @param num_nXtrain_chunks The number of chunks the training data should be split into
  * @param platform_id The OpenCL platform that should be used
@@ -30,6 +31,7 @@
  */
 void init_extern(int n_neighbors,
 		int tree_depth,
+		int max_leaves,
 		int num_threads,
 		int num_nXtrain_chunks,
 		int platform_id,
@@ -45,6 +47,7 @@ void init_extern(int n_neighbors,
 
 	params->n_neighbors = n_neighbors;
 	params->tree_depth = tree_depth;
+	params->max_leaves = max_leaves;
 	params->num_threads = num_threads;
 	params->n_train_chunks = num_nXtrain_chunks;
 	params->splitting_type = splitting_type;

@@ -28,6 +28,8 @@ void init_arrays_cpu(TREE_RECORD *tree_record,
 	tree_record->all_stacks = (INT_TYPE *) calloc(tree_record->nXtest * params->tree_depth, sizeof(UINT_TYPE));
 	tree_record->all_depths = (INT_TYPE *) calloc(tree_record->nXtest, sizeof(UINT_TYPE));
 	tree_record->all_idxs = (INT_TYPE *) calloc(tree_record->nXtest, sizeof(UINT_TYPE));
+	tree_record->leaf_visits = (INT_TYPE *) calloc(tree_record->nXtest, sizeof(UINT_TYPE));
+	
 }
 
 /**
@@ -326,16 +328,26 @@ void find_leaf_idx_batch_cpu(INT_TYPE *all_next_indices,
 	tree_record->find_leaf_idx_calls++;
 	INT_TYPE j;
 
+	INT_TYPE max_leaves = params->max_leaves;
+	
 	for (j = 0; j < num_all_next_indices; j++) {
 		INT_TYPE test_idx = all_next_indices[j];
 		INT_TYPE *depth = tree_record->all_depths + test_idx;
 		INT_TYPE *idx = tree_record->all_idxs + test_idx;
+		
 		INT_TYPE *all_stacks_local = tree_record->all_stacks + test_idx * params->tree_depth;
 		static INT_TYPE axis = 0;
 		static INT_TYPE status = 0;
 		INT_TYPE test_idx_dim = test_idx * tree_record->dXtrain;
 		FLOAT_TYPE dist_mins_global_test_idx_KNN_KNN_M1 = tree_record->dist_mins_global[test_idx * params->n_neighbors + params->n_neighbors - 1];
+		
+		INT_TYPE *lvisits = tree_record->leaf_visits + test_idx;
+		
 		while (1) {
+		
+			*lvisits = *lvisits + 1;
+			if (*lvisits > max_leaves){break;}
+					
 			if (*depth == params->tree_depth) {
 				INT_TYPE leaf_idx = *idx - tree_record->n_nodes;
 				*idx = (*idx - 1) * 0.5;
@@ -343,6 +355,9 @@ void find_leaf_idx_batch_cpu(INT_TYPE *all_next_indices,
 				ret_vals[j] = leaf_idx;
 				break;
 			}
+			
+			
+			
 			status = all_stacks_local[*depth];
 
 			//axis = *depth % tree_record->dXtrain;

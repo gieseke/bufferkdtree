@@ -36,6 +36,7 @@ __kernel void find_leaf_idx_batch(
 					__global int* ret_vals, // we need write access here   
 					__global int* all_depths, // we need write access here
 					__global int* all_idxs, // we need write access here
+					__global int* leaf_visits, // we need write access here
 					__global int* all_stacks, // we need write access here					
 					int kd_tree_depth,
 					__global FLOAT_TYPE* d_min, // we need write access here
@@ -64,6 +65,8 @@ __kernel void find_leaf_idx_batch(
     unsigned int idx_local = *(all_idxs+test_idx);
     // private copy of depth (global one is updated at the end)    
     int depth_local = *(all_depths+test_idx);
+    
+    int leaf_visits_local = *(leaf_visits+test_idx);
 
     INIT_STACK();
     int axis = 0;
@@ -71,6 +74,12 @@ __kernel void find_leaf_idx_batch(
 
     
     for (k=MAX_VISITED;k--;){
+    
+		leaf_visits_local++;
+    	if (leaf_visits_local > MAX_LEAF_VISITS) {
+    		*(leaf_visits+test_idx) = leaf_visits_local;		
+    		break;
+    	}
         if (depth_local == TREE_DEPTH){
             ret_vals[tid] = idx_local - NUM_NODES; // leaf_idx
             idx_local = (idx_local-1)*0.5;
@@ -133,9 +142,12 @@ __kernel void find_leaf_idx_batch(
             }
         }        
     } // end while 
+    
     // copy values back
     *(all_idxs+test_idx) = idx_local;
     *(all_depths+test_idx) = depth_local;
+    *(leaf_visits+test_idx) = leaf_visits_local;
+    
     COPY_STACK_BACK();
 }
 

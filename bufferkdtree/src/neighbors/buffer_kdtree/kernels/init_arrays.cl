@@ -49,7 +49,8 @@ __kernel void do_init_allstacks(
 __kernel void do_init_depths_idx(
     int num_elts,
     __global int * all_depths,
-    __global int * all_idxs    
+    __global int * all_idxs,
+    __global int * leaf_visits,    
     ){
 
     int tid = get_global_id(0);
@@ -59,6 +60,7 @@ __kernel void do_init_depths_idx(
 
     all_depths[tid] = 0;
     all_idxs[tid] = 0;
+    leaf_visits[tid] = 0;
 
 }
 
