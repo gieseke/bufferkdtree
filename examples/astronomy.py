@@ -38,6 +38,7 @@ def run_algorithm(algorithm="buffer_kd_tree", tree_depth=None, leaf_size=None):
                             float_type=float_type, 
                             n_jobs=n_jobs, 
                             plat_dev_ids=plat_dev_ids, 
+                            max_leaves=50,
                             verbose=verbose)
 
     start_time = time.time()

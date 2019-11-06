@@ -105,7 +105,7 @@ class NearestNeighbors(object):
     
     """
 
-    ALLOWED_ALGORITHMS = ["brute", "kd_tree", "buffer_kd_tree"]
+    ALLOWED_ALGORITHMS = ["brute", "kd_tree", "buffer_kd_tree", "buffer_kd_tree_cpu"]
     N_NEIGHBORS_CL_THRES = 30
     
     def __init__(self, 
@@ -335,6 +335,23 @@ class NearestNeighbors(object):
                                   splitting_type=self.splitting_type, 
                                   n_train_chunks=self.n_train_chunks, 
                                   use_gpu=True, 
+                                  plat_dev_ids=self.plat_dev_ids, 
+                                  allowed_train_mem_percent_chunk=self.allowed_train_mem_percent_chunk, 
+                                  allowed_test_mem_percent=self.allowed_test_mem_percent, 
+                                  n_jobs=self.n_jobs, 
+                                  verbose=self.verbose
+                              )
+
+        elif self.algorithm == "buffer_kd_tree_cpu":
+            
+            return BufferKDTreeNN(n_neighbors=self.n_neighbors, 
+                                  float_type=self.float_type, 
+                                  tree_depth=self.tree_depth, 
+                                  leaf_size=self.leaf_size,
+                                  max_leaves=self.max_leaves, 
+                                  splitting_type=self.splitting_type, 
+                                  n_train_chunks=self.n_train_chunks, 
+                                  use_gpu=False, 
                                   plat_dev_ids=self.plat_dev_ids, 
                                   allowed_train_mem_percent_chunk=self.allowed_train_mem_percent_chunk, 
                                   allowed_test_mem_percent=self.allowed_test_mem_percent, 

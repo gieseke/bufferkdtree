@@ -345,14 +345,22 @@ void find_leaf_idx_batch_cpu(INT_TYPE *all_next_indices,
 		
 		while (1) {
 		
-			*lvisits = *lvisits + 1;
-			if (*lvisits > max_leaves){break;}
-					
+			// leaf visit
 			if (*depth == params->tree_depth) {
+
+                // how many leaves have been checked already? if 
+                // max has been reached, stop search
+                *lvisits = *lvisits + 1;
+    			if (*lvisits > max_leaves){
+					ret_vals[j] = -1;
+                    break;
+                }  
+
 				INT_TYPE leaf_idx = *idx - tree_record->n_nodes;
 				*idx = (*idx - 1) * 0.5;
 				*depth = *depth - 1;
 				ret_vals[j] = leaf_idx;
+
 				break;
 			}
 			

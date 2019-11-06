@@ -50,7 +50,7 @@ __kernel void do_init_depths_idx(
     int num_elts,
     __global int * all_depths,
     __global int * all_idxs,
-    __global int * leaf_visits,    
+    __global int * leaf_visits    
     ){
 
     int tid = get_global_id(0);

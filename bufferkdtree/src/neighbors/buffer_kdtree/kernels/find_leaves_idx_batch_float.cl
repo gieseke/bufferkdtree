@@ -74,13 +74,17 @@ __kernel void find_leaf_idx_batch(
 
     
     for (k=MAX_VISITED;k--;){
-    
-		leaf_visits_local++;
-    	if (leaf_visits_local > MAX_LEAF_VISITS) {
-    		*(leaf_visits+test_idx) = leaf_visits_local;		
-    		break;
-    	}
+
+        // leaf visit    
         if (depth_local == TREE_DEPTH){
+
+		    leaf_visits_local++;
+        	if (leaf_visits_local > MAX_LEAF_VISITS) {
+        		*(leaf_visits+test_idx) = leaf_visits_local;		
+                ret_vals[tid]=-1; // stop here, do not provide next leaf index to be processed
+                break; 
+        	}
+
             ret_vals[tid] = idx_local - NUM_NODES; // leaf_idx
             idx_local = (idx_local-1)*0.5;
             depth_local = depth_local-1;

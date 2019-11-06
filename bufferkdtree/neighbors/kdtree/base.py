@@ -117,7 +117,7 @@ class KDTreeNN(object):
         self.X = X.astype(self.numpy_dtype_float)
         
         if self.max_leaves is None:
-            final_max_leaves = 0
+            final_max_leaves = 2147483640
         else:
             if self.max_leaves < 0:
                 raise Exception("max_leaves must be a positive integer")
