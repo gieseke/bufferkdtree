@@ -241,9 +241,7 @@ class BufferKDTreeNN(object):
             if self.max_leaves < 0:
                 raise Exception("max_leaves must be a positive integer")
             final_max_leaves = int(self.max_leaves)
-                       
-        print("final_max_leaves")
-        print(final_max_leaves)     
+                          
         self.wrapper_instances = {}
         if self.use_gpu == True:
             self._fit_gpu(final_tree_depth, final_max_leaves)
@@ -510,8 +508,6 @@ class BufferKDTreeNN(object):
         int : the final tree depth
         """
 
-        
-    
         # last level might be incomplete
         d = int(math.floor(math.log(n, 2)))
 
